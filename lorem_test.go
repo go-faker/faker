@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/bxcodec/faker/v3/support/slice"
+	"github.com/go-faker/faker/v3/support/slice"
 )
 
 func TestDataFaker(t *testing.T) {
