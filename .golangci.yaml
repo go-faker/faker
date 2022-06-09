@@ -1,0 +1,84 @@
+linters-settings:
+  funlen:
+    lines: 200
+    statements: 200
+  golint:
+    min-confidence: 0.8
+  gocyclo:
+    min-complexity: 60
+  maligned:
+    suggest-new: true
+  dupl:
+    threshold: 100
+  goconst:
+    min-len: 2
+    min-occurrences: 5
+  misspell:
+    locale: US
+
+linters:
+  # please, do not use `enable-all`: it's deprecated and will be removed soon.
+  # inverted configuration with `enable-all` and `disable` is not scalable during updates of golangci-lint
+  disable-all: true
+  enable:
+    - asciicheck
+    - bodyclose
+    - deadcode
+    - depguard
+    - dogsled
+    # - dupl
+    - errcheck
+    - exportloopref
+    - funlen
+    # - gochecknoinits
+    - goconst
+    - gocritic
+    - gocyclo
+    - gofmt
+    - goimports
+    # - gomnd
+    - goprintffuncname
+    - gosec
+    - gosimple
+    - govet
+    - ineffassign
+    # - lll
+    - misspell
+    - nakedret
+    - noctx
+    - nolintlint
+    - staticcheck
+    - structcheck
+    - stylecheck
+    - typecheck
+    - unconvert
+    - unparam
+    - unused
+    - revive
+    - varcheck
+    - whitespace
+
+issues:
+  exclude-rules:
+    - path: person.go # since in the person.go there are so many names that may detected as misspell
+      linters:
+        - misspell
+    - path: datetime.go
+      linters:
+        - misspell
+    - path: _test\.go
+      linters:
+        - funlen
+        - gosec
+        - whitespace
+    - path: faker.go
+      text: "G404: Use of weak random number"
+    - path: random_source.go
+      text: "G404: Use of weak random number"
+        
+run:
+  timeout: 5m
+  go: "1.17"
+  skip-dirs:
+    - "bin"
+    # - */mocks
