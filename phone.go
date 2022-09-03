@@ -5,25 +5,14 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/go-faker/faker/v3/support/slice"
+	"github.com/bxcodec/faker/v4/pkg/options"
+	"github.com/bxcodec/faker/v4/pkg/slice"
 )
-
-var phone Phoner
 
 // GetPhoner serves as a constructor for Phoner interface
 func GetPhoner() Phoner {
-	mu.Lock()
-	defer mu.Unlock()
-
-	if phone == nil {
-		phone = &Phone{}
-	}
+	phone := &Phone{}
 	return phone
-}
-
-// SetPhoner sets custom Phoner
-func SetPhoner(p Phoner) {
-	phone = p
 }
 
 // Phoner serves overall tele-phonic contact generator
@@ -49,11 +38,11 @@ func (p Phone) PhoneNumber(v reflect.Value) (interface{}, error) {
 }
 
 // Phonenumber get fake phone number
-func Phonenumber() string {
+func Phonenumber(opts ...options.OptionFunc) string {
 	return singleFakeData(PhoneNumber, func() interface{} {
 		p := Phone{}
 		return p.phonenumber()
-	}).(string)
+	}, opts...).(string)
 }
 
 func (p Phone) tollfreephonenumber() string {
@@ -67,7 +56,7 @@ func (p Phone) tollfreephonenumber() string {
 		}
 		out += v
 	}
-	return fmt.Sprintf("(%s) %s", boxDigitsStart[rand.Intn(2)], out)
+	return fmt.Sprintf("(%s) %s", boxDigitsStart[rand.Intn(len(boxDigitsStart))], out)
 }
 
 // TollFreePhoneNumber generates phone numbers of type: "(888) 937-7238"
@@ -76,11 +65,11 @@ func (p Phone) TollFreePhoneNumber(v reflect.Value) (interface{}, error) {
 }
 
 // TollFreePhoneNumber get fake TollFreePhoneNumber
-func TollFreePhoneNumber() string {
+func TollFreePhoneNumber(opts ...options.OptionFunc) string {
 	return singleFakeData(TollFreeNumber, func() interface{} {
 		p := Phone{}
 		return p.tollfreephonenumber()
-	}).(string)
+	}, opts...).(string)
 }
 
 func (p Phone) e164PhoneNumber() string {
@@ -91,7 +80,7 @@ func (p Phone) e164PhoneNumber() string {
 	for _, v := range slice.IntToString(ints) {
 		out += v
 	}
-	return fmt.Sprintf("+%s%s", boxDigitsStart[rand.Intn(2)], strings.Join(slice.IntToString(ints), ""))
+	return fmt.Sprintf("+%s%s", boxDigitsStart[rand.Intn(len(boxDigitsStart))], strings.Join(slice.IntToString(ints), ""))
 }
 
 // E164PhoneNumber generates phone numbers of type: "+27113456789"
@@ -100,9 +89,9 @@ func (p Phone) E164PhoneNumber(v reflect.Value) (interface{}, error) {
 }
 
 // E164PhoneNumber get fake E164PhoneNumber
-func E164PhoneNumber() string {
+func E164PhoneNumber(opts ...options.OptionFunc) string {
 	return singleFakeData(E164PhoneNumberTag, func() interface{} {
 		p := Phone{}
 		return p.e164PhoneNumber()
-	}).(string)
+	}, opts...).(string)
 }

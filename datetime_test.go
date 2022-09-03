@@ -6,12 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/go-faker/faker/v3/support/slice"
+	"github.com/bxcodec/faker/v4/pkg/slice"
 )
-
-func TestSetDateTimer(t *testing.T) {
-	SetDateTimer(DateTime{})
-}
 
 func TestUnixTimeValueValid(t *testing.T) {
 	d := GetDateTimer()
@@ -226,8 +222,11 @@ func TestFakeDayOfMonth(t *testing.T) {
 		t.Error("function DayOfMonth need return valid digit")
 	}
 }
+
 func TestFakeTimestamp(t *testing.T) {
+
 	tstmp := Timestamp()
+
 	_, err := time.Parse(fmt.Sprintf("%s %s", BaseDateFormat, TimeFormat), tstmp)
 	if err != nil {
 		t.Error("function Timestamp need return valid timestamp format")

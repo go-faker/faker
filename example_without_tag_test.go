@@ -3,7 +3,7 @@ package faker_test
 import (
 	"fmt"
 
-	"github.com/go-faker/faker/v3"
+	"github.com/bxcodec/faker/v4"
 )
 
 // SomeStruct ...
