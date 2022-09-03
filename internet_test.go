@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/go-faker/faker/v3/support/slice"
+	"github.com/bxcodec/faker/v4/pkg/slice"
 )
 
 func TestEmail(t *testing.T) {
@@ -71,6 +71,7 @@ func TestUserName(t *testing.T) {
 	if usrname.(string) == "" {
 		t.Error("Expected get username")
 	}
+
 }
 func TestIPv4(t *testing.T) {
 	ip, err := GetNetworker().IPv4(reflect.Value{})
@@ -89,9 +90,6 @@ func TestIPv6(t *testing.T) {
 	if strings.Count(ip.(string), ":") != 7 {
 		t.Error("Expected IPv4 format")
 	}
-}
-func TestSetNetwork(t *testing.T) {
-	SetNetwork(Internet{})
 }
 
 func TestPassword(t *testing.T) {

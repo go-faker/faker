@@ -3,9 +3,12 @@ package faker
 import (
 	"fmt"
 	"testing"
+
+	fakerErrors "github.com/bxcodec/faker/v4/pkg/errors"
 )
 
 func TestExtractFloat64(t *testing.T) {
+
 	t.Run("happy path", func(t *testing.T) {
 		const f1 = 658897324.4626827
 		const f2 = 77592747.726643
@@ -47,11 +50,12 @@ func TestExtractFloat64(t *testing.T) {
 			t.Errorf("expected error but got nil")
 		}
 		actual := err.Error()
-		expected := ErrUnsupportedTagArguments
+		expected := fakerErrors.ErrUnsupportedTagArguments
 		if actual != expected {
 			t.Errorf("expected %v but got %v", expected, actual)
 		}
 	})
+
 }
 
 func TestExtractFloat32(t *testing.T) {
@@ -96,11 +100,12 @@ func TestExtractFloat32(t *testing.T) {
 			t.Errorf("expected error but got nil")
 		}
 		actual := err.Error()
-		expected := ErrUnsupportedTagArguments
+		expected := fakerErrors.ErrUnsupportedTagArguments
 		if actual != expected {
 			t.Errorf("expected %v but got %v", expected, actual)
 		}
 	})
+
 }
 
 func TestExtractInt64(t *testing.T) {
@@ -145,15 +150,15 @@ func TestExtractInt64(t *testing.T) {
 			t.Errorf("expected error but got nil")
 		}
 		actual := err.Error()
-		expected := ErrUnsupportedTagArguments
+		expected := fakerErrors.ErrUnsupportedTagArguments
 		if actual != expected {
 			t.Errorf("expected %v but got %v", expected, actual)
 		}
 	})
+
 }
 
 func TestExtractInt32(t *testing.T) {
-
 	t.Run("happy path", func(t *testing.T) {
 		const f1 = -160347324
 		const f2 = -75290047
@@ -195,15 +200,15 @@ func TestExtractInt32(t *testing.T) {
 			t.Errorf("expected error but got nil")
 		}
 		actual := err.Error()
-		expected := ErrUnsupportedTagArguments
+		expected := fakerErrors.ErrUnsupportedTagArguments
 		if actual != expected {
 			t.Errorf("expected %v but got %v", expected, actual)
 		}
 	})
+
 }
 
 func TestExtractInt16(t *testing.T) {
-
 	t.Run("happy path", func(t *testing.T) {
 		const f1 = -19474
 		const f2 = 5047
@@ -245,7 +250,7 @@ func TestExtractInt16(t *testing.T) {
 			t.Errorf("expected error but got nil")
 		}
 		actual := err.Error()
-		expected := ErrUnsupportedTagArguments
+		expected := fakerErrors.ErrUnsupportedTagArguments
 		if actual != expected {
 			t.Errorf("expected %v but got %v", expected, actual)
 		}
@@ -263,11 +268,12 @@ func TestExtractInt16(t *testing.T) {
 			t.Errorf("expected error but got nil")
 		}
 		actual := err.Error()
-		expected := ErrUnsupportedTagArguments
+		expected := fakerErrors.ErrUnsupportedTagArguments
 		if actual != expected {
 			t.Errorf("expected %v but got %v", expected, actual)
 		}
 	})
+
 }
 
 func TestExtractInt8(t *testing.T) {
@@ -325,11 +331,12 @@ func TestExtractInt8(t *testing.T) {
 			t.Errorf("expected error but got nil")
 		}
 		actual := err.Error()
-		expected := ErrUnsupportedTagArguments
+		expected := fakerErrors.ErrUnsupportedTagArguments
 		if actual != expected {
 			t.Errorf("expected %v but got %v", expected, actual)
 		}
 	})
+
 }
 
 func TestExtractInt(t *testing.T) {
@@ -375,6 +382,7 @@ func TestExtractInt(t *testing.T) {
 			t.Errorf("expected error but got nil")
 		}
 	})
+
 }
 
 func TestExtractUint64(t *testing.T) {
@@ -433,9 +441,11 @@ func TestExtractUint64(t *testing.T) {
 			t.Errorf("expected error but got nil")
 		}
 	})
+
 }
 
 func TestExtractUint32(t *testing.T) {
+
 	t.Run("happy path", func(t *testing.T) {
 		const f1 = 1658584
 		const f2 = 10467463
@@ -490,6 +500,7 @@ func TestExtractUint32(t *testing.T) {
 			t.Errorf("expected error but got nil")
 		}
 	})
+
 }
 
 func TestExtractUint16(t *testing.T) {
@@ -547,7 +558,6 @@ func TestExtractUint16(t *testing.T) {
 			t.Errorf("expected error but got nil")
 		}
 	})
-
 }
 
 func TestExtractUint8(t *testing.T) {
@@ -605,7 +615,6 @@ func TestExtractUint8(t *testing.T) {
 			t.Errorf("expected error but got nil")
 		}
 	})
-
 }
 
 func TestExtractUint(t *testing.T) {
