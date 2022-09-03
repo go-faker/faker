@@ -7,7 +7,7 @@ Struct Data Fake Generator
 Faker will generate you a fake data based on your Struct.
 
 [![Go Test](https://github.com/go-faker/faker/actions/workflows/go.yml/badge.svg)](https://github.com/go-faker/faker/actions/workflows/go.yml)
-[![Go Report Card](https://goreportcard.com/badge/github.com/go-faker/faker)](https://goreportcard.com/report/github.com/go-faker/faker)
+[![Go Report Card](https://goreportcard.com/badge/github.com/go-faker/faker/v4)](https://goreportcard.com/report/github.com/go-faker/faker/v4)
 [![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/go-faker/faker/blob/master/LICENSE)
 [![Go.Dev](https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white)](https://pkg.go.dev/github.com/go-faker/faker/v4?tab=doc)
 
