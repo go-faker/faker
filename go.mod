@@ -1,4 +1,4 @@
-module github.com/bxcodec/faker/v4
+module github.com/go-faker/faker/v4
 
 go 1.17
 

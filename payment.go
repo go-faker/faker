@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/bxcodec/faker/v4/pkg/options"
+	"github.com/go-faker/faker/v4/pkg/options"
 )
 
 const (

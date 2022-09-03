@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/bxcodec/faker/v4/pkg/options"
+	"github.com/go-faker/faker/v4/pkg/options"
 )
 
 var tld = []string{"com", "biz", "info", "net", "org", "ru"}

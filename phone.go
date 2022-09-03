@@ -5,8 +5,8 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/bxcodec/faker/v4/pkg/options"
-	"github.com/bxcodec/faker/v4/pkg/slice"
+	"github.com/go-faker/faker/v4/pkg/options"
+	"github.com/go-faker/faker/v4/pkg/slice"
 )
 
 // GetPhoner serves as a constructor for Phoner interface

@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/bxcodec/faker/v4/pkg/slice"
+	"github.com/go-faker/faker/v4/pkg/slice"
 )
 
 func TestTitleMale(t *testing.T) {

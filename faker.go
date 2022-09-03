@@ -13,10 +13,10 @@ import (
 	"strings"
 	"time"
 
-	fakerErrors "github.com/bxcodec/faker/v4/pkg/errors"
-	"github.com/bxcodec/faker/v4/pkg/interfaces"
-	"github.com/bxcodec/faker/v4/pkg/options"
-	"github.com/bxcodec/faker/v4/pkg/slice"
+	fakerErrors "github.com/go-faker/faker/v4/pkg/errors"
+	"github.com/go-faker/faker/v4/pkg/interfaces"
+	"github.com/go-faker/faker/v4/pkg/options"
+	"github.com/go-faker/faker/v4/pkg/slice"
 )
 
 var (
