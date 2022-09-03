@@ -95,7 +95,7 @@ Unfortunately this library has some limitation
 - It does not support the `interface{}` data type. How could we generate anything without knowing its data type?
 - It does not support the `map[interface{}]interface{}`, `map[any_type]interface{}` & `map[interface{}]any_type` data types. Once again, we cannot generate values for an unknown data type.
 - Custom types are not fully supported. However some custom types are already supported: we are still investigating how to do this the correct way. For now, if you use `faker`, it's safer not to use any custom types in order to avoid panics.
-- Some extra custom types can be supported IF AND ONLY IF extended with [AddProvider()](https://github.com/go-faker/faker/blob/9169c33ae9926e5b8f8732909790ee20b10b736a/faker.go#L320) please see [example](example_custom_faker_test.go#L46)
+- Some extra custom types can be supported IF AND ONLY IF extended with [AddProvider()](https://github.com/go-faker/faker/blob/7473ac7d8d0440d24addac302c73e13c08895764/faker.go#L303) please see [example](example_custom_faker_test.go#L46)
 - The `oneof` tag currently only supports `string`, the `int` types, and both `float32` & `float64`. Further support is coming soon (i.e. hex numbers, etc). See [example](example_with_tags_test.go#L53) for usage.
 
 ## Contribution
