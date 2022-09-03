@@ -3,7 +3,7 @@ package faker
 import (
 	"reflect"
 
-	"github.com/bxcodec/faker/v4/pkg/options"
+	"github.com/go-faker/faker/v4/pkg/options"
 )
 
 // GetAddress returns a new Addresser interface of Address

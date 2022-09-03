@@ -6,11 +6,11 @@ Struct Data Fake Generator
 
 Faker will generate you a fake data based on your Struct.
 
-[![Build Status](https://travis-ci.org/bxcodec/faker.svg?branch=master)](https://travis-ci.org/bxcodec/faker)
-[![codecov](https://codecov.io/gh/bxcodec/faker/branch/master/graph/badge.svg)](https://codecov.io/gh/bxcodec/faker)
-[![Go Report Card](https://goreportcard.com/badge/github.com/bxcodec/faker)](https://goreportcard.com/report/github.com/bxcodec/faker)
-[![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/bxcodec/faker/blob/master/LICENSE)
-[![Go.Dev](https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white)](https://pkg.go.dev/github.com/bxcodec/faker/v4?tab=doc)
+[![Build Status](https://travis-ci.org/go-faker/faker.svg?branch=master)](https://travis-ci.org/go-faker/faker)
+[![codecov](https://codecov.io/gh/go-faker/faker/branch/master/graph/badge.svg)](https://codecov.io/gh/go-faker/faker)
+[![Go Report Card](https://goreportcard.com/badge/github.com/go-faker/faker)](https://goreportcard.com/report/github.com/go-faker/faker)
+[![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/go-faker/faker/blob/master/LICENSE)
+[![Go.Dev](https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white)](https://pkg.go.dev/github.com/go-faker/faker/v4?tab=doc)
 
 ## Index
 
@@ -22,15 +22,15 @@ Faker will generate you a fake data based on your Struct.
 
 ## Support
 
-You can file an [Issue](https://github.com/bxcodec/faker/issues/new).
-See documentation in [Go.Dev](https://pkg.go.dev/github.com/bxcodec/faker/v4?tab=doc)
+You can file an [Issue](https://github.com/go-faker/faker/issues/new).
+See documentation in [Go.Dev](https://pkg.go.dev/github.com/go-faker/faker/v4?tab=doc)
 
 ## Getting Started
 
 #### Download
 
 ```shell
-go get -u github.com/bxcodec/faker/v4
+go get -u github.com/go-faker/faker/v4
 ```
 
 # Example
@@ -96,7 +96,7 @@ Unfortunately this library has some limitation
 - It does not support the `interface{}` data type. How could we generate anything without knowing its data type?
 - It does not support the `map[interface{}]interface{}`, `map[any_type]interface{}` & `map[interface{}]any_type` data types. Once again, we cannot generate values for an unknown data type.
 - Custom types are not fully supported. However some custom types are already supported: we are still investigating how to do this the correct way. For now, if you use `faker`, it's safer not to use any custom types in order to avoid panics.
-- Some extra custom types can be supported IF AND ONLY IF extended with [AddProvider()](https://github.com/bxcodec/faker/blob/9169c33ae9926e5b8f8732909790ee20b10b736a/faker.go#L320) please see [example](example_custom_faker_test.go#L46)
+- Some extra custom types can be supported IF AND ONLY IF extended with [AddProvider()](https://github.com/go-faker/faker/blob/9169c33ae9926e5b8f8732909790ee20b10b736a/faker.go#L320) please see [example](example_custom_faker_test.go#L46)
 - The `oneof` tag currently only supports `string`, the `int` types, and both `float32` & `float64`. Further support is coming soon (i.e. hex numbers, etc). See [example](example_with_tags_test.go#L53) for usage.
 
 ## Contribution

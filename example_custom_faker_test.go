@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/bxcodec/faker/v4"
+	"github.com/go-faker/faker/v4"
 )
 
 // Gondoruwo ...

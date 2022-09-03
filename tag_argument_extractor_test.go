@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	fakerErrors "github.com/bxcodec/faker/v4/pkg/errors"
+	fakerErrors "github.com/go-faker/faker/v4/pkg/errors"
 )
 
 func TestExtractFloat64(t *testing.T) {

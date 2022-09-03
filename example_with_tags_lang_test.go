@@ -3,8 +3,8 @@ package faker_test
 import (
 	"fmt"
 
-	"github.com/bxcodec/faker/v4"
-	"github.com/bxcodec/faker/v4/pkg/options"
+	"github.com/go-faker/faker/v4"
+	"github.com/go-faker/faker/v4/pkg/options"
 )
 
 // You can set length for your random strings also set boundary for your integers.
