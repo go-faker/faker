@@ -70,7 +70,6 @@ func TestUniqueWord(t *testing.T) {
 	if !slice.Contains(wordList, word) {
 		t.Error("Expected word from slice wordList")
 	}
-
 	SetGenerateUniqueValues(true)
 	word = Word()
 	ResetUnique()

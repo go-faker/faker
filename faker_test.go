@@ -536,7 +536,7 @@ func TestSetRandomNumberBoundaries(t *testing.T) {
 
 func TestSetRandomMapAndSliceSize(t *testing.T) {
 	someStruct := SomeStruct{}
-	size := 5
+	size := 2
 	if err := FakeData(&someStruct, options.WithRandomMapAndSliceMaxSize(uint(size))); err != nil {
 		t.Error("Fake data generation has failed")
 	}
