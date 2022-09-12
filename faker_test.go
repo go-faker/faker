@@ -2445,7 +2445,8 @@ func TestFakeDate_ConcurrentSafe(t *testing.T) {
 	for i := 0; i < 1000; i++ {
 		go func(i int) {
 			defer wg.Done()
-			fmt.Println(fmt.Sprintf("%s-%s", FirstName(), LastName()))
+			fmt.Printf("Goroutine #%d\n", i)
+			fmt.Printf("%s-%s\n", FirstName(), LastName())
 		}(i)
 	}
 	wg.Wait()

@@ -105,7 +105,7 @@ type mapperTagCustom struct {
 	sync.Map
 }
 
-func (m mapperTagCustom) Load(key string) (interfaces.TaggedFunction, bool) {
+func (m *mapperTagCustom) Load(key string) (interfaces.TaggedFunction, bool) {
 	mappedTagFunc, ok := m.Map.Load(key)
 	if !ok {
 		return nil, ok
