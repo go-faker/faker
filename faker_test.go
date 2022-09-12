@@ -5,6 +5,7 @@ import (
 	mathrand "math/rand"
 	"reflect"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 	"unicode/utf8"
@@ -2435,4 +2436,18 @@ func TestFakeData_RecursiveType(t *testing.T) {
 			t.FailNow()
 		}
 	}
+}
+
+func TestFakeDate_ConcurrentSafe(t *testing.T) {
+	var wg sync.WaitGroup
+	wg.Add(1000)
+	fmt.Println("Running for loop…")
+	for i := 0; i < 1000; i++ {
+		go func(i int) {
+			defer wg.Done()
+			fmt.Println(fmt.Sprintf("%s-%s", FirstName(), LastName()))
+		}(i)
+	}
+	wg.Wait()
+	fmt.Println("Finished for loop")
 }
