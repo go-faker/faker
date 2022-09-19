@@ -2445,6 +2445,7 @@ func TestFakeDate_ConcurrentSafe(t *testing.T) {
 	for i := 0; i < 1000; i++ {
 		go func(i int) {
 			defer wg.Done()
+			_ = i
 			_ = FirstName()
 			_ = LastName()
 		}(i)
