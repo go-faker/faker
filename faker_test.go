@@ -2242,7 +2242,7 @@ func TestRandomMaxMinMapSliceSize(t *testing.T) {
 			t.Error(err)
 		}
 
-		if len(s.Map) != c.expect {
+		if len(s.Map) > c.expect {
 			t.Errorf("map (len:%d) not expect length with test case %+v\n", len(s.Map), c)
 		}
 
@@ -2445,10 +2445,9 @@ func TestFakeDate_ConcurrentSafe(t *testing.T) {
 	for i := 0; i < 1000; i++ {
 		go func(i int) {
 			defer wg.Done()
-			fmt.Printf("Goroutine #%d\n", i)
-			fmt.Printf("%s-%s\n", FirstName(), LastName())
+			_ = FirstName()
+			_ = LastName()
 		}(i)
 	}
 	wg.Wait()
-	fmt.Println("Finished for loop")
 }
