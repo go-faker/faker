@@ -5,6 +5,7 @@ import (
 	mathrand "math/rand"
 	"reflect"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 	"unicode/utf8"
@@ -38,6 +39,11 @@ var (
 
 	sliceLenCorrectTags   = [4]string{"slice_len=0", "slice_len=4", "slice_len=5", "slice_len=10"}
 	sliceLenIncorrectTags = [3]string{"slice_len=b", "slice_len=-1", "slice_len=-10"}
+
+	//Sets the random max size for slices and maps.
+	randomMaxSize = 100
+	//Sets the random min size for slices and maps.
+	randomMinSize = 0
 )
 
 type Coupon struct {
@@ -415,8 +421,11 @@ func TestUnsuportedMapStringInterface(t *testing.T) {
 		Map map[string]interface{}
 	}
 	var sample = new(Sample)
-	if err := FakeData(sample); err == nil {
+	if err := FakeData(sample, options.WithRandomMapAndSliceMinSize(1)); err == nil {
 		t.Error("Expected Error. But got nil")
+	}
+	if err := FakeData(sample, options.WithRandomMapAndSliceMaxSize(1)); err != nil {
+		t.Errorf("Expected nil. But got error: %+v", err) // empty map
 	}
 }
 
@@ -473,12 +482,28 @@ func TestSetRandomStringLength(t *testing.T) {
 	if utfLen(someStruct.StringValue) > strLen {
 		t.Error("SetRandomStringLength did not work.")
 	}
+	strLen = 1
+	if err := SetRandomStringLength(strLen); err != nil {
+		t.Error("Fake data generation has failed")
+	}
+	if err := FakeData(&someStruct); err != nil {
+		t.Error("Fake data generation has failed")
+	}
+	if utfLen(someStruct.StringValue) > strLen {
+		t.Error("SetRandomStringLength did not work.")
+	}
 }
 
 func TestSetStringLang(t *testing.T) {
 	someStruct := SomeStruct{}
 	// optionsSetStringLang(LangENG)
 	if err := FakeData(&someStruct, options.WithStringLanguage(interfaces.LangENG)); err != nil {
+		t.Error("Fake data generation has failed")
+	}
+
+	someStruct = SomeStruct{}
+	SetStringLang(interfaces.LangENG)
+	if err := FakeData(&someStruct); err != nil {
 		t.Error("Fake data generation has failed")
 	}
 }
@@ -493,12 +518,42 @@ func TestSetRandomNumberBoundaries(t *testing.T) {
 	if someStruct.Inta >= boundary.End || someStruct.Inta < boundary.Start {
 		t.Errorf("%d must be between [%d,%d)", someStruct.Inta, boundary.Start, boundary.End)
 	}
+
+	someStruct = SomeStruct{}
+	if err := SetRandomNumberBoundaries(10, 0); err == nil {
+		t.Error("Start must be smaller than end value")
+	}
+	boundary = interfaces.RandomIntegerBoundary{Start: 10, End: 90}
+	if err := SetRandomNumberBoundaries(boundary.Start, boundary.End); err != nil {
+		t.Error("SetRandomNumberBoundaries method is corrupted.")
+	}
+	if err := FakeData(&someStruct); err != nil {
+		t.Error("Fake data generation has failed")
+	}
+	if someStruct.Inta >= boundary.End || someStruct.Inta < boundary.Start {
+		t.Errorf("%d must be between [%d,%d)", someStruct.Inta, boundary.Start, boundary.End)
+	}
 }
 
 func TestSetRandomMapAndSliceSize(t *testing.T) {
 	someStruct := SomeStruct{}
-	size := 5
+	size := 2
 	if err := FakeData(&someStruct, options.WithRandomMapAndSliceMaxSize(uint(size))); err != nil {
+		t.Error("Fake data generation has failed")
+	}
+	if len(someStruct.MapStringStruct) > size || len(someStruct.SBool) > size {
+		t.Error("SetRandomMapAndSliceSize did not work.")
+	}
+
+	someStruct = SomeStruct{}
+	if err := SetRandomMapAndSliceSize(-1); err == nil {
+		t.Error("Random Map and Slice must not accept lower than 0 as a size")
+	}
+	size = 5
+	if err := SetRandomMapAndSliceSize(size); err != nil {
+		t.Error("SetRandomMapAndSliceSize method is corrupted.")
+	}
+	if err := FakeData(&someStruct); err != nil {
 		t.Error("Fake data generation has failed")
 	}
 	if len(someStruct.MapStringStruct) > size || len(someStruct.SBool) > size {
@@ -529,6 +584,17 @@ func TestSetIgnoreInterface(t *testing.T) {
 	if err := FakeData(&someInterface, options.WithIgnoreInterface(true)); err != nil {
 		t.Error("Fake data generation fail on interface{} with SetIgnoreInterface(true)")
 	}
+
+	someInterface = nil
+	SetIgnoreInterface(false)
+	if err := FakeData(&someInterface); err == nil {
+		t.Error("Fake data generation didn't fail on interface{}")
+	}
+	SetIgnoreInterface(true)
+	if err := FakeData(&someInterface); err != nil {
+		t.Error("Fake data generation fail on interface{} with SetIgnoreInterface(true)")
+	}
+	SetIgnoreInterface(false)
 }
 
 func TestBoundaryAndLen(t *testing.T) {
@@ -925,8 +991,19 @@ func TestRandomIntOnlySecondParameters(t *testing.T) {
 }
 
 func TestRandomIntThreeParameters(t *testing.T) {
+	if res, err := RandomInt(1, 2, 3); err != nil {
+		t.Fatal(err)
+	} else if len(res) != 2 {
+		t.Fatalf("expect 2 numbers, got %d", len(res))
+	}
+	if res, err := RandomInt(1, 10, 3); err != nil {
+		t.Fatal(err)
+	} else if len(res) != 3 {
+		t.Fatalf("expect 3 numbers, got %d", len(res))
+	}
+
 	first := rand.Intn(50)
-	second := rand.Intn(100) + first
+	second := rand.Intn(100) + first + 5 // at least 5 numbers
 	third := rand.Intn(5)
 	res, _ := RandomInt(first, second, third)
 	if len(res) != (third) {
@@ -2165,7 +2242,51 @@ func TestRandomMaxMinMapSliceSize(t *testing.T) {
 			t.Error(err)
 		}
 
-		if len(s.Map) != c.expect {
+		if len(s.Map) > c.expect {
+			t.Errorf("map (len:%d) not expect length with test case %+v\n", len(s.Map), c)
+		}
+
+		if len(s.Slice) != c.expect {
+			t.Errorf("slice (len:%d) not expect length with test case %+v\n", len(s.Slice), c)
+		}
+	}
+
+	orimax, orimin := randomMaxSize, randomMinSize
+	defer func() {
+		err := SetRandomMapAndSliceMaxSize(orimax)
+		if err != nil {
+			t.Fatal(err)
+		}
+	}()
+	defer func() {
+		err := SetRandomMapAndSliceMinSize(orimin)
+		if err != nil {
+			t.Fatal(err)
+		}
+	}()
+
+	for _, c := range []struct {
+		max, min, expect int
+	}{
+		{2, 1, 1}, // [1,2) => always 1
+		{2, 2, 2},
+		{2, 3, 3}, // if min >= max, result will always be min
+	} {
+		err := SetRandomMapAndSliceMaxSize(c.max)
+		if err != nil {
+			t.Fatal(err)
+		}
+		err = SetRandomMapAndSliceMinSize(c.min)
+		if err != nil {
+			t.Fatal(err)
+		}
+		s := SliceMap{}
+		err = FakeData(&s)
+		if err != nil {
+			t.Error(err)
+		}
+
+		if len(s.Map) > c.expect {
 			t.Errorf("map (len:%d) not expect length with test case %+v\n", len(s.Map), c)
 		}
 
@@ -2315,4 +2436,19 @@ func TestFakeData_RecursiveType(t *testing.T) {
 			t.FailNow()
 		}
 	}
+}
+
+func TestFakeDate_ConcurrentSafe(t *testing.T) {
+	var wg sync.WaitGroup
+	wg.Add(1000)
+	fmt.Println("Running for loop…")
+	for i := 0; i < 1000; i++ {
+		go func(i int) {
+			defer wg.Done()
+			_ = i
+			_ = FirstName()
+			_ = LastName()
+		}(i)
+	}
+	wg.Wait()
 }

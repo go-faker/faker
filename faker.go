@@ -11,6 +11,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	fakerErrors "github.com/go-faker/faker/v4/pkg/errors"
@@ -100,93 +101,121 @@ var PriorityTags = []string{ID, HyphenatedID, EmailTag, MacAddressTag, DomainNam
 	CurrencyTag, AmountTag, AmountWithCurrencyTag, SKIP, Length, SliceLength, Language, BoundaryStart, BoundaryEnd, ONEOF,
 }
 
-var defaultTag = map[string]string{
-	EmailTag:              EmailTag,
-	MacAddressTag:         MacAddressTag,
-	DomainNameTag:         DomainNameTag,
-	URLTag:                URLTag,
-	UserNameTag:           UserNameTag,
-	IPV4Tag:               IPV4Tag,
-	IPV6Tag:               IPV6Tag,
-	PASSWORD:              PASSWORD,
-	JWT:                   JWT,
-	CreditCardType:        CreditCardType,
-	CreditCardNumber:      CreditCardNumber,
-	LATITUDE:              LATITUDE,
-	LONGITUDE:             LONGITUDE,
-	PhoneNumber:           PhoneNumber,
-	TollFreeNumber:        TollFreeNumber,
-	E164PhoneNumberTag:    E164PhoneNumberTag,
-	TitleMaleTag:          TitleMaleTag,
-	TitleFemaleTag:        TitleFemaleTag,
-	FirstNameTag:          FirstNameTag,
-	FirstNameMaleTag:      FirstNameMaleTag,
-	FirstNameFemaleTag:    FirstNameFemaleTag,
-	LastNameTag:           LastNameTag,
-	NAME:                  NAME,
-	ChineseFirstNameTag:   ChineseFirstNameTag,
-	ChineseLastNameTag:    ChineseLastNameTag,
-	ChineseNameTag:        ChineseNameTag,
-	GENDER:                GENDER,
-	UnixTimeTag:           UnixTimeTag,
-	DATE:                  DATE,
-	TIME:                  TimeFormat,
-	MonthNameTag:          MonthNameTag,
-	YEAR:                  YearFormat,
-	DayOfWeekTag:          DayOfWeekTag,
-	DayOfMonthTag:         DayOfMonthFormat,
-	TIMESTAMP:             TIMESTAMP,
-	CENTURY:               CENTURY,
-	TIMEZONE:              TIMEZONE,
-	TimePeriodTag:         TimePeriodFormat,
-	WORD:                  WORD,
-	SENTENCE:              SENTENCE,
-	PARAGRAPH:             PARAGRAPH,
-	CurrencyTag:           CurrencyTag,
-	AmountTag:             AmountTag,
-	AmountWithCurrencyTag: AmountWithCurrencyTag,
-	ID:                    ID,
-	HyphenatedID:          HyphenatedID,
+type mapperTagCustom struct {
+	sync.Map
 }
 
-var mapperTag = map[string]interfaces.TaggedFunction{
-	CreditCardType:        GetPayment().CreditCardType,
-	CreditCardNumber:      GetPayment().CreditCardNumber,
-	LATITUDE:              GetAddress().Latitude,
-	LONGITUDE:             GetAddress().Longitude,
-	PhoneNumber:           GetPhoner().PhoneNumber,
-	TollFreeNumber:        GetPhoner().TollFreePhoneNumber,
-	E164PhoneNumberTag:    GetPhoner().E164PhoneNumber,
-	TitleMaleTag:          GetPerson().TitleMale,
-	TitleFemaleTag:        GetPerson().TitleFeMale,
-	FirstNameTag:          GetPerson().FirstName,
-	FirstNameMaleTag:      GetPerson().FirstNameMale,
-	FirstNameFemaleTag:    GetPerson().FirstNameFemale,
-	LastNameTag:           GetPerson().LastName,
-	NAME:                  GetPerson().Name,
-	ChineseFirstNameTag:   GetPerson().ChineseFirstName,
-	ChineseLastNameTag:    GetPerson().ChineseLastName,
-	ChineseNameTag:        GetPerson().ChineseName,
-	GENDER:                GetPerson().Gender,
-	UnixTimeTag:           GetDateTimer().UnixTime,
-	DATE:                  GetDateTimer().Date,
-	TIME:                  GetDateTimer().Time,
-	MonthNameTag:          GetDateTimer().MonthName,
-	YEAR:                  GetDateTimer().Year,
-	DayOfWeekTag:          GetDateTimer().DayOfWeek,
-	DayOfMonthTag:         GetDateTimer().DayOfMonth,
-	TIMESTAMP:             GetDateTimer().Timestamp,
-	CENTURY:               GetDateTimer().Century,
-	TIMEZONE:              GetDateTimer().TimeZone,
-	TimePeriodTag:         GetDateTimer().TimePeriod,
-	WORD:                  GetLorem().Word,
-	SENTENCE:              GetLorem().Sentence,
-	PARAGRAPH:             GetLorem().Paragraph,
-	CurrencyTag:           GetPrice().Currency,
-	AmountTag:             GetPrice().Amount,
-	AmountWithCurrencyTag: GetPrice().AmountWithCurrency,
-	ID:                    GetIdentifier().Digit,
-	HyphenatedID:          GetIdentifier().Hyphenated,
+func (m *mapperTagCustom) Load(key string) (interfaces.TaggedFunction, bool) {
+	mappedTagFunc, ok := m.Map.Load(key)
+	if !ok {
+		return nil, ok
+	}
+	tagFunc, ok := mappedTagFunc.(interfaces.TaggedFunction)
+	if ok {
+		return tagFunc, ok
+	}
+	tagPureFunc, ok := mappedTagFunc.(func(v reflect.Value) (interface{}, error))
+	if ok {
+		return tagPureFunc, ok
+	}
+	return nil, false
+}
+
+func (m *mapperTagCustom) Store(key string, taggedFunc interfaces.TaggedFunction) {
+	m.Map.Store(key, taggedFunc)
+}
+
+var defaultTag = sync.Map{}
+
+func initDefaultTag() {
+	defaultTag.Store(EmailTag, EmailTag)
+	defaultTag.Store(MacAddressTag, MacAddressTag)
+	defaultTag.Store(DomainNameTag, DomainNameTag)
+	defaultTag.Store(URLTag, URLTag)
+	defaultTag.Store(UserNameTag, UserNameTag)
+	defaultTag.Store(IPV4Tag, IPV4Tag)
+	defaultTag.Store(IPV6Tag, IPV6Tag)
+	defaultTag.Store(PASSWORD, PASSWORD)
+	defaultTag.Store(JWT, JWT)
+	defaultTag.Store(CreditCardType, CreditCardType)
+	defaultTag.Store(CreditCardNumber, CreditCardNumber)
+	defaultTag.Store(LATITUDE, LATITUDE)
+	defaultTag.Store(LONGITUDE, LONGITUDE)
+	defaultTag.Store(PhoneNumber, PhoneNumber)
+	defaultTag.Store(TollFreeNumber, TollFreeNumber)
+	defaultTag.Store(E164PhoneNumberTag, E164PhoneNumberTag)
+	defaultTag.Store(TitleMaleTag, TitleMaleTag)
+	defaultTag.Store(TitleFemaleTag, TitleFemaleTag)
+	defaultTag.Store(FirstNameTag, FirstNameTag)
+	defaultTag.Store(FirstNameMaleTag, FirstNameMaleTag)
+	defaultTag.Store(FirstNameFemaleTag, FirstNameFemaleTag)
+	defaultTag.Store(LastNameTag, LastNameTag)
+	defaultTag.Store(NAME, NAME)
+	defaultTag.Store(ChineseFirstNameTag, ChineseFirstNameTag)
+	defaultTag.Store(ChineseLastNameTag, ChineseLastNameTag)
+	defaultTag.Store(ChineseNameTag, ChineseNameTag)
+	defaultTag.Store(GENDER, GENDER)
+	defaultTag.Store(UnixTimeTag, UnixTimeTag)
+	defaultTag.Store(DATE, DATE)
+	defaultTag.Store(TIME, TimeFormat)
+	defaultTag.Store(MonthNameTag, MonthNameTag)
+	defaultTag.Store(YEAR, YearFormat)
+	defaultTag.Store(DayOfWeekTag, DayOfWeekTag)
+	defaultTag.Store(DayOfMonthTag, DayOfMonthFormat)
+	defaultTag.Store(TIMESTAMP, TIMESTAMP)
+	defaultTag.Store(CENTURY, CENTURY)
+	defaultTag.Store(TIMEZONE, TIMEZONE)
+	defaultTag.Store(TimePeriodTag, TimePeriodFormat)
+	defaultTag.Store(WORD, WORD)
+	defaultTag.Store(SENTENCE, SENTENCE)
+	defaultTag.Store(PARAGRAPH, PARAGRAPH)
+	defaultTag.Store(CurrencyTag, CurrencyTag)
+	defaultTag.Store(AmountTag, AmountTag)
+	defaultTag.Store(AmountWithCurrencyTag, AmountWithCurrencyTag)
+	defaultTag.Store(ID, ID)
+	defaultTag.Store(HyphenatedID, HyphenatedID)
+}
+
+var mapperTag = mapperTagCustom{}
+
+func initMappertTagDefault() {
+	mapperTag.Store(CreditCardType, GetPayment().CreditCardType)
+	mapperTag.Store(CreditCardNumber, GetPayment().CreditCardNumber)
+	mapperTag.Store(LATITUDE, GetAddress().Latitude)
+	mapperTag.Store(LONGITUDE, GetAddress().Longitude)
+	mapperTag.Store(PhoneNumber, GetPhoner().PhoneNumber)
+	mapperTag.Store(TollFreeNumber, GetPhoner().TollFreePhoneNumber)
+	mapperTag.Store(E164PhoneNumberTag, GetPhoner().E164PhoneNumber)
+	mapperTag.Store(TitleMaleTag, GetPerson().TitleMale)
+	mapperTag.Store(TitleFemaleTag, GetPerson().TitleFeMale)
+	mapperTag.Store(FirstNameTag, GetPerson().FirstName)
+	mapperTag.Store(FirstNameMaleTag, GetPerson().FirstNameMale)
+	mapperTag.Store(FirstNameFemaleTag, GetPerson().FirstNameFemale)
+	mapperTag.Store(LastNameTag, GetPerson().LastName)
+	mapperTag.Store(NAME, GetPerson().Name)
+	mapperTag.Store(ChineseFirstNameTag, GetPerson().ChineseFirstName)
+	mapperTag.Store(ChineseLastNameTag, GetPerson().ChineseLastName)
+	mapperTag.Store(ChineseNameTag, GetPerson().ChineseName)
+	mapperTag.Store(GENDER, GetPerson().Gender)
+	mapperTag.Store(UnixTimeTag, GetDateTimer().UnixTime)
+	mapperTag.Store(DATE, GetDateTimer().Date)
+	mapperTag.Store(TIME, GetDateTimer().Time)
+	mapperTag.Store(MonthNameTag, GetDateTimer().MonthName)
+	mapperTag.Store(YEAR, GetDateTimer().Year)
+	mapperTag.Store(DayOfWeekTag, GetDateTimer().DayOfWeek)
+	mapperTag.Store(DayOfMonthTag, GetDateTimer().DayOfMonth)
+	mapperTag.Store(TIMESTAMP, GetDateTimer().Timestamp)
+	mapperTag.Store(CENTURY, GetDateTimer().Century)
+	mapperTag.Store(TIMEZONE, GetDateTimer().TimeZone)
+	mapperTag.Store(TimePeriodTag, GetDateTimer().TimePeriod)
+	mapperTag.Store(WORD, GetLorem().Word)
+	mapperTag.Store(SENTENCE, GetLorem().Sentence)
+	mapperTag.Store(PARAGRAPH, GetLorem().Paragraph)
+	mapperTag.Store(CurrencyTag, GetPrice().Currency)
+	mapperTag.Store(AmountTag, GetPrice().Amount)
+	mapperTag.Store(AmountWithCurrencyTag, GetPrice().AmountWithCurrency)
+	mapperTag.Store(ID, GetIdentifier().Digit)
+	mapperTag.Store(HyphenatedID, GetIdentifier().Hyphenated)
 }
 
 // Compiled regexp
@@ -209,22 +238,38 @@ func init() {
 	randNameFlag = rand.Intn(100) // for person
 }
 
+func init() {
+	initDefaultTag()
+	initMappertTagDefault()
+}
+
 // ResetUnique is used to forget generated unique values.
 // Call this when you're done generating a dataset.
 func ResetUnique() {
 	uniqueValues = map[string][]interface{}{}
 }
 
+var (
+	SetGenerateUniqueValues     = options.SetGenerateUniqueValues
+	SetIgnoreInterface          = options.SetIgnoreInterface
+	SetRandomStringLength       = options.SetRandomStringLength
+	SetStringLang               = options.SetStringLang
+	SetRandomMapAndSliceSize    = options.SetRandomMapAndSliceSize
+	SetRandomMapAndSliceMaxSize = options.SetRandomMapAndSliceMaxSize
+	SetRandomMapAndSliceMinSize = options.SetRandomMapAndSliceMinSize
+	SetRandomNumberBoundaries   = options.SetRandomNumberBoundaries
+)
+
 func initMapperTagWithOption(opts ...options.OptionFunc) {
-	mapperTag[EmailTag] = GetNetworker(opts...).Email
-	mapperTag[MacAddressTag] = GetNetworker(opts...).MacAddress
-	mapperTag[DomainNameTag] = GetNetworker(opts...).DomainName
-	mapperTag[URLTag] = GetNetworker(opts...).URL
-	mapperTag[UserNameTag] = GetNetworker(opts...).UserName
-	mapperTag[IPV4Tag] = GetNetworker(opts...).IPv4
-	mapperTag[IPV6Tag] = GetNetworker(opts...).IPv6
-	mapperTag[PASSWORD] = GetNetworker(opts...).Password
-	mapperTag[JWT] = GetNetworker(opts...).Jwt
+	mapperTag.Store(EmailTag, GetNetworker(opts...).Email)
+	mapperTag.Store(MacAddressTag, GetNetworker(opts...).MacAddress)
+	mapperTag.Store(DomainNameTag, GetNetworker(opts...).DomainName)
+	mapperTag.Store(URLTag, GetNetworker(opts...).URL)
+	mapperTag.Store(UserNameTag, GetNetworker(opts...).UserName)
+	mapperTag.Store(IPV4Tag, GetNetworker(opts...).IPv4)
+	mapperTag.Store(IPV6Tag, GetNetworker(opts...).IPv6)
+	mapperTag.Store(PASSWORD, GetNetworker(opts...).Password)
+	mapperTag.Store(JWT, GetNetworker(opts...).Jwt)
 }
 
 func initOption(opt ...options.OptionFunc) *options.Options {
@@ -301,23 +346,21 @@ func FakeData(a interface{}, opt ...options.OptionFunc) error {
 // 		{ID:43 Gondoruwo:{Name:Power Locatadata:324} Danger:danger-ranger}
 // Notes: when using a custom provider make sure to return the same type as the field
 func AddProvider(tag string, provider interfaces.TaggedFunction) error {
-	if _, ok := mapperTag[tag]; ok {
+	if _, ok := mapperTag.Load(tag); ok {
 		return errors.New(fakerErrors.ErrTagAlreadyExists)
 	}
 	PriorityTags = append(PriorityTags, tag)
-	mapperTag[tag] = provider
+	mapperTag.Store(tag, provider)
 
 	return nil
 }
 
 // RemoveProvider removes existing customization added with AddProvider
 func RemoveProvider(tag string) error {
-	if _, ok := mapperTag[tag]; !ok {
+	if _, ok := mapperTag.Load(tag); !ok {
 		return errors.New(fakerErrors.ErrTagDoesNotExist)
 	}
-
-	delete(mapperTag, tag)
-
+	mapperTag.Delete(tag)
 	return nil
 }
 
@@ -440,11 +483,11 @@ func getFakedValue(a interface{}, opts *options.Options) (reflect.Value, error) 
 		res, err := randomString(opts.RandomStringLength, *opts)
 		return reflect.ValueOf(res), err
 	case reflect.Slice:
-		len := randomSliceAndMapSize(*opts)
-		if opts.SetSliceMapNilIfLenZero && len == 0 {
+		length := randomSliceAndMapSize(*opts)
+		if opts.SetSliceMapNilIfLenZero && length == 0 {
 			return reflect.Zero(t), nil
 		}
-		v := reflect.MakeSlice(t, len, len)
+		v := reflect.MakeSlice(t, length, length)
 		for i := 0; i < v.Len(); i++ {
 			val, err := getFakedValue(v.Index(i).Interface(), opts)
 			if err != nil {
@@ -499,12 +542,12 @@ func getFakedValue(a interface{}, opts *options.Options) (reflect.Value, error) 
 		return reflect.ValueOf(uint64(randomInteger(opts))), nil
 
 	case reflect.Map:
-		len := randomSliceAndMapSize(*opts)
-		if opts.SetSliceMapNilIfLenZero && len == 0 {
+		length := randomSliceAndMapSize(*opts)
+		if opts.SetSliceMapNilIfLenZero && length == 0 {
 			return reflect.Zero(t), nil
 		}
 		v := reflect.MakeMap(t)
-		for i := 0; i < len; i++ {
+		for i := 0; i < length; i++ {
 			keyInstance := reflect.New(t.Key()).Elem().Interface()
 			key, err := getFakedValue(keyInstance, opts)
 			if err != nil {
@@ -600,7 +643,7 @@ func setDataWithTag(v reflect.Value, tag string, opt options.Options) error {
 	v = reflect.Indirect(v)
 	switch v.Kind() {
 	case reflect.Ptr:
-		if _, exist := mapperTag[tag]; !exist {
+		if _, exist := mapperTag.Load(tag); !exist {
 			newv := reflect.New(v.Type().Elem())
 			if err := setDataWithTag(newv, tag, opt); err != nil {
 				return err
@@ -608,8 +651,12 @@ func setDataWithTag(v reflect.Value, tag string, opt options.Options) error {
 			v.Set(newv)
 			return nil
 		}
-		if _, def := defaultTag[tag]; !def {
-			res, err := mapperTag[tag](v)
+		if _, def := defaultTag.Load(tag); !def {
+			tagFunc, ok := mapperTag.Load(tag)
+			if !ok {
+				return fmt.Errorf(fakerErrors.ErrTagNotSupported, tag)
+			}
+			res, err := tagFunc(v)
 			if err != nil {
 				return err
 			}
@@ -619,7 +666,11 @@ func setDataWithTag(v reflect.Value, tag string, opt options.Options) error {
 
 		t := v.Type()
 		newv := reflect.New(t.Elem())
-		res, err := mapperTag[tag](newv.Elem())
+		tagFunc, ok := mapperTag.Load(tag)
+		if !ok {
+			return fmt.Errorf(fakerErrors.ErrTagNotSupported, tag)
+		}
+		res, err := tagFunc(newv.Elem())
 		if err != nil {
 			return err
 		}
@@ -637,10 +688,11 @@ func setDataWithTag(v reflect.Value, tag string, opt options.Options) error {
 	case reflect.Map:
 		return userDefinedMap(v, tag, opt)
 	default:
-		if _, exist := mapperTag[tag]; !exist {
+		tagFunc, ok := mapperTag.Load(tag)
+		if !ok {
 			return fmt.Errorf(fakerErrors.ErrTagNotSupported, tag)
 		}
-		res, err := mapperTag[tag](v)
+		res, err := tagFunc(v)
 		if err != nil {
 			return err
 		}
@@ -650,7 +702,7 @@ func setDataWithTag(v reflect.Value, tag string, opt options.Options) error {
 }
 
 func userDefinedMap(v reflect.Value, tag string, opt options.Options) error {
-	if tagFunc, ok := mapperTag[tag]; ok {
+	if tagFunc, ok := mapperTag.Load(tag); ok {
 		res, err := tagFunc(v)
 		if err != nil {
 			return err
@@ -660,13 +712,13 @@ func userDefinedMap(v reflect.Value, tag string, opt options.Options) error {
 		return nil
 	}
 
-	len := randomSliceAndMapSize(opt)
-	if opt.SetSliceMapNilIfLenZero && len == 0 {
+	length := randomSliceAndMapSize(opt)
+	if opt.SetSliceMapNilIfLenZero && length == 0 {
 		v.Set(reflect.Zero(v.Type()))
 		return nil
 	}
 	definedMap := reflect.MakeMap(v.Type())
-	for i := 0; i < len; i++ {
+	for i := 0; i < length; i++ {
 		key, err := getValueWithTag(v.Type().Key(), tag, opt)
 		if err != nil {
 			return err
@@ -752,9 +804,9 @@ func getValueWithNoTag(t reflect.Type, opt options.Options) (interface{}, error)
 }
 
 func userDefinedArray(v reflect.Value, tag string, opt options.Options) error {
-	_, tagExists := mapperTag[tag]
+	tagFunc, tagExists := mapperTag.Load(tag)
 	if tagExists {
-		res, err := mapperTag[tag](v)
+		res, err := tagFunc(v)
 		if err != nil {
 			return err
 		}
@@ -797,7 +849,7 @@ func userDefinedString(v reflect.Value, tag string, opt options.Options) error {
 	var res interface{}
 	var err error
 
-	if tagFunc, ok := mapperTag[tag]; ok {
+	if tagFunc, ok := mapperTag.Load(tag); ok {
 		res, err = tagFunc(v)
 		if err != nil {
 			return err
@@ -820,7 +872,7 @@ func userDefinedNumber(v reflect.Value, tag string) error {
 	var res interface{}
 	var err error
 
-	if tagFunc, ok := mapperTag[tag]; ok {
+	if tagFunc, ok := mapperTag.Load(tag); ok {
 		res, err = tagFunc(v)
 		if err != nil {
 			return err
@@ -1241,7 +1293,9 @@ func RandomInt(parameters ...int) (p []int, err error) {
 		for i := range p {
 			p[i] += minInt
 		}
-		p = p[0:count]
+		if len(p) > count {
+			p = p[0:count]
+		}
 	default:
 		err = fmt.Errorf(fakerErrors.ErrMoreArguments, len(parameters))
 	}
