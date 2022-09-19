@@ -2286,7 +2286,7 @@ func TestRandomMaxMinMapSliceSize(t *testing.T) {
 			t.Error(err)
 		}
 
-		if len(s.Map) != c.expect {
+		if len(s.Map) > c.expect {
 			t.Errorf("map (len:%d) not expect length with test case %+v\n", len(s.Map), c)
 		}
 
