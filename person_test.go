@@ -192,3 +192,43 @@ func TestChineseName(t *testing.T) {
 	}
 	t.Log(firstname)
 }
+
+func TestRussianFirstNameMale(t *testing.T) {
+	firstName, err := GetPerson().RussianFirstNameMale(reflect.Value{})
+	if err != nil {
+		t.Error("Expected  not error, got err", err)
+	}
+	if !slice.Contains(russianFirstNamesMale, firstName.(string)) {
+		t.Error("Expected value from variable russianFirstNamesMale in function RussianFirstNameMale")
+	}
+}
+
+func TestRussianLastNameMale(t *testing.T) {
+	lastName, err := GetPerson().RussianLastNameMale(reflect.Value{})
+	if err != nil {
+		t.Error("Expected  not error, got err", err)
+	}
+	if !slice.Contains(russianLastNamesMale, lastName.(string)) {
+		t.Error("Expected value from variable russianLastNamesMale in function RussianLastNameMale")
+	}
+}
+
+func TestRussianFirstNameFemale(t *testing.T) {
+	firstName, err := GetPerson().RussianFirstNameFemale(reflect.Value{})
+	if err != nil {
+		t.Error("Expected  not error, got err", err)
+	}
+	if !slice.Contains(russianFirstNamesFemale, firstName.(string)) {
+		t.Error("Expected value from variable russianFirstNamesFemale in function RussianFirstNameFemale")
+	}
+}
+
+func TestRussianLastNameFemale(t *testing.T) {
+	lastName, err := GetPerson().RussianLastNameFemale(reflect.Value{})
+	if err != nil {
+		t.Error("Expected  not error, got err", err)
+	}
+	if !slice.Contains(russianLastNamesFemale, lastName.(string)) {
+		t.Error("Expected value from variable russianLastNamesFemale in function RussianLastNameFemale")
+	}
+}
