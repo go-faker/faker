@@ -887,7 +887,7 @@ func userDefinedNumber(v reflect.Value, tag string) error {
 		return fmt.Errorf(fakerErrors.ErrTagNotSupported, tag)
 	}
 
-	v.Set(reflect.ValueOf(res))
+	v.Set(reflect.ValueOf(res).Convert(v.Type()))
 	return nil
 }
 
