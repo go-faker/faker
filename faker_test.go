@@ -1060,9 +1060,9 @@ type CustomInt int
 type CustomMap map[string]string
 type CustomPointerStruct PointerStructB
 type CustomTypeStruct struct {
-	CustomString        CustomString
-	CustomInt           CustomInt
-	CustomMap           CustomMap
+	CustomString        CustomString `faker:"len=2"`
+	CustomInt           CustomInt    `faker:"boundary_start=0, boundary_end=2"`
+	CustomMap           CustomMap    `faker:"len=2"`
 	CustomPointerStruct CustomPointerStruct
 }
 
