@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/go-faker/faker/v4/pkg/options"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
+
+	"github.com/go-faker/faker/v4/pkg/options"
 )
 
 var wordList = []string{
@@ -85,7 +86,7 @@ func Word(opts ...options.OptionFunc) string {
 
 func (l Lorem) sentence() string {
 	sentence := ""
-	r, _ := RandomInt(1, 6)
+	r, _ := RandomInt(0, len(wordList)-1, 6)
 	size := len(r)
 	for key, val := range r {
 		if key == 0 {
