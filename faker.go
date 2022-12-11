@@ -47,6 +47,7 @@ const (
 	JWT                       = "jwt"
 	LATITUDE                  = "lat"
 	LONGITUDE                 = "long"
+	RealAddressTag            = "real_address"
 	CreditCardNumber          = "cc_number"
 	CreditCardType            = "cc_type"
 	PhoneNumber               = "phone_number"

@@ -17,3 +17,11 @@ func TestGetLatitude(t *testing.T) {
 		t.Error("function Latitude need return a valid longitude")
 	}
 }
+
+func TestGetRealAddress(t *testing.T) {
+	addr := GetRealAddress()
+	if addr.Address1 == "" || addr.City == "" {
+		t.Error("empty address")
+	}
+	t.Log(addr)
+}

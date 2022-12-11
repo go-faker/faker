@@ -1,10 +1,27 @@
 package faker
 
 import (
-	"reflect"
-
+	_ "embed"
+	"encoding/json"
 	"github.com/go-faker/faker/v4/pkg/options"
+	"reflect"
 )
+
+var (
+	//go:embed misc/addresses-us-1000.min.json
+	addressesUSBytes []byte
+	addressesUS      []RealAddress
+)
+
+func init() {
+	data := struct {
+		Addresses []RealAddress `json:"addresses"`
+	}{}
+	if err := json.Unmarshal(addressesUSBytes, &data); err != nil {
+		panic(err)
+	}
+	addressesUS = data.Addresses
+}
 
 // GetAddress returns a new Addresser interface of Address
 func GetAddress() Addresser {
@@ -63,4 +80,25 @@ func Latitude(opts ...options.OptionFunc) float64 {
 		address := Address{}
 		return float64(address.latitude())
 	}, opts...).(float64)
+}
+
+type RealCoordinates struct {
+	Latitude  float64 `json:"lat"`
+	Longitude float64 `json:"lng"`
+}
+
+type RealAddress struct {
+	Address1    string          `json:"address1"`
+	Address2    string          `json:"address2"`
+	City        string          `json:"city"`
+	State       string          `json:"state"`
+	PostalCode  string          `json:"postalCode"`
+	Coordinates RealCoordinates `json:"coordinates"`
+}
+
+// GetRealAddress get real world address randomly
+func GetRealAddress(opts ...options.OptionFunc) RealAddress {
+	return singleFakeData(RealAddressTag, func() interface{} {
+		return addressesUS[rand.Intn(len(addressesUS))]
+	}, opts...).(RealAddress)
 }

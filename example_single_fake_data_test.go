@@ -10,8 +10,9 @@ import (
 func Example_singleFakeData() {
 
 	// Address
-	fmt.Println(faker.Latitude())  // => 81.12195
-	fmt.Println(faker.Longitude()) // => -84.38158
+	fmt.Println(faker.Latitude())       // => 81.12195
+	fmt.Println(faker.Longitude())      // => -84.38158
+	fmt.Println(faker.GetRealAddress()) // => {2755 Country Drive #244 Fremont CA 94536 {37.557882 -121.986823}}
 
 	// Datetime
 	fmt.Println(faker.UnixTime())   // => 1197930901
