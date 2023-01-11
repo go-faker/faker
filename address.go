@@ -3,8 +3,9 @@ package faker
 import (
 	_ "embed"
 	"encoding/json"
-	"github.com/go-faker/faker/v4/pkg/options"
 	"reflect"
+
+	"github.com/go-faker/faker/v4/pkg/options"
 )
 
 var (
