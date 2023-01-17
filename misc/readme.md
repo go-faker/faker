@@ -1,0 +1,1 @@
+* `addresses-us-1000.min.json` is copy from https://github.com/EthanRBrown/rrad
