@@ -20,7 +20,7 @@ func TestGetLatitude(t *testing.T) {
 
 func TestGetRealAddress(t *testing.T) {
 	addr := GetRealAddress()
-	if addr.Address1 == "" || addr.City == "" {
+	if addr.Address == "" || addr.City == "" {
 		t.Error("empty address")
 	}
 	t.Log(addr)

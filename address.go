@@ -89,8 +89,7 @@ type RealCoordinates struct {
 }
 
 type RealAddress struct {
-	Address1    string          `json:"address1"`
-	Address2    string          `json:"address2"`
+	Address     string          `json:"address1"`
 	City        string          `json:"city"`
 	State       string          `json:"state"`
 	PostalCode  string          `json:"postalCode"`
