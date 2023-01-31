@@ -75,7 +75,7 @@ func TestPLen(t *testing.T) {
 }
 
 type SomeInt32 int32
-
+type SomeString string
 type TArray [16]byte
 
 type SomeStruct struct {
@@ -125,6 +125,8 @@ type SomeStruct struct {
 
 	MapStringString        map[string]string
 	MapStringStruct        map[string]AStruct
+	MapCustomStringStruct  map[SomeString]AStruct
+	MapCustomStringString  map[SomeString]string
 	MapStringStructPointer map[string]*AStruct
 
 	SomeInt32s []SomeInt32

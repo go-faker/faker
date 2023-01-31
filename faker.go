@@ -572,6 +572,7 @@ func getFakedValue(a interface{}, opts *options.Options) (reflect.Value, error) 
 			if err != nil {
 				return reflect.Value{}, err
 			}
+			key = key.Convert(t.Key())
 			val = val.Convert(v.Type().Elem())
 			v.SetMapIndex(key, val)
 		}
