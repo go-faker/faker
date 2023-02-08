@@ -317,46 +317,61 @@ func FakeData(a interface{}, opt ...options.OptionFunc) error {
 
 // AddProvider extend faker with tag to generate fake data with specified custom algorithm
 // Example:
-// 		type Gondoruwo struct {
-// 			Name       string
-// 			Locatadata int
-// 		}
 //
-// 		type Sample struct {
-// 			ID                 int64     `faker:"customIdFaker"`
-// 			Gondoruwo          Gondoruwo `faker:"gondoruwo"`
-// 			Danger             string    `faker:"danger"`
-// 		}
+//		type Gondoruwo struct {
+//			Name       string
+//			Locatadata int
+//		}
 //
-// 		func CustomGenerator() {
-// 			// explicit
-// 			faker.AddProvider("customIdFaker", func(v reflect.Value) (interface{}, error) {
-// 			 	return int64(43), nil
-// 			})
-// 			// functional
-// 			faker.AddProvider("danger", func() faker.TaggedFunction {
-// 				return func(v reflect.Value) (interface{}, error) {
-// 					return "danger-ranger", nil
-// 				}
-// 			}())
-// 			faker.AddProvider("gondoruwo", func(v reflect.Value) (interface{}, error) {
-// 				obj := Gondoruwo{
-// 					Name:       "Power",
-// 					Locatadata: 324,
-// 				}
-// 				return obj, nil
-// 			})
-// 		}
+//		type Sample struct {
+//			ID                 int64     `faker:"customIdFaker"`
+//			Gondoruwo          Gondoruwo `faker:"gondoruwo"`
+//			Danger             string    `faker:"danger"`
+//		}
 //
-// 		func main() {
-// 			CustomGenerator()
-// 			var sample Sample
-// 			faker.FakeData(&sample)
-// 			fmt.Printf("%+v", sample)
-// 		}
+//		type Sample struct {
+//			ID                 int64     `faker:"customIdFaker"`
+//			Gondoruwo          Gondoruwo `faker:"gondoruwo"`
+//			Danger             string    `faker:"danger"`
+//		}
+//
+//	type Sample struct {
+//		ID                 int64     `faker:"customIdFaker"`
+//		Gondoruwo          Gondoruwo `faker:"gondoruwo"`
+//		Danger             string    `faker:"danger"`
+//	}
+//
+//	func CustomGenerator() {
+//		// explicit
+//		faker.AddProvider("customIdFaker", func(v reflect.Value) (interface{}, error) {
+//		 	return int64(43), nil
+//		})
+//		// functional
+//		faker.AddProvider("danger", func() faker.TaggedFunction {
+//			return func(v reflect.Value) (interface{}, error) {
+//				return "danger-ranger", nil
+//			}
+//		}())
+//		faker.AddProvider("gondoruwo", func(v reflect.Value) (interface{}, error) {
+//			obj := Gondoruwo{
+//				Name:       "Power",
+//				Locatadata: 324,
+//			}
+//			return obj, nil
+//		})
+//	}
+//
+//	func main() {
+//		CustomGenerator()
+//		var sample Sample
+//		faker.FakeData(&sample)
+//		fmt.Printf("%+v", sample)
+//	}
 //
 // Will print
-// 		{ID:43 Gondoruwo:{Name:Power Locatadata:324} Danger:danger-ranger}
+//
+//	{ID:43 Gondoruwo:{Name:Power Locatadata:324} Danger:danger-ranger}
+//
 // Notes: when using a custom provider make sure to return the same type as the field
 func AddProvider(tag string, provider interfaces.TaggedFunction) error {
 	if _, ok := mapperTag.Load(tag); ok {
@@ -840,6 +855,18 @@ func userDefinedArray(v reflect.Value, tag string, opt options.Options) error {
 	tag = findSliceLenReg.ReplaceAllString(tag, "")
 	array := reflect.MakeSlice(v.Type(), sliceLen, sliceLen)
 	for i := 0; i < array.Len(); i++ {
+		k := v.Type().Elem().Kind()
+		if k == reflect.Pointer || k == reflect.Struct {
+			res, err := getFakedValue(array.Index(i).Interface(), &opt)
+			if err != nil {
+				return err
+			}
+			if res.Kind() == reflect.Invalid {
+				return fmt.Errorf("got invalid reflect value")
+			}
+			array.Index(i).Set(res)
+			continue
+		}
 		if tag == "" {
 			res, err := getValueWithNoTag(v.Type().Elem(), opt)
 			if err != nil {
@@ -905,7 +932,7 @@ func userDefinedNumber(v reflect.Value, tag string) error {
 	return nil
 }
 
-//extractSliceLengthFromTag checks if the sliceLength tag 'slice_len' is set, if so, returns its value, else return a random length
+// extractSliceLengthFromTag checks if the sliceLength tag 'slice_len' is set, if so, returns its value, else return a random length
 func extractSliceLengthFromTag(tag string, opt options.Options) (int, error) {
 	if strings.Contains(tag, SliceLength) {
 		lenParts := strings.SplitN(findSliceLenReg.FindString(tag), Equals, -1)
@@ -1281,9 +1308,10 @@ func randomStringNumber(n int) string {
 
 // RandomInt Get three parameters , only first mandatory and the rest are optional
 // (minimum_int, maximum_int, count)
-// 		If only set one parameter :  An integer greater than minimum_int will be returned
-// 		If only set two parameters : All integers between minimum_int and maximum_int will be returned, in a random order.
-// 		If three parameters: `count` integers between minimum_int and maximum_int will be returned.
+//
+//	If only set one parameter :  An integer greater than minimum_int will be returned
+//	If only set two parameters : All integers between minimum_int and maximum_int will be returned, in a random order.
+//	If three parameters: `count` integers between minimum_int and maximum_int will be returned.
 func RandomInt(parameters ...int) (p []int, err error) {
 	switch len(parameters) {
 	case 1:
