@@ -34,6 +34,7 @@ func GetAddress() Addresser {
 type Addresser interface {
 	Latitude(v reflect.Value) (interface{}, error)
 	Longitude(v reflect.Value) (interface{}, error)
+	RealWorld(v reflect.Value) (interface{}, error)
 }
 
 // Address struct
@@ -65,6 +66,15 @@ func (i Address) Longitude(v reflect.Value) (interface{}, error) {
 		return val, nil
 	}
 	return float64(val), nil
+}
+
+func (i Address) realWorld() RealAddress {
+	return addressesUS[rand.Intn(len(addressesUS))]
+}
+
+// RealWorld sets real world address
+func (i Address) RealWorld(_ reflect.Value) (interface{}, error) {
+	return i.realWorld(), nil
 }
 
 // Longitude get fake longitude randomly
@@ -99,6 +109,7 @@ type RealAddress struct {
 // GetRealAddress get real world address randomly
 func GetRealAddress(opts ...options.OptionFunc) RealAddress {
 	return singleFakeData(RealAddressTag, func() interface{} {
-		return addressesUS[rand.Intn(len(addressesUS))]
+		address := Address{}
+		return address.realWorld()
 	}, opts...).(RealAddress)
 }

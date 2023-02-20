@@ -93,10 +93,11 @@ type SomeStruct struct {
 	UInt32 uint32
 	UInt64 uint64
 
-	Latitude           float32 `faker:"lat"`
-	LATITUDE           float64 `faker:"lat"`
-	Long               float32 `faker:"long"`
-	LONG               float64 `faker:"long"`
+	Latitude           float32     `faker:"lat"`
+	LATITUDE           float64     `faker:"lat"`
+	RealAddress        RealAddress `faker:"real_address"`
+	Long               float32     `faker:"long"`
+	LONG               float64     `faker:"long"`
 	StringValue        string
 	CreditCardType     string `faker:"cc_type"`
 	CreditCardNumber   string `faker:"cc_number"`
@@ -192,6 +193,7 @@ func (s SomeStruct) String() string {
 
 	Latitude: %v
 	LATITUDE: %v
+	RealAddress: %v
 	Long: %v
 	LONG: %v
 	StringValue: %v
@@ -225,7 +227,7 @@ func (s SomeStruct) String() string {
 	}`, s.Inta, s.Int8, s.Int16, s.Int32,
 		s.Int64, s.Float32, s.Float64, s.UInta,
 		s.UInt8, s.UInt16, s.UInt32, s.UInt64,
-		s.Latitude, s.LATITUDE, s.Long, s.LONG,
+		s.Latitude, s.LATITUDE, s.RealAddress, s.Long, s.LONG,
 		s.StringValue, s.CreditCardType, s.CreditCardNumber,
 		s.Email, s.IPV4, s.IPV6, s.Bool, s.SString, s.SInt,
 		s.SInt8, s.SInt16, s.SInt32, s.SInt64, s.SFloat32, s.SFloat64,
@@ -370,7 +372,7 @@ func TestFakerData(t *testing.T) {
 	err := FakeData(&a)
 
 	if err != nil {
-		t.Error("Expected NoError")
+		t.Error("Expected NoError:", err)
 	}
 	fmt.Println("SomeStruct:")
 	t.Logf("%+v\n", a)
