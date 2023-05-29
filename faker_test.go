@@ -2456,3 +2456,19 @@ func TestFakeDate_ConcurrentSafe(t *testing.T) {
 	}
 	wg.Wait()
 }
+
+type StructWithInterface struct {
+	I Interface
+}
+
+type Interface interface {
+	test()
+}
+
+func TestNonEmptyInterface(t *testing.T) {
+	var s StructWithInterface
+	if err := FakeData(&s, options.WithIgnoreInterface(true)); err != nil {
+		t.Errorf("%+v", err)
+		t.FailNow()
+	}
+}

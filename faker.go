@@ -312,7 +312,9 @@ func FakeData(a interface{}, opt ...options.OptionFunc) error {
 	if err != nil {
 		return err
 	}
-
+	if finalValue.Kind() == reflect.Invalid {
+		return nil
+	}
 	rval.Elem().Set(finalValue.Elem().Convert(reflectType.Elem()))
 	return nil
 }
@@ -383,7 +385,7 @@ func getFakedValue(a interface{}, opts *options.Options) (reflect.Value, error) 
 	t := reflect.TypeOf(a)
 	if t == nil {
 		if opts.IgnoreInterface {
-			return reflect.New(reflect.TypeOf(reflect.Struct)), nil
+			return reflect.ValueOf(nil), nil
 		}
 		return reflect.Value{}, fmt.Errorf("interface{} not allowed")
 	}
@@ -408,6 +410,9 @@ func getFakedValue(a interface{}, opts *options.Options) (reflect.Value, error) 
 		}
 		if err != nil {
 			return reflect.Value{}, err
+		}
+		if val.Kind() == reflect.Invalid {
+			return val, nil
 		}
 		v.Elem().Set(val.Convert(t.Elem()))
 		return v, nil
@@ -458,8 +463,10 @@ func getFakedValue(a interface{}, opts *options.Options) (reflect.Value, error) 
 					if err != nil {
 						return reflect.Value{}, err
 					}
-					val = val.Convert(v.Field(i).Type())
-					v.Field(i).Set(val)
+					if val.Kind() != reflect.Invalid {
+						val = val.Convert(v.Field(i).Type())
+						v.Field(i).Set(val)
+					}
 				case tags.fieldType == SKIP:
 					item := originalDataVal.Field(i).Interface()
 					if v.CanSet() && item != nil {
