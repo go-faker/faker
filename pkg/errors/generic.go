@@ -16,6 +16,7 @@ var (
 	ErrTagNotSupported     = "Tag unsupported: %s"
 	ErrTagAlreadyExists    = "Tag exists"
 	ErrTagDoesNotExist     = "Tag does not exist"
+	ErrTagNameInvalid      = "Tag name is invalid"
 	ErrMoreArguments       = "Passed more arguments than is possible : (%d)"
 	ErrNotSupportedPointer = "Use sample:=new(%s)\n faker.FakeData(sample) instead"
 	ErrSmallerThanZero     = "Size:%d is smaller than zero."

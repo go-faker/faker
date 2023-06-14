@@ -31,7 +31,6 @@ const (
 	letterIdxMask             = 1<<letterIdxBits - 1 // All 1-bits, as many as letterIdxBits
 	letterIdxMax              = 63 / letterIdxBits   // # of letter indices fitting in 63 bits
 	maxRetry                  = 10000                // max number of retry for unique values
-	tagName                   = "faker"
 	keep                      = "keep"
 	unique                    = "unique"
 	ID                        = "uuid_digit"
@@ -443,7 +442,7 @@ func getFakedValue(a interface{}, opts *options.Options) (reflect.Value, error) 
 					continue
 				}
 
-				tags := decodeTags(t, i)
+				tags := decodeTags(t, i, opts.TagName)
 				switch {
 				case tags.keepOriginal:
 					zero, err := isZero(reflect.ValueOf(a).Field(i))
@@ -606,7 +605,7 @@ func isZero(field reflect.Value) (bool, error) {
 	return reflect.Zero(field.Type()).Interface() == field.Interface(), nil
 }
 
-func decodeTags(typ reflect.Type, i int) structTag {
+func decodeTags(typ reflect.Type, i int, tagName string) structTag {
 	tagField := typ.Field(i).Tag.Get(tagName)
 	tags := strings.Split(tagField, ",")
 
