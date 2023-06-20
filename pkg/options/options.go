@@ -242,7 +242,7 @@ func WithRandomFloatBoundaries(boundary interfaces.RandomFloatBoundary) OptionFu
 // WithTagName sets the tag name to use. Default tag name is 'faker'.
 func WithTagName(tagName string) OptionFunc {
 	if tagName == "" {
-		err := errors.New(fakerErrors.ErrTagDoesNotExist)
+		err := errors.New(fakerErrors.ErrFieldTagIdentifierInvalid)
 		panic(err)
 	}
 	return func(oo *Options) {
