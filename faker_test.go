@@ -251,51 +251,51 @@ type CStruct struct {
 }
 
 type TaggedStruct struct {
-	Latitude           float32 `faker:"lat"`
-	Longitude          float32 `faker:"long"`
-	CreditCardNumber   string  `faker:"cc_number"`
-	CreditCardType     string  `faker:"cc_type"`
-	Email              string  `faker:"email"`
-	DomainName         string  `faker:"domain_name"`
-	IPV4               string  `faker:"ipv4"`
-	IPV6               string  `faker:"ipv6"`
-	Password           string  `faker:"password"`
-	Jwt                string  `faker:"jwt"`
-	PhoneNumber        string  `faker:"phone_number"`
-	MacAddress         string  `faker:"mac_address"`
-	URL                string  `faker:"url"`
-	UserName           string  `faker:"username"`
-	TollFreeNumber     string  `faker:"toll_free_number"`
-	E164PhoneNumber    string  `faker:"e_164_phone_number"`
-	TitleMale          string  `faker:"title_male"`
-	TitleFemale        string  `faker:"title_female"`
-	FirstName          string  `faker:"first_name"`
-	FirstNameMale      string  `faker:"first_name_male"`
-	FirstNameFemale    string  `faker:"first_name_female"`
-	LastName           string  `faker:"last_name"`
-	Name               string  `faker:"name"`
-	ChineseFirstName   string  `faker:"chinese_first_name"`
-	ChineseLastName    string  `faker:"chinese_last_name"`
-	ChineseName        string  `faker:"chinese_name"`
-	UnixTime           int64   `faker:"unix_time"`
-	Date               string  `faker:"date"`
-	Time               string  `faker:"time"`
-	MonthName          string  `faker:"month_name"`
-	Year               string  `faker:"year"`
-	DayOfWeek          string  `faker:"day_of_week"`
-	DayOfMonth         string  `faker:"day_of_month"`
-	Timestamp          string  `faker:"timestamp"`
-	Century            string  `faker:"century"`
-	TimeZone           string  `faker:"timezone"`
-	TimePeriod         string  `faker:"time_period"`
-	Word               string  `faker:"word"`
-	Sentence           string  `faker:"sentence"`
-	Paragraph          string  `faker:"paragraph"`
-	Currency           string  `faker:"currency"`
-	Amount             float32 `faker:"amount"`
-	AmountWithCurrency string  `faker:"amount_with_currency"`
-	ID                 string  `faker:"uuid_digit"`
-	HyphenatedID       string  `faker:"uuid_hyphenated"`
+	Latitude           float32 `faker:"lat"                  custom_tag_name:"lat"                                 `
+	Longitude          float32 `faker:"long"                 custom_tag_name:"long"`
+	CreditCardNumber   string  `faker:"cc_number"            custom_tag_name:"cc_number"`
+	CreditCardType     string  `faker:"cc_type"              custom_tag_name:"cc_type"`
+	Email              string  `faker:"email"                custom_tag_name:"email"`
+	DomainName         string  `faker:"domain_name"          custom_tag_name:"domain_name"`
+	IPV4               string  `faker:"ipv4"                 custom_tag_name:"ipv4"`
+	IPV6               string  `faker:"ipv6"                 custom_tag_name:"ipv6"`
+	Password           string  `faker:"password"             custom_tag_name:"password"`
+	Jwt                string  `faker:"jwt"                  custom_tag_name:"jwt"`
+	PhoneNumber        string  `faker:"phone_number"         custom_tag_name:"phone_number"`
+	MacAddress         string  `faker:"mac_address"          custom_tag_name:"mac_address"`
+	URL                string  `faker:"url"                  custom_tag_name:"url"`
+	UserName           string  `faker:"username"             custom_tag_name:"username"`
+	TollFreeNumber     string  `faker:"toll_free_number"     custom_tag_name:"toll_free_number"`
+	E164PhoneNumber    string  `faker:"e_164_phone_number"   custom_tag_name:"e_164_phone_number"`
+	TitleMale          string  `faker:"title_male"           custom_tag_name:"title_male"`
+	TitleFemale        string  `faker:"title_female"         custom_tag_name:"title_female"`
+	FirstName          string  `faker:"first_name"           custom_tag_name:"first_name"`
+	FirstNameMale      string  `faker:"first_name_male"      custom_tag_name:"first_name_male"`
+	FirstNameFemale    string  `faker:"first_name_female"    custom_tag_name:"first_name_female"`
+	LastName           string  `faker:"last_name"            custom_tag_name:"last_name"`
+	Name               string  `faker:"name"                 custom_tag_name:"name"`
+	ChineseFirstName   string  `faker:"chinese_first_name"   custom_tag_name:"chinese_first_name"`
+	ChineseLastName    string  `faker:"chinese_last_name"    custom_tag_name:"chinese_last_name"`
+	ChineseName        string  `faker:"chinese_name"         custom_tag_name:"chinese_name"`
+	UnixTime           int64   `faker:"unix_time"            custom_tag_name:"unix_time"`
+	Date               string  `faker:"date"                 custom_tag_name:"date"`
+	Time               string  `faker:"time"                 custom_tag_name:"time"`
+	MonthName          string  `faker:"month_name"           custom_tag_name:"month_name"`
+	Year               string  `faker:"year"                 custom_tag_name:"year"`
+	DayOfWeek          string  `faker:"day_of_week"          custom_tag_name:"day_of_week"`
+	DayOfMonth         string  `faker:"day_of_month"         custom_tag_name:"day_of_month"`
+	Timestamp          string  `faker:"timestamp"            custom_tag_name:"timestamp"`
+	Century            string  `faker:"century"              custom_tag_name:"century"`
+	TimeZone           string  `faker:"timezone"             custom_tag_name:"timezone"`
+	TimePeriod         string  `faker:"time_period"          custom_tag_name:"time_period"`
+	Word               string  `faker:"word"                 custom_tag_name:"word"`
+	Sentence           string  `faker:"sentence"             custom_tag_name:"sentence"`
+	Paragraph          string  `faker:"paragraph"            custom_tag_name:"paragraph"`
+	Currency           string  `faker:"currency"             custom_tag_name:"currency"`
+	Amount             float32 `faker:"amount"               custom_tag_name:"amount"`
+	AmountWithCurrency string  `faker:"amount_with_currency" custom_tag_name:"amount_with_currency"`
+	ID                 string  `faker:"uuid_digit"           custom_tag_name:"uuid_digit"`
+	HyphenatedID       string  `faker:"uuid_hyphenated"      custom_tag_name:"uuid_hyphenated"`
 }
 
 func (t TaggedStruct) String() string {
@@ -2322,6 +2322,41 @@ func TestRandomMapSliceSize(t *testing.T) {
 			t.Errorf("slice (len:%d) not expect length with test case %+v\n", len(s.Slice), expect)
 		}
 	}
+}
+
+func TestWithTagName(t *testing.T) {
+	a := TaggedStruct{}
+	if err := FakeData(&a, options.WithTagName("custom_tag_name")); err != nil {
+		t.Error(err)
+	}
+
+	if err := assertAllStructFieldsNonZero(a); err != nil {
+		t.Error(err)
+	}
+}
+
+// assertAllStructFieldsNonZero asserts that the given struct s has all fields set to a non-zero value.
+// s must be a struct or a pointer to a struct, the function panics otherwise.
+func assertAllStructFieldsNonZero(s interface{}) error {
+	v := reflect.ValueOf(s)
+	if v.Kind() == reflect.Ptr {
+		v = v.Elem()
+	}
+
+	if v.Kind() != reflect.Struct {
+		panic("passed interface is not a struct or a pointer to a struct")
+	}
+
+	for i := 0; i < v.NumField(); i++ {
+		field := v.Field(i)
+		zero := reflect.Zero(field.Type())
+
+		if reflect.DeepEqual(field.Interface(), zero.Interface()) {
+			return fmt.Errorf("field '%s' has a zero value", v.Type().Field(i).Name)
+		}
+	}
+
+	return nil
 }
 
 func TestWithFieldsToIgnore(t *testing.T) {
