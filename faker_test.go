@@ -2547,3 +2547,33 @@ func TestWithInterfaceStructWithIgnoreFalse(t *testing.T) {
 		t.FailNow()
 	}
 }
+
+func BenchmarkRandomString(b *testing.B) {
+	opt := options.DefaultOption()
+	for i := 0; i < b.N; i++ {
+		_, err := randomString(10, *opt)
+		if err != nil {
+			b.Error("Expected NoError, but Got Err:", err)
+		}
+	}
+}
+
+func TestRandomString(t *testing.T) {
+	var (
+		count = 1000
+		set   = map[string]struct{}{}
+		opt   = options.DefaultOption()
+	)
+
+	for i := 0; i < count; i++ {
+		str, err := randomString(20, *opt)
+		if err != nil {
+			t.Error("Expected NoError, but Got Err:", err)
+		}
+		set[str] = struct{}{}
+	}
+
+	if len(set) != count {
+		t.Error("random string in set is duplicate")
+	}
+}
