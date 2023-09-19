@@ -2493,7 +2493,6 @@ func TestFakeDate_ConcurrentSafe(t *testing.T) {
 }
 
 type StructWithInterfaceContainsMethod struct {
-
 	I Interface
 }
 
@@ -2547,4 +2546,4 @@ func TestWithInterfaceStructWithIgnoreFalse(t *testing.T) {
 		t.Errorf("expect error: \"interface{} not allowed\" but got %v", err.Error())
 		t.FailNow()
 	}
-} 
+}

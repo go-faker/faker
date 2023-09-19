@@ -316,7 +316,7 @@ func FakeData(a interface{}, opt ...options.OptionFunc) error {
 		CanConvert(reflectType.Elem()) {
 		rval.Elem().Set(finalValue.Elem().
 			Convert(reflectType.Elem()))
-	} 
+	}
 	return nil
 }
 
