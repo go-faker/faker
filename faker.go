@@ -31,7 +31,6 @@ const (
 	letterIdxMask             = 1<<letterIdxBits - 1 // All 1-bits, as many as letterIdxBits
 	letterIdxMax              = 63 / letterIdxBits   // # of letter indices fitting in 63 bits
 	maxRetry                  = 10000                // max number of retry for unique values
-	tagName                   = "faker"
 	keep                      = "keep"
 	unique                    = "unique"
 	ID                        = "uuid_digit"
@@ -317,7 +316,7 @@ func FakeData(a interface{}, opt ...options.OptionFunc) error {
 		CanConvert(reflectType.Elem()) {
 		rval.Elem().Set(finalValue.Elem().
 			Convert(reflectType.Elem()))
-	}
+	} 
 	return nil
 }
 
@@ -452,7 +451,7 @@ func getFakedValue(item interface{}, opts *options.Options) (reflect.Value, erro
 					continue
 				}
 
-				tags := decodeTags(t, i)
+				tags := decodeTags(t, i, opts.TagName)
 				switch {
 				case tags.keepOriginal:
 					zero, err := isZero(reflect.ValueOf(item).Field(i))
@@ -478,6 +477,7 @@ func getFakedValue(item interface{}, opts *options.Options) (reflect.Value, erro
 							val = val.Convert(v.Field(i).Type())
 							v.Field(i).Set(val)
 						}
+
 					}
 				case tags.fieldType == SKIP:
 					item := originalDataVal.Field(i).Interface()
@@ -637,7 +637,7 @@ func isZero(field reflect.Value) (bool, error) {
 	return reflect.Zero(field.Type()).Interface() == field.Interface(), nil
 }
 
-func decodeTags(typ reflect.Type, i int) structTag {
+func decodeTags(typ reflect.Type, i int, tagName string) structTag {
 	tagField := typ.Field(i).Tag.Get(tagName)
 	tags := strings.Split(tagField, ",")
 
