@@ -480,9 +480,9 @@ func getFakedValue(item interface{}, opts *options.Options) (reflect.Value, erro
 
 					}
 				case tags.fieldType == SKIP:
-					item := originalDataVal.Field(i).Interface()
-					if v.CanSet() && item != nil {
-						v.Field(i).Set(reflect.ValueOf(item))
+					data := originalDataVal.Field(i).Interface()
+					if v.CanSet() && data != nil {
+						v.Field(i).Set(reflect.ValueOf(data))
 					}
 				default:
 					err := setDataWithTag(v.Field(i).Addr(), tags.fieldType, *opts)

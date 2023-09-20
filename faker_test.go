@@ -2477,7 +2477,7 @@ func TestFakeData_RecursiveType(t *testing.T) {
 	}
 }
 
-func TestFakeDate_ConcurrentSafe(t *testing.T) {
+func TestFakeDate_ConcurrentSafe(_ *testing.T) {
 	var wg sync.WaitGroup
 	wg.Add(1000)
 	fmt.Println("Running for loop…")
