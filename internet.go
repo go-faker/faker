@@ -109,7 +109,7 @@ func (internet Internet) domainName() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return (domainPart + "." + randomElementFromSliceString(tld)), nil
+	return (strings.ToLower(domainPart) + "." + randomElementFromSliceString(tld)), nil
 }
 
 // DomainName generates random domain name
