@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func TestSetRandomSource(t *testing.T) {
+func TestSetRandomSource(_ *testing.T) {
 	SetRandomSource(NewSafeSource(mathrand.NewSource(time.Now().UnixNano())))
 
 	_ = rand.Int31n(100)

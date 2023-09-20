@@ -11,7 +11,7 @@ linters-settings:
   golint:
     min-confidence: 0.8
   gocyclo:
-    min-complexity: 60
+    min-complexity: 70
   maligned:
     suggest-new: true
   dupl:
@@ -27,7 +27,7 @@ linters:
   # inverted configuration with `enable-all` and `disable` is not scalable during updates of golangci-lint
   disable-all: true
   enable:
-    - deadcode
+    # - deadcode
     - errcheck
     - goconst
     - gocyclo
@@ -37,12 +37,12 @@ linters:
     - ineffassign
     - misspell
     - staticcheck
-    - structcheck
+    # - structcheck
     - typecheck
     - unconvert
     - unparam
     - unused
-    - varcheck
+    # - varcheck
 
 issues:
   exclude-rules:
@@ -52,6 +52,8 @@ issues:
     - path: datetime.go
       linters:
         - misspell
+    - path: .
+      text: "parameter 'v' seems to be unused"
 run:
   timeout: 5m
   go: "1.17"

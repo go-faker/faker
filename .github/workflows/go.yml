@@ -15,7 +15,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: 1.17
+        go-version: 1.18
 
     - name: Linter
       run: make lint-prepare && make lint
@@ -31,7 +31,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
-          go-version: 1.17
+          go-version: 1.18
 
       - name: Test
         run: go test -v ./... -gcflags=all=-l -coverprofile=coverage.txt -covermode=atomic -race

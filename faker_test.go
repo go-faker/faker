@@ -2477,7 +2477,7 @@ func TestFakeData_RecursiveType(t *testing.T) {
 	}
 }
 
-func TestFakeDate_ConcurrentSafe(t *testing.T) {
+func TestFakeDate_ConcurrentSafe(_ *testing.T) {
 	var wg sync.WaitGroup
 	wg.Add(1000)
 	fmt.Println("Running for loop…")
@@ -2492,7 +2492,7 @@ func TestFakeDate_ConcurrentSafe(t *testing.T) {
 	wg.Wait()
 }
 
-type StructWithInterface struct {
+type StructWithInterfaceContainsMethod struct {
 	I Interface
 }
 
@@ -2501,9 +2501,49 @@ type Interface interface {
 }
 
 func TestNonEmptyInterface(t *testing.T) {
-	var s StructWithInterface
+	var s StructWithInterfaceContainsMethod
+
 	if err := FakeData(&s, options.WithIgnoreInterface(true)); err != nil {
 		t.Errorf("%+v", err)
+		t.FailNow()
+	}
+}
+
+type InterfaceStruct struct {
+	A string
+	B map[string]any
+	C map[string]interface{}
+	D Interface
+	E interface{}
+	F map[interface{}]any
+	G map[any]any
+	H map[any]interface{}
+	I []interface{}
+	J [2]interface{}
+	K [][]interface{}
+	L [][2]interface{}
+	M [3][2]interface{}
+	N map[any][]any
+	O []int
+}
+
+func TestWithInterfaceStruct(t *testing.T) {
+	var s InterfaceStruct
+	if err := FakeData(&s, options.WithIgnoreInterface(true)); err != nil {
+		t.Errorf("%+v", err)
+		t.FailNow()
+	}
+}
+
+func TestWithInterfaceStructWithIgnoreFalse(t *testing.T) {
+	var s InterfaceStruct
+	err := FakeData(&s, options.WithIgnoreInterface(false))
+	if err == nil {
+		t.Errorf("expect error: but got %v", err)
+		t.FailNow()
+	}
+	if err.Error() != "interface{} not allowed" {
+		t.Errorf("expect error: \"interface{} not allowed\" but got %v", err.Error())
 		t.FailNow()
 	}
 }

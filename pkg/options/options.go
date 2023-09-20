@@ -18,7 +18,7 @@ var (
 	randomStringLen      int32 = 25
 	lang                 unsafe.Pointer
 	randomMaxSize        int32 = 100
-	randomMinSize        int32 = 0
+	randomMinSize        int32
 	iBoundary            unsafe.Pointer
 )
 
