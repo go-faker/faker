@@ -109,3 +109,9 @@ func TestUniqueParagraph(t *testing.T) {
 		t.Error("Expected paragraph")
 	}
 }
+
+func BenchmarkParagraph(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		_ = Paragraph()
+	}
+}
