@@ -52,7 +52,6 @@ func TestFakeWord(t *testing.T) {
 
 func TestFakeSentence(t *testing.T) {
 	res := Sentence()
-	fmt.Println(res)
 	if res == "" || !strings.HasSuffix(res, ".") {
 		t.Error("Expected sentence")
 	}
@@ -60,7 +59,6 @@ func TestFakeSentence(t *testing.T) {
 
 func TestFakeParagraph(t *testing.T) {
 	res := Paragraph()
-	fmt.Println(res)
 	if res == "" || !strings.HasSuffix(res, ".") {
 		t.Error("Expected paragraph")
 	}
