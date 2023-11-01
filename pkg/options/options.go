@@ -61,7 +61,7 @@ type Options struct {
 	RandomFloatBoundary *interfaces.RandomFloatBoundary
 	// SetTagName sets the tag name that should be used
 	TagName string
-	// SetAddressMaxPosition to set maximum precision to the decimal point of latitude and longitude of address
+	// SetAddressMaxPosition to set maximum precision to the float point of latitude and longitude of address
 	SetAddressMaxPosition int
 }
 
