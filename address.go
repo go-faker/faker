@@ -3,6 +3,7 @@ package faker
 import (
 	_ "embed"
 	"encoding/json"
+	"math"
 	"reflect"
 
 	"github.com/go-faker/faker/v4/pkg/options"
@@ -40,8 +41,13 @@ type Addresser interface {
 // Address struct
 type Address struct{}
 
-func (i Address) latitude() float32 {
-	return (rand.Float32() * 180) - 90
+func (i Address) latitude(opts ...options.OptionFunc) float32 {
+	lat := (rand.Float32() * 180) - 90
+	ops := initOption(opts...)
+	if ops.SetAddressMaxPosition > 0 {
+		return float32(math.Round(math.Pow10(ops.SetAddressMaxPosition)*float64(lat)) / math.Pow10(ops.SetAddressMaxPosition))
+	}
+	return lat
 }
 
 // Latitude sets latitude of the address
@@ -54,8 +60,13 @@ func (i Address) Latitude(v reflect.Value) (interface{}, error) {
 	return float64(val), nil
 }
 
-func (i Address) longitude() float32 {
-	return (rand.Float32() * 360) - 180
+func (i Address) longitude(opts ...options.OptionFunc) float32 {
+	lng := (rand.Float32() * 360) - 180
+	ops := initOption(opts...)
+	if ops.SetAddressMaxPosition > 0 {
+		return float32(math.Round(math.Pow10(ops.SetAddressMaxPosition)*float64(lng)) / math.Pow10(ops.SetAddressMaxPosition))
+	}
+	return lng
 }
 
 // Longitude sets longitude of the address
@@ -81,7 +92,7 @@ func (i Address) RealWorld(_ reflect.Value) (interface{}, error) {
 func Longitude(opts ...options.OptionFunc) float64 {
 	return singleFakeData(LONGITUDE, func() interface{} {
 		address := Address{}
-		return float64(address.longitude())
+		return float64(address.longitude(opts...))
 	}, opts...).(float64)
 }
 
@@ -89,7 +100,7 @@ func Longitude(opts ...options.OptionFunc) float64 {
 func Latitude(opts ...options.OptionFunc) float64 {
 	return singleFakeData(LATITUDE, func() interface{} {
 		address := Address{}
-		return float64(address.latitude())
+		return float64(address.latitude(opts...))
 	}, opts...).(float64)
 }
 
