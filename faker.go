@@ -880,6 +880,19 @@ func userDefinedArray(v reflect.Value, tag string, opt options.Options) error {
 	tag = findSliceLenReg.ReplaceAllString(tag, "")
 	array := reflect.MakeSlice(v.Type(), sliceLen, sliceLen)
 	for i := 0; i < array.Len(); i++ {
+		k := v.Type().Elem().Kind()
+		if k == reflect.Pointer || k == reflect.Struct {
+			res, err := getFakedValue(array.Index(i).Interface(), &opt)
+			if err != nil {
+				return err
+			}
+			if res.Kind() == reflect.Invalid {
+				return fmt.Errorf("got invalid reflect value")
+			}
+			array.Index(i).Set(res)
+			continue
+		}
+
 		if tag == "" {
 			res, err := getValueWithNoTag(v.Type().Elem(), opt)
 			if err != nil {
