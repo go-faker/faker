@@ -1,8 +1,8 @@
 package faker
 
 import (
-	"fmt"
 	"reflect"
+	"strings"
 
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
@@ -84,47 +84,48 @@ func Word(opts ...options.OptionFunc) string {
 	}, opts...).(string)
 }
 
-func (l Lorem) sentence() string {
-	sentence := ""
+func (l Lorem) sentence(sentence *strings.Builder) *strings.Builder {
 	r, _ := RandomInt(0, len(wordList)-1, 6)
 	size := len(r)
 	for key, val := range r {
 		if key == 0 {
-			sentence += cases.Title(language.Und, cases.NoLower).String(wordList[val])
+			sentence.WriteString(cases.Title(language.Und, cases.NoLower).String(wordList[val]))
 		} else {
-			sentence += wordList[val]
+			sentence.WriteString(wordList[val])
 		}
 		if key != size-1 {
-			sentence += " "
+			sentence.WriteString(" ")
 		}
 	}
-	return fmt.Sprintf("%s.", sentence)
+
+	sentence.WriteString(".")
+	return sentence
 }
 
 // Sentence returns a sentence using the wordList const
-func (l Lorem) Sentence(v reflect.Value) (interface{}, error) {
-	sentence := l.sentence()
-	return sentence, nil
+func (l Lorem) Sentence(_ reflect.Value) (interface{}, error) {
+	sentence := l.sentence(&strings.Builder{})
+	return sentence.String(), nil
 }
 
 // Sentence get a sentence randomly in string
 func Sentence(opts ...options.OptionFunc) string {
 	i := Lorem{}
 	return singleFakeData(SENTENCE, func() interface{} {
-		return i.sentence()
+		return i.sentence(&strings.Builder{}).String()
 	}, opts...).(string)
 }
 
 func (l Lorem) paragraph() string {
-	paragraph := ""
+	paragraph := &strings.Builder{}
 	size := rand.Intn(10) + 1
 	for i := 0; i < size; i++ {
-		paragraph += l.sentence()
+		l.sentence(paragraph)
 		if i != size-1 {
-			paragraph += " "
+			paragraph.WriteString(" ")
 		}
 	}
-	return paragraph
+	return paragraph.String()
 }
 
 // Paragraph returns a series of sentences as a paragraph using the wordList const

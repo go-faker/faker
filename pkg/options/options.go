@@ -18,7 +18,7 @@ var (
 	randomStringLen      int32 = 25
 	lang                 unsafe.Pointer
 	randomMaxSize        int32 = 100
-	randomMinSize        int32 = 0
+	randomMinSize        int32
 	iBoundary            unsafe.Pointer
 )
 
@@ -59,6 +59,8 @@ type Options struct {
 	RandomIntegerBoundary *interfaces.RandomIntegerBoundary
 	// RandomFloatBoundary sets the boundary for random float value generation. Boundaries should comply with float values constraints (IEEE 754)
 	RandomFloatBoundary *interfaces.RandomFloatBoundary
+	// SetTagName sets the tag name that should be used
+	TagName string
 }
 
 // MaxDepthOption used for configuring the max depth of nested struct for faker
@@ -106,6 +108,7 @@ func DefaultOption() *Options {
 	ops.MaxGenerateStringRetries = 1000000 //default
 	ops.RandomIntegerBoundary = (*interfaces.RandomIntegerBoundary)(atomic.LoadPointer(&iBoundary))
 	ops.RandomFloatBoundary = &interfaces.DefaultFloatBoundary
+	ops.TagName = "faker"
 	return ops
 }
 
@@ -233,6 +236,17 @@ func WithRandomFloatBoundaries(boundary interfaces.RandomFloatBoundary) OptionFu
 	}
 	return func(oo *Options) {
 		oo.RandomFloatBoundary = &boundary
+	}
+}
+
+// WithTagName sets the tag name to use. Default tag name is 'faker'.
+func WithTagName(tagName string) OptionFunc {
+	if tagName == "" {
+		err := errors.New(fakerErrors.ErrFieldTagIdentifierInvalid)
+		panic(err)
+	}
+	return func(oo *Options) {
+		oo.TagName = tagName
 	}
 }
 

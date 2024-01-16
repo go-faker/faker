@@ -31,7 +31,6 @@ const (
 	letterIdxMask             = 1<<letterIdxBits - 1 // All 1-bits, as many as letterIdxBits
 	letterIdxMax              = 63 / letterIdxBits   // # of letter indices fitting in 63 bits
 	maxRetry                  = 10000                // max number of retry for unique values
-	tagName                   = "faker"
 	keep                      = "keep"
 	unique                    = "unique"
 	ID                        = "uuid_digit"
@@ -146,6 +145,7 @@ func initDefaultTag() {
 	defaultTag.Store(CreditCardNumber, CreditCardNumber)
 	defaultTag.Store(LATITUDE, LATITUDE)
 	defaultTag.Store(LONGITUDE, LONGITUDE)
+	defaultTag.Store(RealAddressTag, RealAddressTag)
 	defaultTag.Store(PhoneNumber, PhoneNumber)
 	defaultTag.Store(TollFreeNumber, TollFreeNumber)
 	defaultTag.Store(E164PhoneNumberTag, E164PhoneNumberTag)
@@ -192,6 +192,7 @@ func initMappertTagDefault() {
 	mapperTag.Store(CreditCardNumber, GetPayment().CreditCardNumber)
 	mapperTag.Store(LATITUDE, GetAddress().Latitude)
 	mapperTag.Store(LONGITUDE, GetAddress().Longitude)
+	mapperTag.Store(RealAddressTag, GetAddress().RealWorld)
 	mapperTag.Store(PhoneNumber, GetPhoner().PhoneNumber)
 	mapperTag.Store(TollFreeNumber, GetPhoner().TollFreePhoneNumber)
 	mapperTag.Store(E164PhoneNumberTag, GetPhoner().E164PhoneNumber)
@@ -311,29 +312,21 @@ func FakeData(a interface{}, opt ...options.OptionFunc) error {
 		return err
 	}
 
-	rval.Elem().Set(finalValue.Elem().Convert(reflectType.Elem()))
+	if rval.Elem().CanSet() && rval.Elem().
+		CanConvert(reflectType.Elem()) {
+		rval.Elem().Set(finalValue.Elem().
+			Convert(reflectType.Elem()))
+	}
 	return nil
 }
 
 // AddProvider extend faker with tag to generate fake data with specified custom algorithm
 // Example:
 //
-//		type Gondoruwo struct {
-//			Name       string
-//			Locatadata int
-//		}
-//
-//		type Sample struct {
-//			ID                 int64     `faker:"customIdFaker"`
-//			Gondoruwo          Gondoruwo `faker:"gondoruwo"`
-//			Danger             string    `faker:"danger"`
-//		}
-//
-//		type Sample struct {
-//			ID                 int64     `faker:"customIdFaker"`
-//			Gondoruwo          Gondoruwo `faker:"gondoruwo"`
-//			Danger             string    `faker:"danger"`
-//		}
+//	type Gondoruwo struct {
+//		Name       string
+//		Locatadata int
+//	}
 //
 //	type Sample struct {
 //		ID                 int64     `faker:"customIdFaker"`
@@ -392,11 +385,11 @@ func RemoveProvider(tag string) error {
 	return nil
 }
 
-func getFakedValue(a interface{}, opts *options.Options) (reflect.Value, error) {
-	t := reflect.TypeOf(a)
+func getFakedValue(item interface{}, opts *options.Options) (reflect.Value, error) {
+	t := reflect.TypeOf(item)
 	if t == nil {
 		if opts.IgnoreInterface {
-			return reflect.New(reflect.TypeOf(reflect.Struct)), nil
+			return reflect.ValueOf(nil), nil
 		}
 		return reflect.Value{}, fmt.Errorf("interface{} not allowed")
 	}
@@ -408,21 +401,28 @@ func getFakedValue(a interface{}, opts *options.Options) (reflect.Value, error) 
 		opts.MaxDepthOption.ForgetType(t)
 	}()
 	k := t.Kind()
-
 	switch k {
 	case reflect.Ptr:
 		v := reflect.New(t.Elem())
 		var val reflect.Value
 		var err error
-		if a != reflect.Zero(reflect.TypeOf(a)).Interface() {
-			val, err = getFakedValue(reflect.ValueOf(a).Elem().Interface(), opts)
+		if item != reflect.Zero(reflect.TypeOf(item)).Interface() {
+			val, err = getFakedValue(reflect.ValueOf(item).Elem().Interface(), opts)
+
 		} else {
 			val, err = getFakedValue(v.Elem().Interface(), opts)
 		}
 		if err != nil {
 			return reflect.Value{}, err
 		}
-		v.Elem().Set(val.Convert(t.Elem()))
+
+		if reflect.ValueOf(val).IsZero() {
+			return v, nil
+		}
+
+		if v.Elem().CanSet() && v.Elem().CanConvert(t.Elem()) {
+			v.Elem().Set(val.Convert(t.Elem()))
+		}
 		return v, nil
 	case reflect.Struct:
 		switch t.String() {
@@ -430,7 +430,7 @@ func getFakedValue(a interface{}, opts *options.Options) (reflect.Value, error) 
 			ft := time.Now().Add(time.Duration(rand.Int63()))
 			return reflect.ValueOf(ft), nil
 		default:
-			originalDataVal := reflect.ValueOf(a)
+			originalDataVal := reflect.ValueOf(item)
 			v := reflect.New(t).Elem()
 			retry := 0 // error if cannot generate unique value after maxRetry tries
 			for i := 0; i < v.NumField(); i++ {
@@ -451,10 +451,10 @@ func getFakedValue(a interface{}, opts *options.Options) (reflect.Value, error) 
 					continue
 				}
 
-				tags := decodeTags(t, i)
+				tags := decodeTags(t, i, opts.TagName)
 				switch {
 				case tags.keepOriginal:
-					zero, err := isZero(reflect.ValueOf(a).Field(i))
+					zero, err := isZero(reflect.ValueOf(item).Field(i))
 					if err != nil {
 						return reflect.Value{}, err
 					}
@@ -465,18 +465,24 @@ func getFakedValue(a interface{}, opts *options.Options) (reflect.Value, error) 
 						}
 						continue
 					}
-					v.Field(i).Set(reflect.ValueOf(a).Field(i))
+					v.Field(i).Set(reflect.ValueOf(item).Field(i))
 				case tags.fieldType == "":
 					val, err := getFakedValue(v.Field(i).Interface(), opts)
 					if err != nil {
 						return reflect.Value{}, err
 					}
-					val = val.Convert(v.Field(i).Type())
-					v.Field(i).Set(val)
+
+					if v.Field(i).CanSet() {
+						if !reflect.ValueOf(val).IsZero() && val.CanConvert(v.Field(i).Type()) {
+							val = val.Convert(v.Field(i).Type())
+							v.Field(i).Set(val)
+						}
+
+					}
 				case tags.fieldType == SKIP:
-					item := originalDataVal.Field(i).Interface()
-					if v.CanSet() && item != nil {
-						v.Field(i).Set(reflect.ValueOf(item))
+					data := originalDataVal.Field(i).Interface()
+					if v.CanSet() && data != nil {
+						v.Field(i).Set(reflect.ValueOf(data))
 					}
 				default:
 					err := setDataWithTag(v.Field(i).Addr(), tags.fieldType, *opts)
@@ -486,9 +492,8 @@ func getFakedValue(a interface{}, opts *options.Options) (reflect.Value, error) 
 				}
 
 				if tags.unique {
-
 					if retry >= maxRetry {
-						return reflect.Value{}, fmt.Errorf(fakerErrors.ErrUniqueFailure, reflect.TypeOf(a).Field(i).Name)
+						return reflect.Value{}, fmt.Errorf(fakerErrors.ErrUniqueFailure, reflect.TypeOf(item).Field(i).Name)
 					}
 
 					value := v.Field(i).Interface()
@@ -511,18 +516,26 @@ func getFakedValue(a interface{}, opts *options.Options) (reflect.Value, error) 
 		res, err := randomString(opts.RandomStringLength, *opts)
 		return reflect.ValueOf(res), err
 	case reflect.Slice:
+
 		length := randomSliceAndMapSize(*opts)
 		if opts.SetSliceMapNilIfLenZero && length == 0 {
 			return reflect.Zero(t), nil
 		}
 		v := reflect.MakeSlice(t, length, length)
-		for i := 0; i < v.Len(); i++ {
+		for i := 0; i < length; i++ {
 			val, err := getFakedValue(v.Index(i).Interface(), opts)
 			if err != nil {
 				return reflect.Value{}, err
 			}
-			val = val.Convert(v.Index(i).Type())
-			v.Index(i).Set(val)
+			// if the value generated is NIL/Zero
+			// it will kept it as nil
+			if reflect.ValueOf(val).IsZero() {
+				continue
+			}
+			if val.CanConvert(v.Index(i).Type()) {
+				val = val.Convert(v.Index(i).Type())
+				v.Index(i).Set(val)
+			}
 		}
 		return v, nil
 	case reflect.Array:
@@ -532,7 +545,12 @@ func getFakedValue(a interface{}, opts *options.Options) (reflect.Value, error) 
 			if err != nil {
 				return reflect.Value{}, err
 			}
-			val = val.Convert(v.Index(i).Type())
+			if reflect.ValueOf(val).IsZero() {
+				continue
+			}
+			if val.CanConvert(v.Index(i).Type()) {
+				val = val.Convert(v.Index(i).Type())
+			}
 			v.Index(i).Set(val)
 		}
 		return v, nil
@@ -587,6 +605,13 @@ func getFakedValue(a interface{}, opts *options.Options) (reflect.Value, error) 
 			if err != nil {
 				return reflect.Value{}, err
 			}
+
+			keyIsZero := reflect.ValueOf(key).IsZero()
+			valIsZero := reflect.ValueOf(val).IsZero()
+
+			if keyIsZero || valIsZero {
+				continue
+			}
 			key = key.Convert(t.Key())
 			val = val.Convert(v.Type().Elem())
 			v.SetMapIndex(key, val)
@@ -612,7 +637,7 @@ func isZero(field reflect.Value) (bool, error) {
 	return reflect.Zero(field.Type()).Interface() == field.Interface(), nil
 }
 
-func decodeTags(typ reflect.Type, i int) structTag {
+func decodeTags(typ reflect.Type, i int, tagName string) structTag {
 	tagField := typ.Field(i).Tag.Get(tagName)
 	tags := strings.Split(tagField, ",")
 
@@ -928,7 +953,9 @@ func userDefinedNumber(v reflect.Value, tag string) error {
 		return fmt.Errorf(fakerErrors.ErrTagNotSupported, tag)
 	}
 
-	v.Set(reflect.ValueOf(res).Convert(v.Type()))
+	if v.CanSet() && v.CanConvert(v.Type()) {
+		v.Set(reflect.ValueOf(res).Convert(v.Type()))
+	}
 	return nil
 }
 

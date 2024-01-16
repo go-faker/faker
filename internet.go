@@ -9,7 +9,7 @@ import (
 	"github.com/go-faker/faker/v4/pkg/options"
 )
 
-var tld = []string{"com", "biz", "info", "net", "org", "ru"}
+var tld = []string{"com", "biz", "info", "net", "org", "ru", "edu", "top"}
 var urlFormats = []string{
 	"http://www.%s/",
 	"https://www.%s/",
@@ -23,6 +23,16 @@ var urlFormats = []string{
 	"https://%s/%s.html",
 	"http://%s/%s.php",
 	"https://%s/%s.php",
+	"http://%s/%s.jpg",
+	"https://%s/%s.jpg",
+	"http://%s/%s.webp",
+	"https://%s/%s.webp",
+	"http://%s/%s.js",
+	"https://%s/%s.js",
+	"http://%s/%s.css",
+	"https://%s/%s.css",
+	"http://%s/%s.svg",
+	"https://%s/%s.svg",
 }
 
 // GetNetworker returns a new Networker interface of Internet
@@ -109,7 +119,7 @@ func (internet Internet) domainName() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return (domainPart + "." + randomElementFromSliceString(tld)), nil
+	return (strings.ToLower(domainPart) + "." + randomElementFromSliceString(tld)), nil
 }
 
 // DomainName generates random domain name
