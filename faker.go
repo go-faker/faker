@@ -232,6 +232,7 @@ func initMappertTagDefault() {
 	mapperTag.Store(RussianFirstNameFemaleTag, GetPerson().RussianFirstNameFemale)
 	mapperTag.Store(RussianLastNameMaleTag, GetPerson().RussianLastNameMale)
 	mapperTag.Store(RussianLastNameFemaleTag, GetPerson().RussianLastNameFemale)
+	mapperTag.Store(BloodTypeTag, GetBlood().BloodGroup)
 }
 
 // Compiled regexp
@@ -286,7 +287,6 @@ func initMapperTagWithOption(opts ...options.OptionFunc) {
 	mapperTag.Store(IPV6Tag, GetNetworker(opts...).IPv6)
 	mapperTag.Store(PASSWORD, GetNetworker(opts...).Password)
 	mapperTag.Store(JWT, GetNetworker(opts...).Jwt)
-	mapperTag.Store(BloodTypeTag, GetBlood(opts...).BloodGroup)
 }
 
 func initOption(opt ...options.OptionFunc) *options.Options {
