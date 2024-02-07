@@ -786,6 +786,39 @@ func TestSliceLen(t *testing.T) {
 	}
 }
 
+func TestSliceOfStructPointersLen(t *testing.T) {
+	type Child struct {
+		ID    int
+		Value string
+	}
+	type Parent struct {
+		Children []*Child `faker:"slice_len=3"`
+	}
+	var p Parent
+	if err := FakeData(&p); err != nil {
+		t.Fatalf("failed to generate fake data: %s", err.Error())
+	}
+	if len(p.Children) != 3 {
+		t.Errorf("wrong slice length based on slice_len tag, got %d, wanted 3", len(p.Children))
+	}
+}
+func TestSliceOfStructsLen(t *testing.T) {
+	type Child struct {
+		ID    int
+		Value string
+	}
+	type Parent struct {
+		Children []Child `faker:"slice_len=5"`
+	}
+	var p Parent
+	if err := FakeData(&p); err != nil {
+		t.Fatalf("failed to generate fake data: %s", err.Error())
+	}
+	if len(p.Children) != 5 {
+		t.Errorf("wrong slice length based on slice_len tag, got %d, wanted 5", len(p.Children))
+	}
+}
+
 func TestWrongSliceLen(t *testing.T) {
 	type SomeStruct struct {
 		String []string `faker:"slice_len=bla"`
