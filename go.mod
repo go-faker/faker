@@ -2,4 +2,4 @@ module github.com/go-faker/faker/v4
 
 go 1.18
 
-require golang.org/x/text v0.3.7
+require golang.org/x/text v0.14.0
