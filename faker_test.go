@@ -93,37 +93,37 @@ type SomeStruct struct {
 	UInt32 uint32
 	UInt64 uint64
 
-	Latitude           float32     `faker:"lat"`
-	LATITUDE           float64     `faker:"lat"`
-	RealAddress        RealAddress `faker:"real_address"`
-	Long               float32     `faker:"long"`
-	LONG               float64     `faker:"long"`
-	StringValue        string
-	CreditCardType     string `faker:"cc_type"`
-	CreditCardNumber   string `faker:"cc_number"`
-	Email              string `faker:"email"`
-	IPV4               string `faker:"ipv4"`
-	IPV6               string `faker:"ipv6"`
-	Bool               bool
-	SString            []string
-	SInt               []int
-	SInt8              []int8
-	SInt16             []int16
-	SInt32             []int32
-	SInt64             []int64
-	SFloat32           []float32
-	SFloat64           []float64
-	SBool              []bool
-	Struct             AStruct
-	TArray             TArray
-	Time               time.Time
-	Stime              []time.Time
-	Currency           string  `faker:"currency"`
-	Amount             float64 `faker:"amount"`
-	AmountWithCurrency string  `faker:"amount_with_currency"`
-	ID                 string  `faker:"uuid_digit"`
-	HyphenatedID       string  `faker:"uuid_hyphenated"`
-
+	Latitude               float32     `faker:"lat"`
+	LATITUDE               float64     `faker:"lat"`
+	RealAddress            RealAddress `faker:"real_address"`
+	Long                   float32     `faker:"long"`
+	LONG                   float64     `faker:"long"`
+	StringValue            string
+	CreditCardType         string `faker:"cc_type"`
+	CreditCardNumber       string `faker:"cc_number"`
+	Email                  string `faker:"email"`
+	IPV4                   string `faker:"ipv4"`
+	IPV6                   string `faker:"ipv6"`
+	Bool                   bool
+	SString                []string
+	SInt                   []int
+	SInt8                  []int8
+	SInt16                 []int16
+	SInt32                 []int32
+	SInt64                 []int64
+	SFloat32               []float32
+	SFloat64               []float64
+	SBool                  []bool
+	Struct                 AStruct
+	TArray                 TArray
+	Time                   time.Time
+	Stime                  []time.Time
+	Currency               string  `faker:"currency"`
+	Amount                 float64 `faker:"amount"`
+	AmountWithCurrency     string  `faker:"amount_with_currency"`
+	ID                     string  `faker:"uuid_digit"`
+	HyphenatedID           string  `faker:"uuid_hyphenated"`
+	BloodType              string  `faker:"blood_type"`
 	MapStringString        map[string]string
 	MapStringStruct        map[string]AStruct
 	MapCustomStringStruct  map[SomeString]AStruct
@@ -220,7 +220,7 @@ func (s SomeStruct) String() string {
 	AmountWithCurrency: %v
 	ID: %v
 	HyphenatedID: %v
-
+	BloodType: %v
 	MapStringString: %v
 	MapStringStruct: %v
 	MapStringStructPointer: %v
@@ -232,7 +232,7 @@ func (s SomeStruct) String() string {
 		s.Email, s.IPV4, s.IPV6, s.Bool, s.SString, s.SInt,
 		s.SInt8, s.SInt16, s.SInt32, s.SInt64, s.SFloat32, s.SFloat64,
 		s.SBool, s.Struct, s.Time, s.Stime, s.Currency, s.Amount,
-		s.AmountWithCurrency, s.ID, s.HyphenatedID, s.MapStringString,
+		s.AmountWithCurrency, s.ID, s.HyphenatedID, s.BloodType, s.MapStringString,
 		s.MapStringStruct, s.MapStringStructPointer)
 }
 
