@@ -237,9 +237,11 @@ func initMappertTagDefault() {
 
 // Compiled regexp
 var (
-	findLangReg     *regexp.Regexp
-	findLenReg      *regexp.Regexp
-	findSliceLenReg *regexp.Regexp
+	findLangReg       *regexp.Regexp
+	findLenReg        *regexp.Regexp
+	findSliceLenReg   *regexp.Regexp
+	matchInnerTagsReg *regexp.Regexp
+	findInnerTagsReg  *regexp.Regexp
 )
 
 func init() {
@@ -251,6 +253,8 @@ func init() {
 	findLangReg, _ = regexp.Compile("lang=[a-z]{3}")
 	findLenReg, _ = regexp.Compile(`len=\d+`)
 	findSliceLenReg, _ = regexp.Compile(`slice_len=\d+`)
+	matchInnerTagsReg, _ = regexp.Compile(`^\s?\[.+\]\s?$`) // Regex to check if tag contains nested tags
+	findInnerTagsReg, _ = regexp.Compile(`\[(.+)\]`)        // Regex to find nested tags
 
 	randNameFlag = rand.Intn(100) // for person
 }
@@ -673,6 +677,12 @@ func decodeTags(typ reflect.Type, i int, tagName string) structTag {
 			delete(pMap, ptag)
 		}
 	}
+	// Nested
+	for _, tag := range pMap {
+		if matchInnerTagsReg.MatchString(tag) {
+			res = append(res, tag)
+		}
+	}
 	// custom,keep,unique
 	if len(res) < 1 {
 		if !keepOriginal && !uni {
@@ -879,8 +889,16 @@ func userDefinedArray(v reflect.Value, tag string, opt options.Options) error {
 		v.Set(reflect.Zero(v.Type()))
 		return nil
 	}
-	//remove slice_len from tag string to avoid extra logic in downstream function
-	tag = findSliceLenReg.ReplaceAllString(tag, "")
+
+	subMatch := findInnerTagsReg.FindAllStringSubmatch(tag, -1)
+	if len(subMatch) == 1 && len(subMatch[0]) == 2 {
+		// Remove all tags except nested tags
+		tag = subMatch[0][1]
+	} else {
+		//remove slice_len from tag string to avoid extra logic in downstream function
+		tag = findSliceLenReg.ReplaceAllString(tag, "")
+	}
+
 	array := reflect.MakeSlice(v.Type(), sliceLen, sliceLen)
 	for i := 0; i < array.Len(); i++ {
 		k := v.Type().Elem().Kind()
@@ -904,11 +922,20 @@ func userDefinedArray(v reflect.Value, tag string, opt options.Options) error {
 			continue
 		}
 
-		res, err := getValueWithTag(v.Type().Elem(), tag, opt)
-		if err != nil {
-			return err
+		// Check and load tag function for nested tags
+		if tagFunc, ok := mapperTag.Load(tag); ok {
+			res, err := tagFunc(v)
+			if err != nil {
+				return err
+			}
+			array.Index(i).Set(reflect.ValueOf(res))
+		} else {
+			res, err := getValueWithTag(v.Type().Elem(), tag, opt)
+			if err != nil {
+				return err
+			}
+			array.Index(i).Set(reflect.ValueOf(res))
 		}
-		array.Index(i).Set(reflect.ValueOf(res))
 	}
 	v.Set(array)
 	return nil
