@@ -12,16 +12,26 @@ var (
 	//go:embed misc/addresses-us-1000.min.json
 	addressesUSBytes []byte
 	addressesUS      []RealAddress
+
+	//go:embed misc/country_info.json
+	countriesBytes []byte
+	countries      []CountryInfo
 )
 
 func init() {
 	data := struct {
 		Addresses []RealAddress `json:"addresses"`
+		Countries []CountryInfo `json:"countries"`
 	}{}
 	if err := json.Unmarshal(addressesUSBytes, &data); err != nil {
 		panic(err)
 	}
 	addressesUS = data.Addresses
+
+	if err := json.Unmarshal(countriesBytes, &data); err != nil {
+		panic(err)
+	}
+	countries = data.Countries
 }
 
 // GetAddress returns a new Addresser interface of Address
@@ -35,6 +45,7 @@ type Addresser interface {
 	Latitude(v reflect.Value) (interface{}, error)
 	Longitude(v reflect.Value) (interface{}, error)
 	RealWorld(v reflect.Value) (interface{}, error)
+	CountryInfo(v reflect.Value) (interface{}, error)
 }
 
 // Address struct
@@ -70,6 +81,14 @@ func (i Address) Longitude(v reflect.Value) (interface{}, error) {
 
 func (i Address) realWorld() RealAddress {
 	return addressesUS[rand.Intn(len(addressesUS))]
+}
+
+func (i Address) countryInfo() CountryInfo {
+	return countries[rand.Intn(len(countries))]
+}
+
+func (i Address) CountryInfo(_ reflect.Value) (interface{}, error) {
+	return i.countryInfo(), nil
 }
 
 // RealWorld sets real world address
@@ -112,4 +131,19 @@ func GetRealAddress(opts ...options.OptionFunc) RealAddress {
 		address := Address{}
 		return address.realWorld()
 	}, opts...).(RealAddress)
+}
+
+type CountryInfo struct {
+	Abbr       string `json:"abbr"`
+	Name       string `json:"name"`
+	Capital    string `json:"capital"`
+	Population string `json:"population"`
+	Continent  string `json:"continent"`
+}
+
+func GetCountryInfo(opts ...options.OptionFunc) CountryInfo {
+	return singleFakeData(CountryInfoTag, func() interface{} {
+		address := Address{}
+		return address.countryInfo()
+	}, opts...).(CountryInfo)
 }

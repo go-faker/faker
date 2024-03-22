@@ -93,6 +93,7 @@ type SomeStruct struct {
 	UInt32 uint32
 	UInt64 uint64
 
+	CountryInfo            CountryInfo `faker:"country_info"`
 	Latitude               float32     `faker:"lat"`
 	LATITUDE               float64     `faker:"lat"`
 	RealAddress            RealAddress `faker:"real_address"`
@@ -191,6 +192,7 @@ func (s SomeStruct) String() string {
 	UInt32: %v
 	UInt64: %v
 
+    CountryInfo: %v
 	Latitude: %v
 	LATITUDE: %v
 	RealAddress: %v
@@ -227,7 +229,7 @@ func (s SomeStruct) String() string {
 	}`, s.Inta, s.Int8, s.Int16, s.Int32,
 		s.Int64, s.Float32, s.Float64, s.UInta,
 		s.UInt8, s.UInt16, s.UInt32, s.UInt64,
-		s.Latitude, s.LATITUDE, s.RealAddress, s.Long, s.LONG,
+		s.CountryInfo, s.Latitude, s.LATITUDE, s.RealAddress, s.Long, s.LONG,
 		s.StringValue, s.CreditCardType, s.CreditCardNumber,
 		s.Email, s.IPV4, s.IPV6, s.Bool, s.SString, s.SInt,
 		s.SInt8, s.SInt16, s.SInt32, s.SInt64, s.SFloat32, s.SFloat64,
