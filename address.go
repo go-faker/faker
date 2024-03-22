@@ -14,14 +14,14 @@ var (
 	addressesUS      []RealAddress
 
 	//go:embed misc/country_info.json
-	countriesBytes 	 []byte
-	countries		 []CountryInfo
+	countriesBytes []byte
+	countries      []CountryInfo
 )
 
 func init() {
 	data := struct {
 		Addresses []RealAddress `json:"addresses"`
-        Countries []CountryInfo `json:"countries"`
+		Countries []CountryInfo `json:"countries"`
 	}{}
 	if err := json.Unmarshal(addressesUSBytes, &data); err != nil {
 		panic(err)
@@ -134,11 +134,11 @@ func GetRealAddress(opts ...options.OptionFunc) RealAddress {
 }
 
 type CountryInfo struct {
-	Abbr		string			`json:"abbr"`
-	Name 		string          `json:"name"`
-	Capital 	string          `json:"capital"`
-	Population  string 			`json:"population"`
-	Continent   string			`json:"continent"`
+	Abbr       string `json:"abbr"`
+	Name       string `json:"name"`
+	Capital    string `json:"capital"`
+	Population string `json:"population"`
+	Continent  string `json:"continent"`
 }
 
 func GetCountryInfo(opts ...options.OptionFunc) CountryInfo {

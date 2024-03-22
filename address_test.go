@@ -1,7 +1,7 @@
 package faker
 
 import (
-    "regexp"
+	"regexp"
 	"testing"
 )
 
@@ -44,7 +44,7 @@ func TestGetCountryInfo(t *testing.T) {
 		t.Error("Invalid continent abbreviation")
 	}
 
-	re := regexp.MustCompile(`^\d{1,3}(,\d{3})*$`)	
+	re := regexp.MustCompile(`^\d{1,3}(,\d{3})*$`)
 	if !re.MatchString(countryInfo.Population) {
 		t.Error("Invalid population number")
 	}

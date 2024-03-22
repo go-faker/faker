@@ -95,7 +95,7 @@ const (
 	RussianFirstNameFemaleTag = "russian_first_name_female"
 	RussianLastNameFemaleTag  = "russian_last_name_female"
 	BloodTypeTag              = "blood_type"
-    CountryInfoTag			  = "country_info"
+	CountryInfoTag            = "country_info"
 )
 
 // PriorityTags define the priority order of the tag
@@ -146,7 +146,7 @@ func initDefaultTag() {
 	defaultTag.Store(JWT, JWT)
 	defaultTag.Store(CreditCardType, CreditCardType)
 	defaultTag.Store(CreditCardNumber, CreditCardNumber)
-    defaultTag.Store(CountryInfoTag, CountryInfoTag)
+	defaultTag.Store(CountryInfoTag, CountryInfoTag)
 	defaultTag.Store(LATITUDE, LATITUDE)
 	defaultTag.Store(LONGITUDE, LONGITUDE)
 	defaultTag.Store(RealAddressTag, RealAddressTag)
@@ -194,7 +194,7 @@ var mapperTag = mapperTagCustom{}
 func initMappertTagDefault() {
 	mapperTag.Store(CreditCardType, GetPayment().CreditCardType)
 	mapperTag.Store(CreditCardNumber, GetPayment().CreditCardNumber)
-    mapperTag.Store(CountryInfoTag, GetAddress().CountryInfo)
+	mapperTag.Store(CountryInfoTag, GetAddress().CountryInfo)
 	mapperTag.Store(LATITUDE, GetAddress().Latitude)
 	mapperTag.Store(LONGITUDE, GetAddress().Longitude)
 	mapperTag.Store(RealAddressTag, GetAddress().RealWorld)
