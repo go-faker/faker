@@ -1,0 +1,1754 @@
+{
+    "countries": [
+        {
+            "abbr": "AD",
+            "name": "Andorra",
+            "capital": "Andorra la Vella",
+            "population": "77,006",
+            "continent": "EU"
+        },
+        {
+            "abbr": "AE",
+            "name": "United Arab Emirates",
+            "capital": "Abu Dhabi",
+            "population": "9,630,959",
+            "continent": "AS"
+        },
+        {
+            "abbr": "AF",
+            "name": "Afghanistan",
+            "capital": "Kabul",
+            "population": "37,172,386",
+            "continent": "AS"
+        },
+        {
+            "abbr": "AG",
+            "name": "Antigua and Barbuda",
+            "capital": "St. John's",
+            "population": "96,286",
+            "continent": "NA"
+        },
+        {
+            "abbr": "AI",
+            "name": "Anguilla",
+            "capital": "The Valley",
+            "population": "13,254",
+            "continent": "NA"
+        },
+        {
+            "abbr": "AL",
+            "name": "Albania",
+            "capital": "Tirana",
+            "population": "2,866,376",
+            "continent": "EU"
+        },
+        {
+            "abbr": "AM",
+            "name": "Armenia",
+            "capital": "Yerevan",
+            "population": "2,951,776",
+            "continent": "AS"
+        },
+        {
+            "abbr": "AO",
+            "name": "Angola",
+            "capital": "Luanda",
+            "population": "30,809,762",
+            "continent": "AF"
+        },
+        {
+            "abbr": "AQ",
+            "name": "Antarctica",
+            "capital": "",
+            "population": "0",
+            "continent": "AN"
+        },
+        {
+            "abbr": "AR",
+            "name": "Argentina",
+            "capital": "Buenos Aires",
+            "population": "44,494,502",
+            "continent": "SA"
+        },
+        {
+            "abbr": "AS",
+            "name": "American Samoa",
+            "capital": "Pago Pago",
+            "population": "55,465",
+            "continent": "OC"
+        },
+        {
+            "abbr": "AT",
+            "name": "Austria",
+            "capital": "Vienna",
+            "population": "8,847,037",
+            "continent": "EU"
+        },
+        {
+            "abbr": "AU",
+            "name": "Australia",
+            "capital": "Canberra",
+            "population": "24,992,369",
+            "continent": "OC"
+        },
+        {
+            "abbr": "AW",
+            "name": "Aruba",
+            "capital": "Oranjestad",
+            "population": "105,845",
+            "continent": "NA"
+        },
+        {
+            "abbr": "AX",
+            "name": "Åland",
+            "capital": "Mariehamn",
+            "population": "26,711",
+            "continent": "EU"
+        },
+        {
+            "abbr": "AZ",
+            "name": "Azerbaijan",
+            "capital": "Baku",
+            "population": "9,942,334",
+            "continent": "AS"
+        },
+        {
+            "abbr": "BA",
+            "name": "Bosnia and Herzegovina",
+            "capital": "Sarajevo",
+            "population": "3,323,929",
+            "continent": "EU"
+        },
+        {
+            "abbr": "BB",
+            "name": "Barbados",
+            "capital": "Bridgetown",
+            "population": "286,641",
+            "continent": "NA"
+        },
+        {
+            "abbr": "BD",
+            "name": "Bangladesh",
+            "capital": "Dhaka",
+            "population": "161,356,039",
+            "continent": "AS"
+        },
+        {
+            "abbr": "BE",
+            "name": "Belgium",
+            "capital": "Brussels",
+            "population": "11,422,068",
+            "continent": "EU"
+        },
+        {
+            "abbr": "BF",
+            "name": "Burkina Faso",
+            "capital": "Ouagadougou",
+            "population": "19,751,535",
+            "continent": "AF"
+        },
+        {
+            "abbr": "BG",
+            "name": "Bulgaria",
+            "capital": "Sofia",
+            "population": "7,000,039",
+            "continent": "EU"
+        },
+        {
+            "abbr": "BH",
+            "name": "Bahrain",
+            "capital": "Manama",
+            "population": "1,569,439",
+            "continent": "AS"
+        },
+        {
+            "abbr": "BI",
+            "name": "Burundi",
+            "capital": "Gitega",
+            "population": "11,175,378",
+            "continent": "AF"
+        },
+        {
+            "abbr": "BJ",
+            "name": "Benin",
+            "capital": "Porto-Novo",
+            "population": "11,485,048",
+            "continent": "AF"
+        },
+        {
+            "abbr": "BL",
+            "name": "Saint Barthélemy",
+            "capital": "Gustavia",
+            "population": "8,450",
+            "continent": "NA"
+        },
+        {
+            "abbr": "BM",
+            "name": "Bermuda",
+            "capital": "Hamilton",
+            "population": "63,968",
+            "continent": "NA"
+        },
+        {
+            "abbr": "BN",
+            "name": "Brunei",
+            "capital": "Bandar Seri Begawan",
+            "population": "428,962",
+            "continent": "AS"
+        },
+        {
+            "abbr": "BO",
+            "name": "Bolivia",
+            "capital": "Sucre",
+            "population": "11,353,142",
+            "continent": "SA"
+        },
+        {
+            "abbr": "BQ",
+            "name": "Bonaire, Sint Eustatius, and Saba",
+            "capital": "",
+            "population": "18,012",
+            "continent": "NA"
+        },
+        {
+            "abbr": "BR",
+            "name": "Brazil",
+            "capital": "Brasilia",
+            "population": "209,469,333",
+            "continent": "SA"
+        },
+        {
+            "abbr": "BS",
+            "name": "Bahamas",
+            "capital": "Nassau",
+            "population": "385,640",
+            "continent": "NA"
+        },
+        {
+            "abbr": "BT",
+            "name": "Bhutan",
+            "capital": "Thimphu",
+            "population": "754,394",
+            "continent": "AS"
+        },
+        {
+            "abbr": "BV",
+            "name": "Bouvet Island",
+            "capital": "",
+            "population": "0",
+            "continent": "AN"
+        },
+        {
+            "abbr": "BW",
+            "name": "Botswana",
+            "capital": "Gaborone",
+            "population": "2,254,126",
+            "continent": "AF"
+        },
+        {
+            "abbr": "BY",
+            "name": "Belarus",
+            "capital": "Minsk",
+            "population": "9,485,386",
+            "continent": "EU"
+        },
+        {
+            "abbr": "BZ",
+            "name": "Belize",
+            "capital": "Belmopan",
+            "population": "383,071",
+            "continent": "NA"
+        },
+        {
+            "abbr": "CA",
+            "name": "Canada",
+            "capital": "Ottawa",
+            "population": "37,058,856",
+            "continent": "NA"
+        },
+        {
+            "abbr": "CC",
+            "name": "Cocos (Keeling) Islands",
+            "capital": "West Island",
+            "population": "628",
+            "continent": "AS"
+        },
+        {
+            "abbr": "CD",
+            "name": "DR Congo",
+            "capital": "Kinshasa",
+            "population": "84,068,091",
+            "continent": "AF"
+        },
+        {
+            "abbr": "CF",
+            "name": "Central African Republic",
+            "capital": "Bangui",
+            "population": "4,666,377",
+            "continent": "AF"
+        },
+        {
+            "abbr": "CG",
+            "name": "Congo Republic",
+            "capital": "Brazzaville",
+            "population": "5,244,363",
+            "continent": "AF"
+        },
+        {
+            "abbr": "CH",
+            "name": "Switzerland",
+            "capital": "Bern",
+            "population": "8,516,543",
+            "continent": "EU"
+        },
+        {
+            "abbr": "CI",
+            "name": "Ivory Coast",
+            "capital": "Yamoussoukro",
+            "population": "25,069,229",
+            "continent": "AF"
+        },
+        {
+            "abbr": "CK",
+            "name": "Cook Islands",
+            "capital": "Avarua",
+            "population": "21,388",
+            "continent": "OC"
+        },
+        {
+            "abbr": "CL",
+            "name": "Chile",
+            "capital": "Santiago",
+            "population": "18,729,160",
+            "continent": "SA"
+        },
+        {
+            "abbr": "CM",
+            "name": "Cameroon",
+            "capital": "Yaounde",
+            "population": "25,216,237",
+            "continent": "AF"
+        },
+        {
+            "abbr": "CN",
+            "name": "China",
+            "capital": "Beijing",
+            "population": "1,411,778,724",
+            "continent": "AS"
+        },
+        {
+            "abbr": "CO",
+            "name": "Colombia",
+            "capital": "Bogota",
+            "population": "49,648,685",
+            "continent": "SA"
+        },
+        {
+            "abbr": "CR",
+            "name": "Costa Rica",
+            "capital": "San Jose",
+            "population": "4,999,441",
+            "continent": "NA"
+        },
+        {
+            "abbr": "CU",
+            "name": "Cuba",
+            "capital": "Havana",
+            "population": "11,338,138",
+            "continent": "NA"
+        },
+        {
+            "abbr": "CV",
+            "name": "Cabo Verde",
+            "capital": "Praia",
+            "population": "543,767",
+            "continent": "AF"
+        },
+        {
+            "abbr": "CW",
+            "name": "Curaçao",
+            "capital": "Willemstad",
+            "population": "159,849",
+            "continent": "NA"
+        },
+        {
+            "abbr": "CX",
+            "name": "Christmas Island",
+            "capital": "Flying Fish Cove",
+            "population": "1,500",
+            "continent": "OC"
+        },
+        {
+            "abbr": "CY",
+            "name": "Cyprus",
+            "capital": "Nicosia",
+            "population": "1,189,265",
+            "continent": "EU"
+        },
+        {
+            "abbr": "CZ",
+            "name": "Czechia",
+            "capital": "Prague",
+            "population": "10,625,695",
+            "continent": "EU"
+        },
+        {
+            "abbr": "DE",
+            "name": "Germany",
+            "capital": "Berlin",
+            "population": "82,927,922",
+            "continent": "EU"
+        },
+        {
+            "abbr": "DJ",
+            "name": "Djibouti",
+            "capital": "Djibouti",
+            "population": "958,920",
+            "continent": "AF"
+        },
+        {
+            "abbr": "DK",
+            "name": "Denmark",
+            "capital": "Copenhagen",
+            "population": "5,797,446",
+            "continent": "EU"
+        },
+        {
+            "abbr": "DM",
+            "name": "Dominica",
+            "capital": "Roseau",
+            "population": "71,625",
+            "continent": "NA"
+        },
+        {
+            "abbr": "DO",
+            "name": "Dominican Republic",
+            "capital": "Santo Domingo",
+            "population": "10,627,165",
+            "continent": "NA"
+        },
+        {
+            "abbr": "DZ",
+            "name": "Algeria",
+            "capital": "Algiers",
+            "population": "42,228,429",
+            "continent": "AF"
+        },
+        {
+            "abbr": "EC",
+            "name": "Ecuador",
+            "capital": "Quito",
+            "population": "17,084,357",
+            "continent": "SA"
+        },
+        {
+            "abbr": "EE",
+            "name": "Estonia",
+            "capital": "Tallinn",
+            "population": "1,320,884",
+            "continent": "EU"
+        },
+        {
+            "abbr": "EG",
+            "name": "Egypt",
+            "capital": "Cairo",
+            "population": "98,423,595",
+            "continent": "AF"
+        },
+        {
+            "abbr": "EH",
+            "name": "Western Sahara",
+            "capital": "El-Aaiun",
+            "population": "273,008",
+            "continent": "AF"
+        },
+        {
+            "abbr": "ER",
+            "name": "Eritrea",
+            "capital": "Asmara",
+            "population": "6,209,262",
+            "continent": "AF"
+        },
+        {
+            "abbr": "ES",
+            "name": "Spain",
+            "capital": "Madrid",
+            "population": "46,723,749",
+            "continent": "EU"
+        },
+        {
+            "abbr": "ET",
+            "name": "Ethiopia",
+            "capital": "Addis Ababa",
+            "population": "109,224,559",
+            "continent": "AF"
+        },
+        {
+            "abbr": "FI",
+            "name": "Finland",
+            "capital": "Helsinki",
+            "population": "5,518,050",
+            "continent": "EU"
+        },
+        {
+            "abbr": "FJ",
+            "name": "Fiji",
+            "capital": "Suva",
+            "population": "883,483",
+            "continent": "OC"
+        },
+        {
+            "abbr": "FK",
+            "name": "Falkland Islands",
+            "capital": "Stanley",
+            "population": "2,638",
+            "continent": "SA"
+        },
+        {
+            "abbr": "FM",
+            "name": "Micronesia",
+            "capital": "Palikir",
+            "population": "112,640",
+            "continent": "OC"
+        },
+        {
+            "abbr": "FO",
+            "name": "Faroe Islands",
+            "capital": "Torshavn",
+            "population": "48,497",
+            "continent": "EU"
+        },
+        {
+            "abbr": "FR",
+            "name": "France",
+            "capital": "Paris",
+            "population": "66,987,244",
+            "continent": "EU"
+        },
+        {
+            "abbr": "GA",
+            "name": "Gabon",
+            "capital": "Libreville",
+            "population": "2,119,275",
+            "continent": "AF"
+        },
+        {
+            "abbr": "GB",
+            "name": "United Kingdom",
+            "capital": "London",
+            "population": "66,488,991",
+            "continent": "EU"
+        },
+        {
+            "abbr": "GD",
+            "name": "Grenada",
+            "capital": "St. George's",
+            "population": "111,454",
+            "continent": "NA"
+        },
+        {
+            "abbr": "GE",
+            "name": "Georgia",
+            "capital": "Tbilisi",
+            "population": "3,731,000",
+            "continent": "AS"
+        },
+        {
+            "abbr": "GF",
+            "name": "French Guiana",
+            "capital": "Cayenne",
+            "population": "195,506",
+            "continent": "SA"
+        },
+        {
+            "abbr": "GG",
+            "name": "Guernsey",
+            "capital": "St Peter Port",
+            "population": "65,228",
+            "continent": "EU"
+        },
+        {
+            "abbr": "GH",
+            "name": "Ghana",
+            "capital": "Accra",
+            "population": "29,767,108",
+            "continent": "AF"
+        },
+        {
+            "abbr": "GI",
+            "name": "Gibraltar",
+            "capital": "Gibraltar",
+            "population": "33,718",
+            "continent": "EU"
+        },
+        {
+            "abbr": "GL",
+            "name": "Greenland",
+            "capital": "Nuuk",
+            "population": "56,025",
+            "continent": "NA"
+        },
+        {
+            "abbr": "GM",
+            "name": "The Gambia",
+            "capital": "Banjul",
+            "population": "2,280,102",
+            "continent": "AF"
+        },
+        {
+            "abbr": "GN",
+            "name": "Guinea",
+            "capital": "Conakry",
+            "population": "12,414,318",
+            "continent": "AF"
+        },
+        {
+            "abbr": "GP",
+            "name": "Guadeloupe",
+            "capital": "Basse-Terre",
+            "population": "443,000",
+            "continent": "NA"
+        },
+        {
+            "abbr": "GQ",
+            "name": "Equatorial Guinea",
+            "capital": "Malabo",
+            "population": "1,308,974",
+            "continent": "AF"
+        },
+        {
+            "abbr": "GR",
+            "name": "Greece",
+            "capital": "Athens",
+            "population": "10,727,668",
+            "continent": "EU"
+        },
+        {
+            "abbr": "GS",
+            "name": "South Georgia and South Sandwich Islands",
+            "capital": "Grytviken",
+            "population": "30",
+            "continent": "AN"
+        },
+        {
+            "abbr": "GT",
+            "name": "Guatemala",
+            "capital": "Guatemala City",
+            "population": "17,247,807",
+            "continent": "NA"
+        },
+        {
+            "abbr": "GU",
+            "name": "Guam",
+            "capital": "Hagatna",
+            "population": "165,768",
+            "continent": "OC"
+        },
+        {
+            "abbr": "GW",
+            "name": "Guinea-Bissau",
+            "capital": "Bissau",
+            "population": "1,874,309",
+            "continent": "AF"
+        },
+        {
+            "abbr": "GY",
+            "name": "Guyana",
+            "capital": "Georgetown",
+            "population": "779,004",
+            "continent": "SA"
+        },
+        {
+            "abbr": "HK",
+            "name": "Hong Kong",
+            "capital": "Hong Kong",
+            "population": "7,491,609",
+            "continent": "AS"
+        },
+        {
+            "abbr": "HM",
+            "name": "Heard and McDonald Islands",
+            "capital": "",
+            "population": "0",
+            "continent": "AN"
+        },
+        {
+            "abbr": "HN",
+            "name": "Honduras",
+            "capital": "Tegucigalpa",
+            "population": "9,587,522",
+            "continent": "NA"
+        },
+        {
+            "abbr": "HR",
+            "name": "Croatia",
+            "capital": "Zagreb",
+            "population": "3,871,833",
+            "continent": "EU"
+        },
+        {
+            "abbr": "HT",
+            "name": "Haiti",
+            "capital": "Port-au-Prince",
+            "population": "11,123,176",
+            "continent": "NA"
+        },
+        {
+            "abbr": "HU",
+            "name": "Hungary",
+            "capital": "Budapest",
+            "population": "9,768,785",
+            "continent": "EU"
+        },
+        {
+            "abbr": "ID",
+            "name": "Indonesia",
+            "capital": "Jakarta",
+            "population": "267,663,435",
+            "continent": "AS"
+        },
+        {
+            "abbr": "IE",
+            "name": "Ireland",
+            "capital": "Dublin",
+            "population": "4,853,506",
+            "continent": "EU"
+        },
+        {
+            "abbr": "IL",
+            "name": "Israel",
+            "capital": "Jerusalem",
+            "population": "8,883,800",
+            "continent": "AS"
+        },
+        {
+            "abbr": "IM",
+            "name": "Isle of Man",
+            "capital": "Douglas",
+            "population": "84,077",
+            "continent": "EU"
+        },
+        {
+            "abbr": "IN",
+            "name": "India",
+            "capital": "New Delhi",
+            "population": "1,352,617,328",
+            "continent": "AS"
+        },
+        {
+            "abbr": "IO",
+            "name": "British Indian Ocean Territory",
+            "capital": "Diego Garcia",
+            "population": "4,000",
+            "continent": "AS"
+        },
+        {
+            "abbr": "IQ",
+            "name": "Iraq",
+            "capital": "Baghdad",
+            "population": "38,433,600",
+            "continent": "AS"
+        },
+        {
+            "abbr": "IR",
+            "name": "Iran",
+            "capital": "Tehran",
+            "population": "81,800,269",
+            "continent": "AS"
+        },
+        {
+            "abbr": "IS",
+            "name": "Iceland",
+            "capital": "Reykjavik",
+            "population": "353,574",
+            "continent": "EU"
+        },
+        {
+            "abbr": "IT",
+            "name": "Italy",
+            "capital": "Rome",
+            "population": "60,431,283",
+            "continent": "EU"
+        },
+        {
+            "abbr": "JE",
+            "name": "Jersey",
+            "capital": "Saint Helier",
+            "population": "90,812",
+            "continent": "EU"
+        },
+        {
+            "abbr": "JM",
+            "name": "Jamaica",
+            "capital": "Kingston",
+            "population": "2,934,855",
+            "continent": "NA"
+        },
+        {
+            "abbr": "JO",
+            "name": "Jordan",
+            "capital": "Amman",
+            "population": "9,956,011",
+            "continent": "AS"
+        },
+        {
+            "abbr": "JP",
+            "name": "Japan",
+            "capital": "Tokyo",
+            "population": "126,529,100",
+            "continent": "AS"
+        },
+        {
+            "abbr": "KE",
+            "name": "Kenya",
+            "capital": "Nairobi",
+            "population": "51,393,010",
+            "continent": "AF"
+        },
+        {
+            "abbr": "KG",
+            "name": "Kyrgyzstan",
+            "capital": "Bishkek",
+            "population": "6,315,800",
+            "continent": "AS"
+        },
+        {
+            "abbr": "KH",
+            "name": "Cambodia",
+            "capital": "Phnom Penh",
+            "population": "16,249,798",
+            "continent": "AS"
+        },
+        {
+            "abbr": "KI",
+            "name": "Kiribati",
+            "capital": "Tarawa",
+            "population": "115,847",
+            "continent": "OC"
+        },
+        {
+            "abbr": "KM",
+            "name": "Comoros",
+            "capital": "Moroni",
+            "population": "832,322",
+            "continent": "AF"
+        },
+        {
+            "abbr": "KN",
+            "name": "St Kitts and Nevis",
+            "capital": "Basseterre",
+            "population": "52,441",
+            "continent": "NA"
+        },
+        {
+            "abbr": "KP",
+            "name": "North Korea",
+            "capital": "Pyongyang",
+            "population": "25,549,819",
+            "continent": "AS"
+        },
+        {
+            "abbr": "KR",
+            "name": "South Korea",
+            "capital": "Seoul",
+            "population": "51,635,256",
+            "continent": "AS"
+        },
+        {
+            "abbr": "KW",
+            "name": "Kuwait",
+            "capital": "Kuwait City",
+            "population": "4,137,309",
+            "continent": "AS"
+        },
+        {
+            "abbr": "KY",
+            "name": "Cayman Islands",
+            "capital": "George Town",
+            "population": "64,174",
+            "continent": "NA"
+        },
+        {
+            "abbr": "KZ",
+            "name": "Kazakhstan",
+            "capital": "Nur-Sultan",
+            "population": "18,276,499",
+            "continent": "AS"
+        },
+        {
+            "abbr": "LA",
+            "name": "Laos",
+            "capital": "Vientiane",
+            "population": "7,061,507",
+            "continent": "AS"
+        },
+        {
+            "abbr": "LB",
+            "name": "Lebanon",
+            "capital": "Beirut",
+            "population": "6,848,925",
+            "continent": "AS"
+        },
+        {
+            "abbr": "LC",
+            "name": "Saint Lucia",
+            "capital": "Castries",
+            "population": "181,889",
+            "continent": "NA"
+        },
+        {
+            "abbr": "LI",
+            "name": "Liechtenstein",
+            "capital": "Vaduz",
+            "population": "37,910",
+            "continent": "EU"
+        },
+        {
+            "abbr": "LK",
+            "name": "Sri Lanka",
+            "capital": "Colombo",
+            "population": "21,670,000",
+            "continent": "AS"
+        },
+        {
+            "abbr": "LR",
+            "name": "Liberia",
+            "capital": "Monrovia",
+            "population": "4,818,977",
+            "continent": "AF"
+        },
+        {
+            "abbr": "LS",
+            "name": "Lesotho",
+            "capital": "Maseru",
+            "population": "2,108,132",
+            "continent": "AF"
+        },
+        {
+            "abbr": "LT",
+            "name": "Lithuania",
+            "capital": "Vilnius",
+            "population": "2,789,533",
+            "continent": "EU"
+        },
+        {
+            "abbr": "LU",
+            "name": "Luxembourg",
+            "capital": "Luxembourg",
+            "population": "607,728",
+            "continent": "EU"
+        },
+        {
+            "abbr": "LV",
+            "name": "Latvia",
+            "capital": "Riga",
+            "population": "1,926,542",
+            "continent": "EU"
+        },
+        {
+            "abbr": "LY",
+            "name": "Libya",
+            "capital": "Tripoli",
+            "population": "6,678,567",
+            "continent": "AF"
+        },
+        {
+            "abbr": "MA",
+            "name": "Morocco",
+            "capital": "Rabat",
+            "population": "36,029,138",
+            "continent": "AF"
+        },
+        {
+            "abbr": "MC",
+            "name": "Monaco",
+            "capital": "Monaco",
+            "population": "38,682",
+            "continent": "EU"
+        },
+        {
+            "abbr": "MD",
+            "name": "Moldova",
+            "capital": "Chisinau",
+            "population": "3,545,883",
+            "continent": "EU"
+        },
+        {
+            "abbr": "ME",
+            "name": "Montenegro",
+            "capital": "Podgorica",
+            "population": "622,345",
+            "continent": "EU"
+        },
+        {
+            "abbr": "MF",
+            "name": "Saint Martin",
+            "capital": "Marigot",
+            "population": "37,264",
+            "continent": "NA"
+        },
+        {
+            "abbr": "MG",
+            "name": "Madagascar",
+            "capital": "Antananarivo",
+            "population": "26,262,368",
+            "continent": "AF"
+        },
+        {
+            "abbr": "MH",
+            "name": "Marshall Islands",
+            "capital": "Majuro",
+            "population": "58,413",
+            "continent": "OC"
+        },
+        {
+            "abbr": "MK",
+            "name": "North Macedonia",
+            "capital": "Skopje",
+            "population": "2,082,958",
+            "continent": "EU"
+        },
+        {
+            "abbr": "ML",
+            "name": "Mali",
+            "capital": "Bamako",
+            "population": "19,077,690",
+            "continent": "AF"
+        },
+        {
+            "abbr": "MM",
+            "name": "Myanmar",
+            "capital": "Nay Pyi Taw",
+            "population": "53,708,395",
+            "continent": "AS"
+        },
+        {
+            "abbr": "MN",
+            "name": "Mongolia",
+            "capital": "Ulaanbaatar",
+            "population": "3,170,208",
+            "continent": "AS"
+        },
+        {
+            "abbr": "MO",
+            "name": "Macao",
+            "capital": "Macao",
+            "population": "631,636",
+            "continent": "AS"
+        },
+        {
+            "abbr": "MP",
+            "name": "Northern Mariana Islands",
+            "capital": "Saipan",
+            "population": "56,882",
+            "continent": "OC"
+        },
+        {
+            "abbr": "MQ",
+            "name": "Martinique",
+            "capital": "Fort-de-France",
+            "population": "432,900",
+            "continent": "NA"
+        },
+        {
+            "abbr": "MR",
+            "name": "Mauritania",
+            "capital": "Nouakchott",
+            "population": "4,403,319",
+            "continent": "AF"
+        },
+        {
+            "abbr": "MS",
+            "name": "Montserrat",
+            "capital": "Plymouth",
+            "population": "9,341",
+            "continent": "NA"
+        },
+        {
+            "abbr": "MT",
+            "name": "Malta",
+            "capital": "Valletta",
+            "population": "483,530",
+            "continent": "EU"
+        },
+        {
+            "abbr": "MU",
+            "name": "Mauritius",
+            "capital": "Port Louis",
+            "population": "1,265,303",
+            "continent": "AF"
+        },
+        {
+            "abbr": "MV",
+            "name": "Maldives",
+            "capital": "Male",
+            "population": "515,696",
+            "continent": "AS"
+        },
+        {
+            "abbr": "MW",
+            "name": "Malawi",
+            "capital": "Lilongwe",
+            "population": "17,563,749",
+            "continent": "AF"
+        },
+        {
+            "abbr": "MX",
+            "name": "Mexico",
+            "capital": "Mexico City",
+            "population": "126,190,788",
+            "continent": "NA"
+        },
+        {
+            "abbr": "MY",
+            "name": "Malaysia",
+            "capital": "Kuala Lumpur",
+            "population": "31,528,585",
+            "continent": "AS"
+        },
+        {
+            "abbr": "MZ",
+            "name": "Mozambique",
+            "capital": "Maputo",
+            "population": "29,495,962",
+            "continent": "AF"
+        },
+        {
+            "abbr": "NA",
+            "name": "Namibia",
+            "capital": "Windhoek",
+            "population": "2,448,255",
+            "continent": "AF"
+        },
+        {
+            "abbr": "NC",
+            "name": "New Caledonia",
+            "capital": "Noumea",
+            "population": "284,060",
+            "continent": "OC"
+        },
+        {
+            "abbr": "NE",
+            "name": "Niger",
+            "capital": "Niamey",
+            "population": "22,442,948",
+            "continent": "AF"
+        },
+        {
+            "abbr": "NF",
+            "name": "Norfolk Island",
+            "capital": "Kingston",
+            "population": "1,828",
+            "continent": "OC"
+        },
+        {
+            "abbr": "NG",
+            "name": "Nigeria",
+            "capital": "Abuja",
+            "population": "195,874,740",
+            "continent": "AF"
+        },
+        {
+            "abbr": "NI",
+            "name": "Nicaragua",
+            "capital": "Managua",
+            "population": "6,465,513",
+            "continent": "NA"
+        },
+        {
+            "abbr": "NL",
+            "name": "The Netherlands",
+            "capital": "Amsterdam",
+            "population": "17,231,017",
+            "continent": "EU"
+        },
+        {
+            "abbr": "NO",
+            "name": "Norway",
+            "capital": "Oslo",
+            "population": "5,314,336",
+            "continent": "EU"
+        },
+        {
+            "abbr": "NP",
+            "name": "Nepal",
+            "capital": "Kathmandu",
+            "population": "28,087,871",
+            "continent": "AS"
+        },
+        {
+            "abbr": "NR",
+            "name": "Nauru",
+            "capital": "Yaren",
+            "population": "12,704",
+            "continent": "OC"
+        },
+        {
+            "abbr": "NU",
+            "name": "Niue",
+            "capital": "Alofi",
+            "population": "2,166",
+            "continent": "OC"
+        },
+        {
+            "abbr": "NZ",
+            "name": "New Zealand",
+            "capital": "Wellington",
+            "population": "4,885,500",
+            "continent": "OC"
+        },
+        {
+            "abbr": "OM",
+            "name": "Oman",
+            "capital": "Muscat",
+            "population": "4,829,483",
+            "continent": "AS"
+        },
+        {
+            "abbr": "PA",
+            "name": "Panama",
+            "capital": "Panama City",
+            "population": "4,176,873",
+            "continent": "NA"
+        },
+        {
+            "abbr": "PE",
+            "name": "Peru",
+            "capital": "Lima",
+            "population": "31,989,256",
+            "continent": "SA"
+        },
+        {
+            "abbr": "PF",
+            "name": "French Polynesia",
+            "capital": "Papeete",
+            "population": "277,679",
+            "continent": "OC"
+        },
+        {
+            "abbr": "PG",
+            "name": "Papua New Guinea",
+            "capital": "Port Moresby",
+            "population": "8,606,316",
+            "continent": "OC"
+        },
+        {
+            "abbr": "PH",
+            "name": "Philippines",
+            "capital": "Manila",
+            "population": "106,651,922",
+            "continent": "AS"
+        },
+        {
+            "abbr": "PK",
+            "name": "Pakistan",
+            "capital": "Islamabad",
+            "population": "212,215,030",
+            "continent": "AS"
+        },
+        {
+            "abbr": "PL",
+            "name": "Poland",
+            "capital": "Warsaw",
+            "population": "37,978,548",
+            "continent": "EU"
+        },
+        {
+            "abbr": "PM",
+            "name": "Saint Pierre and Miquelon",
+            "capital": "Saint-Pierre",
+            "population": "7,012",
+            "continent": "NA"
+        },
+        {
+            "abbr": "PN",
+            "name": "Pitcairn Islands",
+            "capital": "Adamstown",
+            "population": "46",
+            "continent": "OC"
+        },
+        {
+            "abbr": "PR",
+            "name": "Puerto Rico",
+            "capital": "San Juan",
+            "population": "3,195,153",
+            "continent": "NA"
+        },
+        {
+            "abbr": "PS",
+            "name": "Palestine",
+            "capital": "East Jerusalem",
+            "population": "4,569,087",
+            "continent": "AS"
+        },
+        {
+            "abbr": "PT",
+            "name": "Portugal",
+            "capital": "Lisbon",
+            "population": "10,281,762",
+            "continent": "EU"
+        },
+        {
+            "abbr": "PW",
+            "name": "Palau",
+            "capital": "Melekeok",
+            "population": "17,907",
+            "continent": "OC"
+        },
+        {
+            "abbr": "PY",
+            "name": "Paraguay",
+            "capital": "Asuncion",
+            "population": "6,956,071",
+            "continent": "SA"
+        },
+        {
+            "abbr": "QA",
+            "name": "Qatar",
+            "capital": "Doha",
+            "population": "2,781,677",
+            "continent": "AS"
+        },
+        {
+            "abbr": "RE",
+            "name": "Réunion",
+            "capital": "Saint-Denis",
+            "population": "776,948",
+            "continent": "AF"
+        },
+        {
+            "abbr": "RO",
+            "name": "Romania",
+            "capital": "Bucharest",
+            "population": "19,473,936",
+            "continent": "EU"
+        },
+        {
+            "abbr": "RS",
+            "name": "Serbia",
+            "capital": "Belgrade",
+            "population": "6,982,084",
+            "continent": "EU"
+        },
+        {
+            "abbr": "RU",
+            "name": "Russia",
+            "capital": "Moscow",
+            "population": "144,478,050",
+            "continent": "EU"
+        },
+        {
+            "abbr": "RW",
+            "name": "Rwanda",
+            "capital": "Kigali",
+            "population": "12,301,939",
+            "continent": "AF"
+        },
+        {
+            "abbr": "SA",
+            "name": "Saudi Arabia",
+            "capital": "Riyadh",
+            "population": "33,699,947",
+            "continent": "AS"
+        },
+        {
+            "abbr": "SB",
+            "name": "Solomon Islands",
+            "capital": "Honiara",
+            "population": "652,858",
+            "continent": "OC"
+        },
+        {
+            "abbr": "SC",
+            "name": "Seychelles",
+            "capital": "Victoria",
+            "population": "96,762",
+            "continent": "AF"
+        },
+        {
+            "abbr": "SD",
+            "name": "Sudan",
+            "capital": "Khartoum",
+            "population": "41,801,533",
+            "continent": "AF"
+        },
+        {
+            "abbr": "SE",
+            "name": "Sweden",
+            "capital": "Stockholm",
+            "population": "10,183,175",
+            "continent": "EU"
+        },
+        {
+            "abbr": "SG",
+            "name": "Singapore",
+            "capital": "Singapore",
+            "population": "5,638,676",
+            "continent": "AS"
+        },
+        {
+            "abbr": "SH",
+            "name": "Saint Helena",
+            "capital": "Jamestown",
+            "population": "7,460",
+            "continent": "AF"
+        },
+        {
+            "abbr": "SI",
+            "name": "Slovenia",
+            "capital": "Ljubljana",
+            "population": "2,067,372",
+            "continent": "EU"
+        },
+        {
+            "abbr": "SJ",
+            "name": "Svalbard and Jan Mayen",
+            "capital": "Longyearbyen",
+            "population": "2,550",
+            "continent": "EU"
+        },
+        {
+            "abbr": "SK",
+            "name": "Slovakia",
+            "capital": "Bratislava",
+            "population": "5,447,011",
+            "continent": "EU"
+        },
+        {
+            "abbr": "SL",
+            "name": "Sierra Leone",
+            "capital": "Freetown",
+            "population": "7,650,154",
+            "continent": "AF"
+        },
+        {
+            "abbr": "SM",
+            "name": "San Marino",
+            "capital": "San Marino",
+            "population": "33,785",
+            "continent": "EU"
+        },
+        {
+            "abbr": "SN",
+            "name": "Senegal",
+            "capital": "Dakar",
+            "population": "15,854,360",
+            "continent": "AF"
+        },
+        {
+            "abbr": "SO",
+            "name": "Somalia",
+            "capital": "Mogadishu",
+            "population": "15,008,154",
+            "continent": "AF"
+        },
+        {
+            "abbr": "SR",
+            "name": "Suriname",
+            "capital": "Paramaribo",
+            "population": "575,991",
+            "continent": "SA"
+        },
+        {
+            "abbr": "SS",
+            "name": "South Sudan",
+            "capital": "Juba",
+            "population": "8,260,490",
+            "continent": "AF"
+        },
+        {
+            "abbr": "ST",
+            "name": "São Tomé and Príncipe",
+            "capital": "Sao Tome",
+            "population": "197,700",
+            "continent": "AF"
+        },
+        {
+            "abbr": "SV",
+            "name": "El Salvador",
+            "capital": "San Salvador",
+            "population": "6,420,744",
+            "continent": "NA"
+        },
+        {
+            "abbr": "SX",
+            "name": "Sint Maarten",
+            "capital": "Philipsburg",
+            "population": "40,654",
+            "continent": "NA"
+        },
+        {
+            "abbr": "SY",
+            "name": "Syria",
+            "capital": "Damascus",
+            "population": "16,906,283",
+            "continent": "AS"
+        },
+        {
+            "abbr": "SZ",
+            "name": "Eswatini",
+            "capital": "Mbabane",
+            "population": "1,136,191",
+            "continent": "AF"
+        },
+        {
+            "abbr": "TC",
+            "name": "Turks and Caicos Islands",
+            "capital": "Cockburn Town",
+            "population": "37,665",
+            "continent": "NA"
+        },
+        {
+            "abbr": "TD",
+            "name": "Chad",
+            "capital": "N'Djamena",
+            "population": "15,477,751",
+            "continent": "AF"
+        },
+        {
+            "abbr": "TF",
+            "name": "French Southern Territories",
+            "capital": "Port-aux-Francais",
+            "population": "140",
+            "continent": "AN"
+        },
+        {
+            "abbr": "TG",
+            "name": "Togo",
+            "capital": "Lome",
+            "population": "7,889,094",
+            "continent": "AF"
+        },
+        {
+            "abbr": "TH",
+            "name": "Thailand",
+            "capital": "Bangkok",
+            "population": "69,428,524",
+            "continent": "AS"
+        },
+        {
+            "abbr": "TJ",
+            "name": "Tajikistan",
+            "capital": "Dushanbe",
+            "population": "9,100,837",
+            "continent": "AS"
+        },
+        {
+            "abbr": "TK",
+            "name": "Tokelau",
+            "capital": "",
+            "population": "1,466",
+            "continent": "OC"
+        },
+        {
+            "abbr": "TL",
+            "name": "Timor-Leste",
+            "capital": "Dili",
+            "population": "1,267,972",
+            "continent": "OC"
+        },
+        {
+            "abbr": "TM",
+            "name": "Turkmenistan",
+            "capital": "Ashgabat",
+            "population": "5,850,908",
+            "continent": "AS"
+        },
+        {
+            "abbr": "TN",
+            "name": "Tunisia",
+            "capital": "Tunis",
+            "population": "11,565,204",
+            "continent": "AF"
+        },
+        {
+            "abbr": "TO",
+            "name": "Tonga",
+            "capital": "Nuku'alofa",
+            "population": "103,197",
+            "continent": "OC"
+        },
+        {
+            "abbr": "TR",
+            "name": "Türkiye",
+            "capital": "Ankara",
+            "population": "82,319,724",
+            "continent": "AS"
+        },
+        {
+            "abbr": "TT",
+            "name": "Trinidad and Tobago",
+            "capital": "Port of Spain",
+            "population": "1,389,858",
+            "continent": "NA"
+        },
+        {
+            "abbr": "TV",
+            "name": "Tuvalu",
+            "capital": "Funafuti",
+            "population": "11,508",
+            "continent": "OC"
+        },
+        {
+            "abbr": "TW",
+            "name": "Taiwan",
+            "capital": "Taipei",
+            "population": "23,451,837",
+            "continent": "AS"
+        },
+        {
+            "abbr": "TZ",
+            "name": "Tanzania",
+            "capital": "Dodoma",
+            "population": "56,318,348",
+            "continent": "AF"
+        },
+        {
+            "abbr": "UA",
+            "name": "Ukraine",
+            "capital": "Kyiv",
+            "population": "44,622,516",
+            "continent": "EU"
+        },
+        {
+            "abbr": "UG",
+            "name": "Uganda",
+            "capital": "Kampala",
+            "population": "42,723,139",
+            "continent": "AF"
+        },
+        {
+            "abbr": "UM",
+            "name": "U.S. Outlying Islands",
+            "capital": "",
+            "population": "0",
+            "continent": "OC"
+        },
+        {
+            "abbr": "US",
+            "name": "United States",
+            "capital": "Washington",
+            "population": "327,167,434",
+            "continent": "NA"
+        },
+        {
+            "abbr": "UY",
+            "name": "Uruguay",
+            "capital": "Montevideo",
+            "population": "3,449,299",
+            "continent": "SA"
+        },
+        {
+            "abbr": "UZ",
+            "name": "Uzbekistan",
+            "capital": "Tashkent",
+            "population": "32,955,400",
+            "continent": "AS"
+        },
+        {
+            "abbr": "VA",
+            "name": "Vatican City",
+            "capital": "Vatican City",
+            "population": "921",
+            "continent": "EU"
+        },
+        {
+            "abbr": "VC",
+            "name": "St Vincent and Grenadines",
+            "capital": "Kingstown",
+            "population": "110,211",
+            "continent": "NA"
+        },
+        {
+            "abbr": "VE",
+            "name": "Venezuela",
+            "capital": "Caracas",
+            "population": "28,870,195",
+            "continent": "SA"
+        },
+        {
+            "abbr": "VG",
+            "name": "British Virgin Islands",
+            "capital": "Road Town",
+            "population": "29,802",
+            "continent": "NA"
+        },
+        {
+            "abbr": "VI",
+            "name": "U.S. Virgin Islands",
+            "capital": "Charlotte Amalie",
+            "population": "106,977",
+            "continent": "NA"
+        },
+        {
+            "abbr": "VN",
+            "name": "Vietnam",
+            "capital": "Hanoi",
+            "population": "95,540,395",
+            "continent": "AS"
+        },
+        {
+            "abbr": "VU",
+            "name": "Vanuatu",
+            "capital": "Port Vila",
+            "population": "292,680",
+            "continent": "OC"
+        },
+        {
+            "abbr": "WF",
+            "name": "Wallis and Futuna",
+            "capital": "Mata Utu",
+            "population": "16,025",
+            "continent": "OC"
+        },
+        {
+            "abbr": "WS",
+            "name": "Samoa",
+            "capital": "Apia",
+            "population": "196,130",
+            "continent": "OC"
+        },
+        {
+            "abbr": "XK",
+            "name": "Kosovo",
+            "capital": "Pristina",
+            "population": "1,845,300",
+            "continent": "EU"
+        },
+        {
+            "abbr": "YE",
+            "name": "Yemen",
+            "capital": "Sanaa",
+            "population": "28,498,687",
+            "continent": "AS"
+        },
+        {
+            "abbr": "YT",
+            "name": "Mayotte",
+            "capital": "Mamoudzou",
+            "population": "279,471",
+            "continent": "AF"
+        },
+        {
+            "abbr": "ZA",
+            "name": "South Africa",
+            "capital": "Pretoria",
+            "population": "57,779,622",
+            "continent": "AF"
+        },
+        {
+            "abbr": "ZM",
+            "name": "Zambia",
+            "capital": "Lusaka",
+            "population": "17,351,822",
+            "continent": "AF"
+        },
+        {
+            "abbr": "ZW",
+            "name": "Zimbabwe",
+            "capital": "Harare",
+            "population": "14,439,018",
+            "continent": "AF"
+        }
+    ]
+}
