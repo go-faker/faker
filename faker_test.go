@@ -1521,9 +1521,26 @@ func TestUnique(t *testing.T) {
 
 func TestUniqueInConcurrentParallel(t *testing.T) {
 	t.Parallel()
-	Username(options.WithGenerateUniqueValues(true))
-	IPv4(options.WithGenerateUniqueValues(true))
-	Email(options.WithGenerateUniqueValues(true))
+
+	var wg sync.WaitGroup
+	wg.Add(3)
+
+	go func() {
+		defer wg.Done()
+		Username(options.WithGenerateUniqueValues(true))
+	}()
+
+	go func() {
+		defer wg.Done()
+		IPv4(options.WithGenerateUniqueValues(true))
+	}()
+
+	go func() {
+		defer wg.Done()
+		Email(options.WithGenerateUniqueValues(true))
+	}()
+
+	wg.Wait()
 }
 
 func TestUniqueReset(t *testing.T) {
