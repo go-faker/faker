@@ -1503,7 +1503,9 @@ func TestUnique(t *testing.T) {
 	}
 
 	found := []interface{}{}
-	for _, v := range uniqueValues["word"] {
+	uniqueVal, _ := uniqueValues.Load("word")
+	uniqueValArr := uniqueVal.([]interface{})
+	for _, v := range uniqueValArr {
 		for _, f := range found {
 			if f == v {
 				t.Errorf("expected unique values, found \"%s\" at least twice", v)
@@ -1515,6 +1517,13 @@ func TestUnique(t *testing.T) {
 	}
 
 	ResetUnique()
+}
+
+func TestUniqueInConcurrentParallel(t *testing.T) {
+	t.Parallel()
+	Username(options.WithGenerateUniqueValues(true))
+	IPv4(options.WithGenerateUniqueValues(true))
+	Email(options.WithGenerateUniqueValues(true))
 }
 
 func TestUniqueReset(t *testing.T) {
@@ -1531,7 +1540,15 @@ func TestUniqueReset(t *testing.T) {
 	}
 
 	ResetUnique()
-	length := len(uniqueValues)
+	var getSize = func(m *sync.Map) (count int) {
+		m.Range(func(_, _ interface{}) bool {
+			count++
+			return true
+		})
+		return
+	}
+
+	length := getSize(uniqueValues)
 	if length > 0 {
 		t.Errorf("expected empty uniqueValues map, but got a length of %d", length)
 	}

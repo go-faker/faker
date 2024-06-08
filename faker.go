@@ -22,7 +22,7 @@ import (
 
 var (
 	// Unique values are kept in memory so the generator retries if the value already exists
-	uniqueValues = map[string][]interface{}{}
+	uniqueValues = &sync.Map{}
 )
 
 // Supported tags
@@ -266,7 +266,7 @@ func init() {
 // ResetUnique is used to forget generated unique values.
 // Call this when you're done generating a dataset.
 func ResetUnique() {
-	uniqueValues = map[string][]interface{}{}
+	uniqueValues = &sync.Map{}
 }
 
 var (
@@ -501,15 +501,16 @@ func getFakedValue(item interface{}, opts *options.Options) (reflect.Value, erro
 					if retry >= maxRetry {
 						return reflect.Value{}, fmt.Errorf(fakerErrors.ErrUniqueFailure, reflect.TypeOf(item).Field(i).Name)
 					}
-
 					value := v.Field(i).Interface()
-					if slice.ContainsValue(uniqueValues[tags.fieldType], value) { // Retry if unique value already found
+					uniqueVal, _ := uniqueValues.Load(tags.fieldType)
+					uniqueValArr, _ := uniqueVal.([]interface{})
+					if slice.ContainsValue(uniqueValArr, value) { // Retry if unique value already found
 						i--
 						retry++
 						continue
 					}
 					retry = 0
-					uniqueValues[tags.fieldType] = append(uniqueValues[tags.fieldType], value)
+					uniqueValues.Store(tags.fieldType, append(uniqueValArr, value))
 				} else {
 					retry = 0
 				}
@@ -1380,8 +1381,10 @@ func RandomInt(parameters ...int) (p []int, err error) {
 func generateUnique(dataType string, fn func() interface{}) (interface{}, error) {
 	for i := 0; i < maxRetry; i++ {
 		value := fn()
-		if !slice.ContainsValue(uniqueValues[dataType], value) { // Retry if unique value already found
-			uniqueValues[dataType] = append(uniqueValues[dataType], value)
+		uniqueVal, _ := uniqueValues.Load(dataType)
+		uniqueValArr, _ := uniqueVal.([]interface{})
+		if !slice.ContainsValue(uniqueValArr, value) { // Retry if unique value already found
+			uniqueValues.Store(dataType, append(uniqueValArr, value))
 			return value, nil
 		}
 	}
