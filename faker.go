@@ -96,6 +96,7 @@ const (
 	RussianLastNameFemaleTag  = "russian_last_name_female"
 	BloodTypeTag              = "blood_type"
 	CountryInfoTag            = "country_info"
+	UserAgentTag              = "user_agent"
 )
 
 // PriorityTags define the priority order of the tag
@@ -105,6 +106,7 @@ var PriorityTags = []string{ID, HyphenatedID, EmailTag, MacAddressTag, DomainNam
 	NAME, ChineseFirstNameTag, ChineseLastNameTag, ChineseNameTag, GENDER, UnixTimeTag, DATE, TIME, MonthNameTag,
 	YEAR, DayOfWeekTag, DayOfMonthTag, TIMESTAMP, CENTURY, TIMEZONE, TimePeriodTag, WORD, SENTENCE, PARAGRAPH,
 	CurrencyTag, AmountTag, AmountWithCurrencyTag, SKIP, Length, SliceLength, Language, BoundaryStart, BoundaryEnd, ONEOF, BloodTypeTag,
+	UserAgentTag,
 }
 
 type mapperTagCustom struct {
@@ -187,11 +189,12 @@ func initDefaultTag() {
 	defaultTag.Store(RussianLastNameMaleTag, RussianLastNameMaleTag)
 	defaultTag.Store(RussianFirstNameFemaleTag, RussianFirstNameFemaleTag)
 	defaultTag.Store(RussianLastNameFemaleTag, RussianLastNameFemaleTag)
+	defaultTag.Store(UserAgentTag, UserAgentTag)
 }
 
 var mapperTag = mapperTagCustom{}
 
-func initMappertTagDefault() {
+func initMapperTagDefault() {
 	mapperTag.Store(CreditCardType, GetPayment().CreditCardType)
 	mapperTag.Store(CreditCardNumber, GetPayment().CreditCardNumber)
 	mapperTag.Store(CountryInfoTag, GetAddress().CountryInfo)
@@ -236,6 +239,7 @@ func initMappertTagDefault() {
 	mapperTag.Store(RussianLastNameMaleTag, GetPerson().RussianLastNameMale)
 	mapperTag.Store(RussianLastNameFemaleTag, GetPerson().RussianLastNameFemale)
 	mapperTag.Store(BloodTypeTag, GetBlood().BloodGroup)
+	mapperTag.Store(UserAgentTag, GetUserAgent().UserAgent)
 }
 
 // Compiled regexp
@@ -260,7 +264,7 @@ func init() {
 
 func init() {
 	initDefaultTag()
-	initMappertTagDefault()
+	initMapperTagDefault()
 }
 
 // ResetUnique is used to forget generated unique values.

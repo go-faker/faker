@@ -105,6 +105,7 @@ type SomeStruct struct {
 	Email                  string `faker:"email"`
 	IPV4                   string `faker:"ipv4"`
 	IPV6                   string `faker:"ipv6"`
+	UserAgent              string `faker:"user_agent"`
 	Bool                   bool
 	SString                []string
 	SInt                   []int
@@ -204,6 +205,7 @@ func (s SomeStruct) String() string {
 	Email: %v
 	IPV4: %v
 	IPV6: %v
+        UserAgent: %v
 	Bool: %v
 	SString: %v
 	SInt: %v
@@ -231,7 +233,7 @@ func (s SomeStruct) String() string {
 		s.UInt8, s.UInt16, s.UInt32, s.UInt64,
 		s.CountryInfo, s.Latitude, s.LATITUDE, s.RealAddress, s.Long, s.LONG,
 		s.StringValue, s.CreditCardType, s.CreditCardNumber,
-		s.Email, s.IPV4, s.IPV6, s.Bool, s.SString, s.SInt,
+		s.Email, s.IPV4, s.IPV6, s.UserAgent, s.Bool, s.SString, s.SInt,
 		s.SInt8, s.SInt16, s.SInt32, s.SInt64, s.SFloat32, s.SFloat64,
 		s.SBool, s.Struct, s.Time, s.Stime, s.Currency, s.Amount,
 		s.AmountWithCurrency, s.ID, s.HyphenatedID, s.BloodType, s.MapStringString,
