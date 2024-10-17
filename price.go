@@ -5,7 +5,7 @@ import (
 	"math"
 	"reflect"
 
-	"github.com/go-faker/faker/v4/pkg/options"
+	"github.com/cj/faker/pkg/options"
 )
 
 // Currency Codes | Source: https://en.wikipedia.org/wiki/ISO_4217

@@ -5,7 +5,7 @@ import (
 	"io"
 	"reflect"
 
-	"github.com/go-faker/faker/v4/pkg/options"
+	"github.com/cj/faker/pkg/options"
 )
 
 // GetIdentifier returns a new Identifier

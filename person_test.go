@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/go-faker/faker/v4/pkg/slice"
+	"github.com/cj/faker/pkg/slice"
 )
 
 func TestTitleMale(t *testing.T) {

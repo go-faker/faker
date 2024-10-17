@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"reflect"
 
-	"github.com/go-faker/faker/v4/pkg/options"
+	"github.com/cj/faker/pkg/options"
 )
 
 var (

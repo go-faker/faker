@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/go-faker/faker/v4/pkg/options"
-	"github.com/go-faker/faker/v4/pkg/slice"
+	"github.com/cj/faker/pkg/options"
+	"github.com/cj/faker/pkg/slice"
 )
 
 func TestWord(t *testing.T) {

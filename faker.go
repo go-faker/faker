@@ -14,10 +14,10 @@ import (
 	"sync"
 	"time"
 
-	fakerErrors "github.com/go-faker/faker/v4/pkg/errors"
-	"github.com/go-faker/faker/v4/pkg/interfaces"
-	"github.com/go-faker/faker/v4/pkg/options"
-	"github.com/go-faker/faker/v4/pkg/slice"
+	fakerErrors "github.com/cj/faker/pkg/errors"
+	"github.com/cj/faker/pkg/interfaces"
+	"github.com/cj/faker/pkg/options"
+	"github.com/cj/faker/pkg/slice"
 )
 
 var (
@@ -457,7 +457,8 @@ func getFakedValue(item interface{}, opts *options.Options) (reflect.Value, erro
 					if err != nil {
 						return reflect.Value{}, fmt.Errorf("custom provider for field %s: %w", t.Field(i).Name, err)
 					}
-					v.Field(i).Set(reflect.ValueOf(val))
+					// convert support for enum types
+					v.Field(i).Set(reflect.ValueOf(val).Convert(v.Field(i).Type()))
 					continue
 				}
 

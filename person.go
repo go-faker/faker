@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/go-faker/faker/v4/pkg/options"
+	"github.com/cj/faker/pkg/options"
 )
 
 // Dowser provides interfaces to generate random logical Names with their initials

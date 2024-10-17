@@ -8,9 +8,9 @@ Faker will generate you a fake data based on your Struct.
 
 [![Go Test](https://github.com/go-faker/faker/actions/workflows/go.yml/badge.svg)](https://github.com/go-faker/faker/actions/workflows/go.yml)
 [![codecov](https://codecov.io/gh/go-faker/faker/branch/main/graph/badge.svg)](https://codecov.io/gh/go-faker/faker)
-[![Go Report Card](https://goreportcard.com/badge/github.com/go-faker/faker/v4)](https://goreportcard.com/report/github.com/go-faker/faker/v4)
+[![Go Report Card](https://goreportcard.com/badge/github.com/cj/faker)](https://goreportcard.com/report/github.com/cj/faker)
 [![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/go-faker/faker/blob/master/LICENSE)
-[![Go.Dev](https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white)](https://pkg.go.dev/github.com/go-faker/faker/v4?tab=doc)
+[![Go.Dev](https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white)](https://pkg.go.dev/github.com/cj/faker?tab=doc)
 
 ## Index
 
@@ -23,14 +23,14 @@ Faker will generate you a fake data based on your Struct.
 ## Support
 
 You can file an [Issue](https://github.com/go-faker/faker/issues/new).
-See documentation in [Go.Dev](https://pkg.go.dev/github.com/go-faker/faker/v4?tab=doc)
+See documentation in [Go.Dev](https://pkg.go.dev/github.com/cj/faker?tab=doc)
 
 ## Getting Started
 
 #### Download
 
 ```shell
-go get -u github.com/go-faker/faker/v4
+go get -u github.com/cj/faker
 ```
 
 # Example

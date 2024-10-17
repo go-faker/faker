@@ -3,8 +3,8 @@ package faker_test
 import (
 	"fmt"
 
-	"github.com/go-faker/faker/v4"
-	"github.com/go-faker/faker/v4/pkg/options"
+	"github.com/cj/faker"
+	"github.com/cj/faker/pkg/options"
 )
 
 // SomeStructWithTags ...

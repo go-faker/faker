@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/go-faker/faker/v4/pkg/slice"
+	"github.com/cj/faker/pkg/slice"
 )
 
 func TestCurrency(t *testing.T) {

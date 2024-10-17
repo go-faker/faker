@@ -3,7 +3,7 @@ package faker_test
 import (
 	"fmt"
 
-	"github.com/go-faker/faker/v4"
+	"github.com/cj/faker"
 )
 
 // SomeStructWithUnique ...
