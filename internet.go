@@ -68,10 +68,19 @@ func (internet Internet) email() (string, error) {
 	if emailName, err = randomString(7, internet.fakerOption); err != nil {
 		return "", err
 	}
-	if emailDomain, err = randomString(7, internet.fakerOption); err != nil {
-		return "", err
+
+	if internet.fakerOption.CustomDomain != nil {
+		emailDomain = *internet.fakerOption.CustomDomain
+	} else {
+		randDomain, err := randomString(7, internet.fakerOption)
+		if err != nil {
+			return "", err
+		}
+
+		emailDomain = randDomain + "." + randomElementFromSliceString(tld)
 	}
-	return (emailName + "@" + emailDomain + "." + randomElementFromSliceString(tld)), nil
+
+	return (emailName + "@" + emailDomain), nil
 }
 
 // Email generates random email id
