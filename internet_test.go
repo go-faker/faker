@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/go-faker/faker/v4/pkg/options"
 	"github.com/go-faker/faker/v4/pkg/slice"
 )
 
@@ -108,6 +109,14 @@ func TestFakeEmail(t *testing.T) {
 		t.Error("Expected  email")
 	}
 }
+
+func TestFakeEmailWithCustomDomain(t *testing.T) {
+	email := Email(options.WithCustomDomain("yopmail.com"))
+	if !strings.Contains(email, "@yopmail.com") {
+		t.Error("Expected  email")
+	}
+}
+
 func TestFakeMacAddress(t *testing.T) {
 	mc := MacAddress()
 	if strings.Count(mc, ":") != 5 {

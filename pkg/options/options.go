@@ -61,6 +61,8 @@ type Options struct {
 	RandomFloatBoundary *interfaces.RandomFloatBoundary
 	// SetTagName sets the tag name that should be used
 	TagName string
+	// CustomDomain is used for specifying a custom domain when generating email
+	CustomDomain *string
 }
 
 // MaxDepthOption used for configuring the max depth of nested struct for faker
@@ -124,6 +126,13 @@ func WithFieldsToIgnore(fieldNames ...string) OptionFunc {
 		for _, f := range fieldNames {
 			oo.IgnoreFields[f] = struct{}{}
 		}
+	}
+}
+
+// WithCustomDomain is used to set a custom domain for generating fake email
+func WithCustomDomain(domain string) OptionFunc {
+	return func(oo *Options) {
+		oo.CustomDomain = &domain
 	}
 }
 
