@@ -617,6 +617,7 @@ type DateTimer interface {
 	Century(v reflect.Value) (interface{}, error)
 	TimeZone(v reflect.Value) (interface{}, error)
 	TimePeriod(v reflect.Value) (interface{}, error)
+	UTCTimestampValue(v reflect.Value) (interface{}, error)
 }
 
 // GetDateTimer returns a new DateTimer interface of DateTime
@@ -827,4 +828,25 @@ func Timeperiod(opts ...options.OptionFunc) string {
 // RandomUnixTime is a helper function returning random Unix time
 func RandomUnixTime() int64 {
 	return rand.Int63n(time.Now().Unix())
+}
+
+// UTCTimestamp generates a random time.Time in UTC
+func (d DateTime) UTCTimestamp() time.Time {
+	return time.Unix(RandomUnixTime(), 0).UTC()
+}
+
+// UTCTimestamp handles time.Time fields for utc_timestamp tag
+func (d DateTime) UTCTimestampValue(v reflect.Value) (interface{}, error) {
+	if v.Type() != reflect.TypeOf(time.Time{}) {
+		return nil, fmt.Errorf("UTCTimestamp only supports time.Time, got %v", v.Type())
+	}
+	return d.UTCTimestamp(), nil
+}
+
+// UTCTimestamp generates a random UTC timestamp for a struct field
+func UTCTimestamp(opts ...options.OptionFunc) time.Time {
+	return singleFakeData(UTCTimestampTag, func() interface{} {
+		datetime := DateTime{}
+		return datetime.UTCTimestamp()
+	}, opts...).(time.Time)
 }

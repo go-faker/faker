@@ -15,17 +15,18 @@ func Example_singleFakeData() {
 	fmt.Println(faker.GetRealAddress()) // => {2755 Country Drive Fremont CA 94536 {37.557882 -121.986823}}
 
 	// Datetime
-	fmt.Println(faker.UnixTime())   // => 1197930901
-	fmt.Println(faker.Date())       // => 1982-02-27
-	fmt.Println(faker.TimeString()) // => 03:10:25
-	fmt.Println(faker.MonthName())  // => February
-	fmt.Println(faker.YearString()) // => 1994
-	fmt.Println(faker.DayOfWeek())  // => Sunday
-	fmt.Println(faker.DayOfMonth()) // => 20
-	fmt.Println(faker.Timestamp())  // => 1973-06-21 14:50:46
-	fmt.Println(faker.Century())    // => IV
-	fmt.Println(faker.Timezone())   // => Asia/Jakarta
-	fmt.Println(faker.Timeperiod()) // => PM
+	fmt.Println(faker.UnixTime())     // => 1197930901
+	fmt.Println(faker.Date())         // => 1982-02-27
+	fmt.Println(faker.TimeString())   // => 03:10:25
+	fmt.Println(faker.MonthName())    // => February
+	fmt.Println(faker.YearString())   // => 1994
+	fmt.Println(faker.DayOfWeek())    // => Sunday
+	fmt.Println(faker.DayOfMonth())   // => 20
+	fmt.Println(faker.Timestamp())    // => 1973-06-21 14:50:46
+	fmt.Println(faker.Century())      // => IV
+	fmt.Println(faker.Timezone())     // => Asia/Jakarta
+	fmt.Println(faker.Timeperiod())   // => PM
+	fmt.Println(faker.UTCTimestamp()) // => 2025-04-15 12:34:56 +0000 UTC.
 
 	// Internet
 	fmt.Println(faker.Email())      // => mJBJtbv@OSAaT.com

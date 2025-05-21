@@ -254,3 +254,27 @@ func TestFakeTimePeriod(t *testing.T) {
 		t.Error("function TimePeriod need return valid period")
 	}
 }
+
+func TestUTCTimestampValueValid(t *testing.T) {
+	d := GetDateTimer()
+	var ref = struct {
+		some time.Time
+	}{
+		some: time.Time{},
+	}
+	val, err := d.UTCTimestampValue(reflect.ValueOf(&ref.some).Elem())
+	if err != nil {
+		t.Error("function UTCTimestampValue need return valid value")
+	}
+
+	result, ok := val.(time.Time)
+	if !ok {
+		t.Error("UTCTimestampValue should return time.Time")
+	}
+	if result.Location() != time.UTC {
+		t.Error("UTCTimestampValue should return time in UTC")
+	}
+	if time.Now().Unix() <= result.Unix() {
+		t.Error("UTCTimestamp should return time <= now")
+	}
+}

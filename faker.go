@@ -74,6 +74,7 @@ const (
 	CENTURY                   = "century"
 	TIMEZONE                  = "timezone"
 	TimePeriodTag             = "time_period"
+	UTCTimestampTag           = "utc_timestamp"
 	WORD                      = "word"
 	SENTENCE                  = "sentence"
 	PARAGRAPH                 = "paragraph"
@@ -104,7 +105,7 @@ var PriorityTags = []string{ID, HyphenatedID, EmailTag, MacAddressTag, DomainNam
 	IPV6Tag, PASSWORD, JWT, CountryInfoTag, LATITUDE, LONGITUDE, CreditCardNumber, CreditCardType, PhoneNumber, TollFreeNumber,
 	E164PhoneNumberTag, TitleMaleTag, TitleFemaleTag, FirstNameTag, FirstNameMaleTag, FirstNameFemaleTag, LastNameTag,
 	NAME, ChineseFirstNameTag, ChineseLastNameTag, ChineseNameTag, GENDER, UnixTimeTag, DATE, TIME, MonthNameTag,
-	YEAR, DayOfWeekTag, DayOfMonthTag, TIMESTAMP, CENTURY, TIMEZONE, TimePeriodTag, WORD, SENTENCE, PARAGRAPH,
+	YEAR, DayOfWeekTag, DayOfMonthTag, TIMESTAMP, CENTURY, TIMEZONE, TimePeriodTag, UTCTimestampTag, WORD, SENTENCE, PARAGRAPH,
 	CurrencyTag, AmountTag, AmountWithCurrencyTag, SKIP, Length, SliceLength, Language, BoundaryStart, BoundaryEnd, ONEOF, BloodTypeTag,
 	UserAgentTag,
 }
@@ -177,6 +178,7 @@ func initDefaultTag() {
 	defaultTag.Store(CENTURY, CENTURY)
 	defaultTag.Store(TIMEZONE, TIMEZONE)
 	defaultTag.Store(TimePeriodTag, TimePeriodFormat)
+	defaultTag.Store(UTCTimestampTag, UTCTimestampTag)
 	defaultTag.Store(WORD, WORD)
 	defaultTag.Store(SENTENCE, SENTENCE)
 	defaultTag.Store(PARAGRAPH, PARAGRAPH)
@@ -226,6 +228,7 @@ func initMapperTagDefault() {
 	mapperTag.Store(CENTURY, GetDateTimer().Century)
 	mapperTag.Store(TIMEZONE, GetDateTimer().TimeZone)
 	mapperTag.Store(TimePeriodTag, GetDateTimer().TimePeriod)
+	mapperTag.Store(UTCTimestampTag, GetDateTimer().UTCTimestampValue)
 	mapperTag.Store(WORD, GetLorem().Word)
 	mapperTag.Store(SENTENCE, GetLorem().Sentence)
 	mapperTag.Store(PARAGRAPH, GetLorem().Paragraph)
