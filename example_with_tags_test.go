@@ -2,6 +2,7 @@ package faker_test
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/go-faker/faker/v4"
 )
@@ -66,6 +67,7 @@ type SomeStructWithTags struct {
 	NumU8              uint8             `faker:"oneof: 15, 16"`
 	NumU               uint              `faker:"oneof: 17, 18"`
 	PtrNumU            *uint             `faker:"oneof: 19, 20"`
+	UTCTime            time.Time         `faker:"utc_timestamp"`
 }
 
 func Example_withTags() {
