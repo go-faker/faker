@@ -18,7 +18,7 @@ func TestUserAgent(t *testing.T) {
 	}
 
 	ua, err := GetUserAgent().UserAgent(reflect.Value{})
-
+	t.Logf("agent: %s", ua.(string))
 	if err != nil {
 		t.Error("Expected not error, got err", err)
 	}
