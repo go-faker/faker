@@ -7,15 +7,23 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  run-tests:
+    strategy:
+      matrix:
+        version: [
+          "~1.21",
+          "~1.22",
+          "~1.23",
+          "~1.24"
+        ]
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Set up Go
-      uses: actions/setup-go@v3
+      uses: actions/setup-go@v5
       with:
-        go-version: 1.18
+        go-version: ${{ matrix.version }}
 
     - name: Linter
       run: make lint-prepare && make lint
@@ -23,15 +31,21 @@ jobs:
     - name: Test
       run: make test
 
-  test:
+  generate-report:
+    needs:
+      - run-tests
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version: [
+          "~1.24"
+        ]
     steps:
-      - uses: actions/checkout@v3
-
+      - uses: actions/checkout@v4
       - name: Set up Go
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v5
         with:
-          go-version: 1.18
+          go-version: ${{ matrix.version }}
 
       - name: Test
         run: go test -v ./... -gcflags=all=-l -coverprofile=coverage.txt -covermode=atomic -race

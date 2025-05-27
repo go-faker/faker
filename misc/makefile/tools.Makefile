@@ -15,7 +15,7 @@ bin:
 GOTESTSUM := $(shell command -v gotestsum || echo "bin/gotestsum")
 gotestsum: bin/gotestsum ## Installs gotestsum (testing go code)
 
-bin/gotestsum: VERSION := 1.8.1
+bin/gotestsum: VERSION := 1.12.2
 bin/gotestsum: GITHUB  := gotestyourself/gotestsum
 bin/gotestsum: ARCHIVE := gotestsum_$(VERSION)_$(OSTYPE)_amd64.tar.gz
 bin/gotestsum: bin
@@ -28,7 +28,7 @@ bin/gotestsum: bin
 TPARSE := $(shell command -v tparse || echo "bin/tparse")
 tparse: bin/tparse ## Installs tparse (testing go code)
 
-bin/tparse: VERSION := 0.11.1
+bin/tparse: VERSION := 0.17.0
 bin/tparse: GITHUB  := mfridman/tparse
 bin/tparse: ARCHIVE := tparse_$(OSTYPE)_x86_64
 bin/tparse: bin
@@ -42,7 +42,7 @@ bin/tparse: bin
 GOLANGCI := $(shell command -v golangci-lint || echo "bin/golangci-lint")
 golangci-lint: bin/golangci-lint ## Installs golangci-lint (linter)
 
-bin/golangci-lint: VERSION := 1.49.0
+bin/golangci-lint: VERSION := 2.1.6
 bin/golangci-lint: GITHUB  := golangci/golangci-lint
 bin/golangci-lint: ARCHIVE := golangci-lint-$(VERSION)-$(OSTYPE)-amd64.tar.gz
 bin/golangci-lint: bin
