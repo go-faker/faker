@@ -1,60 +1,60 @@
-linters-settings:
-  govet:
-    check-shadowing: true
-    settings:
-      printf:
-        funcs:
-          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Infof
-          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Warnf
-          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Errorf
-          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Fatalf
-  golint:
-    min-confidence: 0.8
-  gocyclo:
-    min-complexity: 70
-  maligned:
-    suggest-new: true
-  dupl:
-    threshold: 100
-  goconst:
-    min-len: 2
-    min-occurrences: 5
-  misspell:
-    locale: US
-
+version: "2"
 linters:
-  # please, do not use `enable-all`: it's deprecated and will be removed soon.
-  # inverted configuration with `enable-all` and `disable` is not scalable during updates of golangci-lint
-  disable-all: true
+  default: none
   enable:
-    # - deadcode
     - errcheck
     - goconst
     - gocyclo
-    - revive
-    - gosimple
     - govet
     - ineffassign
     - misspell
+    - revive
     - staticcheck
-    # - structcheck
-    - typecheck
     - unconvert
     - unparam
     - unused
-    # - varcheck
-
-issues:
-  exclude-rules:
-    - path: person.go # since in the person.go there are so many names that may detected as misspell
-      linters:
-        - misspell
-    - path: datetime.go
-      linters:
-        - misspell
-    - path: .
-      text: "parameter 'v' seems to be unused"
-run:
-  timeout: 5m
-  go: "1.17"
-  skip-dirs: []
+  settings:
+    dupl:
+      threshold: 100
+    goconst:
+      min-len: 2
+      min-occurrences: 5
+    gocyclo:
+      min-complexity: 70
+    govet:
+      settings:
+        printf:
+          funcs:
+            - (github.com/golangci/golangci-lint/pkg/logutils.Log).Infof
+            - (github.com/golangci/golangci-lint/pkg/logutils.Log).Warnf
+            - (github.com/golangci/golangci-lint/pkg/logutils.Log).Errorf
+            - (github.com/golangci/golangci-lint/pkg/logutils.Log).Fatalf
+    misspell:
+      locale: US
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    rules:
+      - linters:
+          - misspell
+        path: person.go
+      - linters:
+          - misspell
+        path: datetime.go
+      - path: .
+        text: parameter 'v' seems to be unused
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+formatters:
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$

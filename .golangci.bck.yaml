@@ -1,0 +1,53 @@
+linters-settings:
+  govet:
+    settings:
+      printf:
+        funcs:
+          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Infof
+          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Warnf
+          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Errorf
+          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Fatalf
+  gocyclo:
+    min-complexity: 70
+  dupl:
+    threshold: 100
+  goconst:
+    min-len: 2
+    min-occurrences: 5
+  misspell:
+    locale: US
+
+linters:
+  # please, do not use `enable-all`: it's deprecated and will be removed soon.
+  # inverted configuration with `enable-all` and `disable` is not scalable during updates of golangci-lint
+  disable-all: true
+  enable:
+    # - deadcode
+    - errcheck
+    - goconst
+    - gocyclo
+    - revive
+    - gosimple
+    - govet
+    - ineffassign
+    - misspell
+    - staticcheck
+    # - structcheck
+    - typecheck
+    - unconvert
+    - unparam
+    - unused
+    # - varcheck
+
+issues:
+  exclude-rules:
+    - path: person.go # since in the person.go there are so many names that may detected as misspell
+      linters:
+        - misspell
+    - path: datetime.go
+      linters:
+        - misspell
+    - path: .
+      text: "parameter 'v' seems to be unused"
+run:
+  timeout: 5m
