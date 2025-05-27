@@ -973,7 +973,7 @@ func userDefinedNumber(v reflect.Value, tag string) error {
 // extractSliceLengthFromTag checks if the sliceLength tag 'slice_len' is set, if so, returns its value, else return a random length
 func extractSliceLengthFromTag(tag string, opt options.Options) (int, error) {
 	if strings.Contains(tag, SliceLength) {
-		lenParts := strings.SplitN(findSliceLenReg.FindString(tag), Equals, -1)
+		lenParts := strings.Split(findSliceLenReg.FindString(tag), Equals)
 		if len(lenParts) != 2 {
 			return 0, fmt.Errorf(fakerErrors.ErrWrongFormattedTag, tag)
 		}
@@ -999,7 +999,7 @@ func extractStringFromTag(tag string, opts options.Options) (interface{}, error)
 		return nil, fmt.Errorf(fakerErrors.ErrTagNotSupported, tag)
 	}
 	if strings.Contains(tag, Length) {
-		lenParts := strings.SplitN(findLenReg.FindString(tag), Equals, -1)
+		lenParts := strings.Split(findLenReg.FindString(tag), Equals)
 		if len(lenParts) != 2 {
 			return nil, fmt.Errorf(fakerErrors.ErrWrongFormattedTag, tag)
 		}
@@ -1029,7 +1029,7 @@ func extractStringFromTag(tag string, opts options.Options) (interface{}, error)
 
 func extractLangFromTag(tag string) (*interfaces.LangRuneBoundary, error) {
 	text := findLangReg.FindString(tag)
-	texts := strings.SplitN(text, Equals, -1)
+	texts := strings.Split(text, Equals)
 	if len(texts) != 2 {
 		return nil, fmt.Errorf(fakerErrors.ErrWrongFormattedTag, text)
 	}
@@ -1172,7 +1172,7 @@ func extractNumberFromTag(tag string, t reflect.Type) (interface{}, error) {
 	}
 
 	// handling boundary tags
-	valuesStr := strings.SplitN(tag, comma, -1)
+	valuesStr := strings.Split(tag, comma)
 	if len(valuesStr) != 2 {
 		return nil, fmt.Errorf(fakerErrors.ErrWrongFormattedTag, tag)
 	}
@@ -1210,7 +1210,7 @@ func extractNumberFromTag(tag string, t reflect.Type) (interface{}, error) {
 
 func extractIntFromText(text string) (int, error) {
 	text = strings.TrimSpace(text)
-	texts := strings.SplitN(text, Equals, -1)
+	texts := strings.Split(text, Equals)
 	if len(texts) != 2 {
 		return 0, fmt.Errorf(fakerErrors.ErrWrongFormattedTag, text)
 	}
@@ -1219,7 +1219,7 @@ func extractIntFromText(text string) (int, error) {
 
 func extractFloatFromText(text string) (float64, error) {
 	text = strings.TrimSpace(text)
-	texts := strings.SplitN(text, Equals, -1)
+	texts := strings.Split(text, Equals)
 	if len(texts) != 2 {
 		return 0, fmt.Errorf(fakerErrors.ErrWrongFormattedTag, text)
 	}
@@ -1259,7 +1259,7 @@ func randomString(n int, fakerOpt options.Options) (string, error) {
 		randRune := rune(rand.Intn(int(fakerOpt.StringLanguage.End-fakerOpt.StringLanguage.Start)) + int(fakerOpt.StringLanguage.Start))
 		for slice.ContainsRune(set, randRune) {
 			if counter++; counter >= fakerOpt.MaxGenerateStringRetries {
-				return "", errors.New("Max number of string generation retries exhausted")
+				return "", errors.New("max number of string generation retries exhausted")
 			}
 			randRune = rune(rand.Intn(int(fakerOpt.StringLanguage.End-fakerOpt.StringLanguage.Start)) + int(fakerOpt.StringLanguage.Start))
 			_, ok := set[randRune]

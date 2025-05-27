@@ -439,7 +439,7 @@ func TestUnsuportedMapStringInterface(t *testing.T) {
 
 func TestSetDataIfArgumentNotPtr(t *testing.T) {
 	temp := struct{}{}
-	if "Not a pointer value" != FakeData(temp).Error() {
+	if FakeData(temp).Error() != "Not a pointer value" {
 		t.Error("Expected in arguments not ptr")
 	}
 }

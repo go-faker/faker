@@ -184,6 +184,8 @@ func (ua UserAgent) geckoVersion() string {
 }
 
 // intBetween generates a random integer in the range [min, max].
+//
+//nolint:revive
 func (ua UserAgent) intBetween(min, max int) int {
 	boundary := interfaces.RandomIntegerBoundary{Start: min, End: max + 1}
 	return randomIntegerWithBoundary(boundary)
