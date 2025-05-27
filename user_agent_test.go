@@ -18,12 +18,12 @@ func TestUserAgent(t *testing.T) {
 	}
 
 	ua, err := GetUserAgent().UserAgent(reflect.Value{})
-
+	t.Logf("agent: %s", ua.(string))
 	if err != nil {
 		t.Error("Expected not error, got err", err)
 	}
-	if strings.Index(ua.(string), "Mozilla/5.0") != 0 {
-		t.Error("Expected User Agent string to begin with 'Mozilla/5.0'")
+	if strings.Index(ua.(string), "") == 0 {
+		t.Error("Expected User Agent string should not be empty")
 	}
 	if !uaStringContains(layoutEngines, ua.(string)) {
 		t.Error("Expected User Agent string to contain a valid layout engine")

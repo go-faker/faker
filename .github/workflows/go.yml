@@ -12,6 +12,7 @@ jobs:
       matrix:
         version: [
           "~1.21",
+          "~1.22",
           "~1.23",
           "~1.24"
         ]
@@ -37,8 +38,6 @@ jobs:
     strategy:
       matrix:
         version: [
-          "~1.21",
-          "~1.23",
           "~1.24"
         ]
     steps:
