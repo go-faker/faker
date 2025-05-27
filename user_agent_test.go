@@ -22,7 +22,7 @@ func TestUserAgent(t *testing.T) {
 	if err != nil {
 		t.Error("Expected not error, got err", err)
 	}
-	if strings.Index(ua.(string), "") == 0 {
+	if ua == nil {
 		t.Error("Expected User Agent string should not be empty")
 	}
 	if !uaStringContains(layoutEngines, ua.(string)) {
