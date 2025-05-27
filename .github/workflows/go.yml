@@ -10,7 +10,12 @@ jobs:
   build:
     strategy:
       matrix:
-        version: [1.18, 1.19, 1.20, 1.21, 1.22, 1.23, 1.24]
+        version: [
+          "~1.21",
+          "~1.22",
+          "~1.23",
+          "˜1.24"
+        ]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -30,7 +35,12 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        version: [1.18, 1.19, 1.20, 1.21, 1.22, 1.23, 1.24]
+        version: [
+          "~1.21",
+          "~1.22",
+          "~1.23",
+          "˜1.24"
+        ]
     steps:
       - uses: actions/checkout@v4
       - name: Set up Go
