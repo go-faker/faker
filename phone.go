@@ -20,6 +20,7 @@ type Phoner interface {
 	PhoneNumber(v reflect.Value) (interface{}, error)
 	TollFreePhoneNumber(v reflect.Value) (interface{}, error)
 	E164PhoneNumber(v reflect.Value) (interface{}, error)
+	NANPPhoneNumber(v reflect.Value) (interface{}, error)
 }
 
 // Phone struct
@@ -72,6 +73,19 @@ func TollFreePhoneNumber(opts ...options.OptionFunc) string {
 	}, opts...).(string)
 }
 
+func (p Phone) nanpPhoneNumber() string {
+	// Generate area code: NXX where N=2-9, X=0-9
+	areaCode := (rand.Intn(8)+2)*100 + rand.Intn(100)
+	
+	// Generate central office code: NXX where N=2-9, X=0-9  
+	centralCode := (rand.Intn(8)+2)*100 + rand.Intn(100)
+	
+	// Generate line number: XXXX where X=0-9
+	lineNumber := rand.Intn(10000)
+	
+	return fmt.Sprintf("%03d-%03d-%04d", areaCode, centralCode, lineNumber)
+}
+
 func (p Phone) e164PhoneNumber() string {
 	out := ""
 	boxDigitsStart := []string{"7", "8"}
@@ -83,9 +97,22 @@ func (p Phone) e164PhoneNumber() string {
 	return fmt.Sprintf("+%s%s", boxDigitsStart[rand.Intn(len(boxDigitsStart))], strings.Join(slice.IntToString(ints), ""))
 }
 
+// NANPPhoneNumber generates NANP-compatible phone numbers of type: "234-567-8901"
+func (p Phone) NANPPhoneNumber(v reflect.Value) (interface{}, error) {
+	return p.nanpPhoneNumber(), nil
+}
+
 // E164PhoneNumber generates phone numbers of type: "+27113456789"
 func (p Phone) E164PhoneNumber(v reflect.Value) (interface{}, error) {
 	return p.e164PhoneNumber(), nil
+}
+
+// NANPPhoneNumber get fake NANP-compatible phone number
+func NANPPhoneNumber(opts ...options.OptionFunc) string {
+	return singleFakeData(NANPPhoneNumberTag, func() interface{} {
+		p := Phone{}
+		return p.nanpPhoneNumber()
+	}, opts...).(string)
 }
 
 // E164PhoneNumber get fake E164PhoneNumber

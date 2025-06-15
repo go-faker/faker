@@ -52,6 +52,7 @@ const (
 	PhoneNumber               = "phone_number"
 	TollFreeNumber            = "toll_free_number"
 	E164PhoneNumberTag        = "e_164_phone_number"
+	NANPPhoneNumberTag        = "nanp_phone_number"
 	TitleMaleTag              = "title_male"
 	TitleFemaleTag            = "title_female"
 	FirstNameTag              = "first_name"
@@ -102,7 +103,7 @@ const (
 // PriorityTags define the priority order of the tag
 var PriorityTags = []string{ID, HyphenatedID, EmailTag, MacAddressTag, DomainNameTag, UserNameTag, URLTag, IPV4Tag,
 	IPV6Tag, PASSWORD, JWT, CountryInfoTag, LATITUDE, LONGITUDE, CreditCardNumber, CreditCardType, PhoneNumber, TollFreeNumber,
-	E164PhoneNumberTag, TitleMaleTag, TitleFemaleTag, FirstNameTag, FirstNameMaleTag, FirstNameFemaleTag, LastNameTag,
+	E164PhoneNumberTag, NANPPhoneNumberTag, TitleMaleTag, TitleFemaleTag, FirstNameTag, FirstNameMaleTag, FirstNameFemaleTag, LastNameTag,
 	NAME, ChineseFirstNameTag, ChineseLastNameTag, ChineseNameTag, GENDER, UnixTimeTag, DATE, TIME, MonthNameTag,
 	YEAR, DayOfWeekTag, DayOfMonthTag, TIMESTAMP, CENTURY, TIMEZONE, TimePeriodTag, WORD, SENTENCE, PARAGRAPH,
 	CurrencyTag, AmountTag, AmountWithCurrencyTag, SKIP, Length, SliceLength, Language, BoundaryStart, BoundaryEnd, ONEOF, BloodTypeTag,
@@ -155,6 +156,7 @@ func initDefaultTag() {
 	defaultTag.Store(PhoneNumber, PhoneNumber)
 	defaultTag.Store(TollFreeNumber, TollFreeNumber)
 	defaultTag.Store(E164PhoneNumberTag, E164PhoneNumberTag)
+	defaultTag.Store(NANPPhoneNumberTag, NANPPhoneNumberTag)
 	defaultTag.Store(TitleMaleTag, TitleMaleTag)
 	defaultTag.Store(TitleFemaleTag, TitleFemaleTag)
 	defaultTag.Store(FirstNameTag, FirstNameTag)
@@ -204,6 +206,7 @@ func initMapperTagDefault() {
 	mapperTag.Store(PhoneNumber, GetPhoner().PhoneNumber)
 	mapperTag.Store(TollFreeNumber, GetPhoner().TollFreePhoneNumber)
 	mapperTag.Store(E164PhoneNumberTag, GetPhoner().E164PhoneNumber)
+	mapperTag.Store(NANPPhoneNumberTag, GetPhoner().NANPPhoneNumber)
 	mapperTag.Store(TitleMaleTag, GetPerson().TitleMale)
 	mapperTag.Store(TitleFemaleTag, GetPerson().TitleFeMale)
 	mapperTag.Store(FirstNameTag, GetPerson().FirstName)
