@@ -1166,7 +1166,7 @@ func extractNumberFromTag(tag string, t reflect.Type) (interface{}, error) {
 			}
 		default:
 			{
-				return nil, fmt.Errorf(fakerErrors.ErrUnsupportedNumberType)
+				return nil, fmt.Errorf("%s", fakerErrors.ErrUnsupportedNumberType)
 			}
 		}
 	}
@@ -1230,17 +1230,17 @@ func fetchOneOfArgsFromTag(tag string) ([]string, error) {
 	items := strings.Split(tag, colon)
 	argsList := items[1:]
 	if len(argsList) != 1 {
-		return nil, fmt.Errorf(fakerErrors.ErrUnsupportedTagArguments)
+		return nil, fmt.Errorf("%s", fakerErrors.ErrUnsupportedTagArguments)
 	}
 	if strings.Contains(argsList[0], ",,") {
-		return nil, fmt.Errorf(fakerErrors.ErrDuplicateSeparator)
+		return nil, fmt.Errorf("%s", fakerErrors.ErrDuplicateSeparator)
 	}
 	if argsList[0] == "" {
-		return nil, fmt.Errorf(fakerErrors.ErrNotEnoughTagArguments)
+		return nil, fmt.Errorf("%s", fakerErrors.ErrNotEnoughTagArguments)
 	}
 	args := strings.Split(argsList[0], comma)
 	if len(args) < 1 {
-		return nil, fmt.Errorf(fakerErrors.ErrNotEnoughTagArguments)
+		return nil, fmt.Errorf("%s", fakerErrors.ErrNotEnoughTagArguments)
 	}
 	return args, nil
 }
