@@ -3,8 +3,10 @@ package options
 import (
 	"errors"
 	"fmt"
+	"math/rand"
 	"reflect"
 	"sync/atomic"
+	"time"
 	"unsafe"
 
 	fakerErrors "github.com/go-faker/faker/v4/pkg/errors"
@@ -35,8 +37,12 @@ type Options struct {
 	IgnoreFields map[string]struct{}
 	// FieldProviders used for storing the custom provider function
 	FieldProviders map[string]interfaces.CustomProviderFunction
-	// MaxDepthOption used for configuring the max depth of nested struct for faker
+	// StructTypeProviders used for storing the struct type of custom provider function
+	StructTypeProviders map[reflect.Type]interfaces.CustomProviderFunction
+	// MaxDepthOption used for configuring the max depth of nested identical structs for faker
 	MaxDepthOption *MaxDepthOption
+	// MaxFieldDepthOption used for configuring the max depth of fields that are filled for a struct
+	MaxFieldDepthOption int
 	// IgnoreInterface used for ignoring any interface field
 	IgnoreInterface bool
 	// StringLanguage used for setting the language for any string in faker
@@ -97,10 +103,15 @@ func BuildOptions(optFuncs []OptionFunc) *Options {
 // DefaultOption build the default option
 func DefaultOption() *Options {
 	ops := &Options{}
+	ops.StructTypeProviders = make(map[reflect.Type]interfaces.CustomProviderFunction)
+	ops.StructTypeProviders[reflect.TypeOf(time.Time{})] = func() (interface{}, error) {
+		return time.Now().Add(time.Duration(rand.Int63())), nil
+	}
 	ops.MaxDepthOption = &MaxDepthOption{
 		typeSeen:          make(map[reflect.Type]int, 1),
 		recursionMaxDepth: 1,
 	}
+	ops.MaxFieldDepthOption = -1
 	ops.GenerateUniqueValues = generateUniqueValues.Load().(bool)
 	ops.IgnoreInterface = ignoreInterface.Load().(bool)
 	ops.StringLanguage = (*interfaces.LangRuneBoundary)(atomic.LoadPointer(&lang))
@@ -156,6 +167,23 @@ func WithRecursionMaxDepth(depth uint) OptionFunc {
 			}
 		}
 		oo.MaxDepthOption.recursionMaxDepth = int(depth)
+	}
+}
+
+// WithMaxFieldDepthOption used for configuring the max depth of fields that are filled for a struct
+func WithMaxFieldDepthOption(depth int) OptionFunc {
+	return func(oo *Options) {
+		oo.MaxFieldDepthOption = depth
+	}
+}
+
+// WithStructTypeProviders used for configuring the custom provider of struct type
+func WithStructTypeProviders(t interface{}, provider interfaces.CustomProviderFunction) OptionFunc {
+	if reflect.TypeOf(t).Kind() != reflect.Struct {
+		panic(fakerErrors.ErrOnlyStructTypeSupported)
+	}
+	return func(oo *Options) {
+		oo.StructTypeProviders[reflect.TypeOf(t)] = provider
 	}
 }
 

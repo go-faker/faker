@@ -32,4 +32,5 @@ var (
 	ErrDuplicateSeparator      = "Duplicate separator for tag arguments."
 	ErrNotEnoughTagArguments   = "Not enough arguments for tag."
 	ErrUnsupportedNumberType   = "Unsupported Number type."
+	ErrOnlyStructTypeSupported = "only struct type supported."
 )

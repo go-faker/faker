@@ -2,6 +2,7 @@ package faker
 
 import (
 	"fmt"
+	"math/big"
 	mathrand "math/rand"
 	"reflect"
 	"strings"
@@ -2646,5 +2647,131 @@ func TestRandomString(t *testing.T) {
 
 	if len(set) != count {
 		t.Error("random string in set is duplicate")
+	}
+}
+
+type RedefinedTime time.Time
+
+func TestStructTypeProvidersToBeFilled(t *testing.T) {
+	var s struct {
+		T  *RedefinedTime
+		RP *big.Rat
+		R  big.Rat
+	}
+	if err := FakeData(&s, options.WithStructTypeProviders(RedefinedTime{}, func() (interface{}, error) {
+		return time.Now(), nil
+	}), options.WithStructTypeProviders(big.Rat{}, func() (interface{}, error) {
+		return *big.NewRat(rand.Int63(), rand.Int63n(1<<63-1)+1), nil
+	})); err != nil {
+		t.Errorf("%+v", err)
+		t.FailNow()
+	}
+	if s.T == nil || time.Time(*s.T).Equal(time.Time{}) {
+		t.Errorf("expect RedefinedTime to be filled")
+		t.FailNow()
+	}
+	if s.RP == nil || s.RP.RatString() == "0" {
+		t.Errorf("expect *big.Rat field to be filled")
+		t.FailNow()
+	}
+	if s.R.RatString() == "0" {
+		t.Errorf("expect big.Rat field to be filled")
+		t.FailNow()
+	}
+}
+
+type FirstStruct struct {
+	OneName *string
+	Second  []SecondStruct
+}
+type SecondStruct struct {
+	SecondName *string
+	Third      map[string]ThirdStruct
+}
+type ThirdStruct struct {
+	ThirdName *string
+	Forth     *ForthStruct
+}
+type ForthStruct struct {
+	ForthName *string
+	First     *FirstStruct
+}
+
+func TestMaxFieldDepthFirstLevel(t *testing.T) {
+	var fs FirstStruct
+	err := FakeData(&fs, options.WithRandomMapAndSliceMinSize(2), options.WithRandomMapAndSliceMaxSize(3),
+		options.WithMaxFieldDepthOption(1))
+	if err != nil {
+		t.Errorf("expect error: but got %v", err)
+		t.FailNow()
+	}
+	if fs.OneName == nil || len(fs.Second) == 0 {
+		t.Errorf("expect first fields to be filled")
+		t.FailNow()
+	}
+	var second = fs.Second[0]
+	if second.SecondName != nil || len(second.Third) > 0 {
+		t.Errorf("expect second fields not to be filled")
+		t.FailNow()
+	}
+}
+
+func TestMaxFieldDepthSecondLevel(t *testing.T) {
+	var fs FirstStruct
+	err := FakeData(&fs, options.WithRandomMapAndSliceMinSize(2), options.WithRandomMapAndSliceMaxSize(3),
+		options.WithMaxFieldDepthOption(2))
+	if err != nil {
+		t.Errorf("expect error: but got %v", err)
+		t.FailNow()
+	}
+	if fs.OneName == nil || len(fs.Second) == 0 {
+		t.Errorf("expect first fields to be filled")
+		t.FailNow()
+	}
+	var second = fs.Second[0]
+	if second.SecondName == nil || len(second.Third) == 0 {
+		t.Errorf("expect second fields to be filled")
+		t.FailNow()
+	}
+	var third ThirdStruct
+	for _, v := range second.Third {
+		third = v
+		break
+	}
+	if third.ThirdName != nil || third.Forth != nil {
+		t.Errorf("expect third fields not to be filled")
+		t.FailNow()
+	}
+}
+func TestMaxFieldDepthThirdLevel(t *testing.T) {
+	var fs FirstStruct
+	err := FakeData(&fs, options.WithRandomMapAndSliceMinSize(2), options.WithRandomMapAndSliceMaxSize(3),
+		options.WithMaxFieldDepthOption(3))
+	if err != nil {
+		t.Errorf("expect error: but got %v", err)
+		t.FailNow()
+	}
+	if fs.OneName == nil || len(fs.Second) == 0 {
+		t.Errorf("expect first fields field to be filled")
+		t.FailNow()
+	}
+	var second = fs.Second[0]
+	if second.SecondName == nil || len(second.Third) == 0 {
+		t.Errorf("expect second fields to be filled")
+		t.FailNow()
+	}
+	var third ThirdStruct
+	for _, v := range second.Third {
+		third = v
+		break
+	}
+	if third.ThirdName == nil || third.Forth == nil {
+		t.Errorf("expect third fields to be filled")
+		t.FailNow()
+	}
+	var forth = third.Forth
+	if forth.ForthName != nil || forth.First != nil {
+		t.Errorf("expect forth fields not to be filled")
+		t.FailNow()
 	}
 }
