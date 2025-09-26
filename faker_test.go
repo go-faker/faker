@@ -2661,7 +2661,7 @@ func TestStructTypeProvidersToBeFilled(t *testing.T) {
 	if err := FakeData(&s, options.WithStructTypeProviders(RedefinedTime{}, func() (interface{}, error) {
 		return time.Now(), nil
 	}), options.WithStructTypeProviders(big.Rat{}, func() (interface{}, error) {
-		return *big.NewRat(rand.Int63(), rand.Int63()), nil
+		return *big.NewRat(rand.Int63(), rand.Int63n(1<<63-1)+1), nil
 	})); err != nil {
 		t.Errorf("%+v", err)
 		t.FailNow()
