@@ -46,6 +46,8 @@ go get -u github.com/go-faker/faker/v4
 - Custom Struct's tag (define your own faker data): [example_custom_faker_test.go](/example_custom_faker_test.go)
 - Without struct's tag: [example_without_tag_test.go](/example_without_tag_test.go)
 - Single Fake Data Function: [example_single_fake_data_test.go](/example_single_fake_data_test.go)
+- custom struct type providers : [example_custom_struct_test.go](/example_custom_struct_test.go)
+- large nested (& circular) struct with map & slice size limits & depth limitations : [example_with_limits_test.go](/example_with_limits_test.go)
 
 ## DEMO
 
@@ -76,15 +78,19 @@ BenchmarkFakerDataNOTTagged-4             500000              3049 ns/op        
 ---
 
 The Struct Field must be PUBLIC.<br>
-Support Only For :
+Support For :
 
+- pointer fields of any type
 - `int`, `int8`, `int16`, `int32` & `int64`
-- `[]int`, `[]int8`, `[]int16`, `[]int32` & `[]int64`
-- `bool` & `[]bool`
-- `string` & `[]string`
-- `float32`, `float64`, `[]float32` &`[]float64`
-- `time.Time` & `[]time.Time`
-- Nested Struct Field
+- `uint`, `uint8`, `uint16`, `uint32` & `uint64`
+- `bool`
+- `string`
+- `float32`, `float64`
+- struct & nested struct
+- `slice` / `array` of any type
+- `map` of any key/value of supported types
+- custom struct types by registering a `StructTypeProvider` & implementing your own generator function. This can be used for redefined time, big.Rat, etc. See [example](faker_test.go#L2655) for usage.
+  - default `time.Time` provider is registered, you can override it by registering your own provider.
 
 ## Limitation
 
@@ -95,7 +101,6 @@ Unfortunately this library has some limitation
 - It does not support private fields. Make sure your structs fields you intend to generate fake data for are public, it would otherwise trigger a panic. You can however omit fields using a tag skip `faker:"-"` on your private fields.
 - It does not support the `interface{}` data type. How could we generate anything without knowing its data type?
 - It does not support the `map[interface{}]interface{}`, `map[any_type]interface{}` & `map[interface{}]any_type` data types. Once again, we cannot generate values for an unknown data type.
-- Custom types are not fully supported. However some custom types are already supported: we are still investigating how to do this the correct way. For now, if you use `faker`, it's safer not to use any custom types in order to avoid panics.
 - Some extra custom types can be supported IF AND ONLY IF extended with [AddProvider()](https://github.com/go-faker/faker/blob/7473ac7d8d0440d24addac302c73e13c08895764/faker.go#L303) please see [example](example_custom_faker_test.go#L46)
 - The `oneof` tag currently only supports `string`, the `int` types, and both `float32` & `float64`. Further support is coming soon (i.e. hex numbers, etc). See [example](example_with_tags_test.go#L53) for usage.
 
