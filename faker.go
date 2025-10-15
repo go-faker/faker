@@ -91,6 +91,7 @@ const (
 	comma                      = ","
 	colon                      = ":"
 	ONEOF                      = "oneof"
+	TemplateTag                = "template"
 	RussianFirstNameMaleTag    = "russian_first_name_male"
 	RussianMiddleNameMaleTag   = "russian_middle_name_male"
 	RussianLastNameMaleTag     = "russian_last_name_male"
@@ -586,6 +587,8 @@ func getFakedValueForStruct(item any, t reflect.Type, opts *options.Options) (re
 	}
 	originalDataVal := reflect.ValueOf(item)
 	v := reflect.New(t).Elem()
+	// collect template fields to evaluate in a second pass
+	var templateFields []int
 	if opts.MaxFieldDepthOption == 0 {
 		return v, nil
 	} else if opts.MaxFieldDepthOption > 0 {
@@ -617,6 +620,11 @@ func getFakedValueForStruct(item any, t reflect.Type, opts *options.Options) (re
 		}
 
 		tags := decodeTags(t, i, opts.TagName)
+		// if this field is a template tag, defer evaluation until other fields are generated
+		if strings.HasPrefix(strings.ToLower(tags.fieldType), TemplateTag) {
+			templateFields = append(templateFields, i)
+			continue
+		}
 		switch {
 		case tags.keepOriginal:
 			zero, err := isZero(reflect.ValueOf(item).Field(i))
@@ -674,6 +682,12 @@ func getFakedValueForStruct(item any, t reflect.Type, opts *options.Options) (re
 			retry = 0
 		}
 
+	}
+	// second pass: evaluate template fields using values generated above
+	if len(templateFields) > 0 {
+		if err := EvaluateTemplateFields(t, v, templateFields, opts.TagName); err != nil {
+			return reflect.Value{}, err
+		}
 	}
 	return v, nil
 }
