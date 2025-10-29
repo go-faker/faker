@@ -15,7 +15,7 @@ func EvaluateTemplateFields(t reflect.Type, v reflect.Value, templateFields []in
 		return nil
 	}
 	// build context map from current struct values
-	ctx := make(map[string]interface{})
+	ctx := make(map[string]any)
 	for i := 0; i < v.NumField(); i++ {
 		ctx[t.Field(i).Name] = v.Field(i).Interface()
 	}
@@ -41,7 +41,7 @@ func EvaluateTemplateFields(t reflect.Type, v reflect.Value, templateFields []in
 
 // evaluateTemplateForField evaluates a template string tpl with context ctx (map of field name -> value)
 // and returns the resulting string. Only a small set of helper funcs are exposed.
-func evaluateTemplateForField(tpl string, ctx map[string]interface{}) (string, error) {
+func evaluateTemplateForField(tpl string, ctx map[string]any) (string, error) {
 	t, err := template.New("faker_template").Funcs(helpers()).Parse(tpl)
 	if err != nil {
 		return "", err
