@@ -14,7 +14,7 @@ type Address struct {
 type UserProfile struct {
 	FirstName string `faker:"first_name"`
 	LastName  string `faker:"last_name"`
-	Domain    string `faker:"domain_name"`
+	Domain    string `faker:"domain"`
 
 	// Template uses helper 'lower' and 'slug' (slug is lower+dash)
 	Username string `faker:"template:{{.FirstName | lower}}.{{.LastName | lower}}"`
