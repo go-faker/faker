@@ -15,6 +15,8 @@ func EvaluateTemplateFields(t reflect.Type, v reflect.Value, templateFields []in
 		return nil
 	}
 	// build context map from current struct values
+	// this will be updated as we compute each template field so
+	// later templates can reference earlier template results.
 	ctx := make(map[string]any)
 	for i := 0; i < v.NumField(); i++ {
 		ctx[t.Field(i).Name] = v.Field(i).Interface()
@@ -34,7 +36,10 @@ func EvaluateTemplateFields(t reflect.Type, v reflect.Value, templateFields []in
 		if v.Field(idx).Kind() != reflect.String {
 			return fmt.Errorf("template tag only supported on string fields: %s", t.Field(idx).Name)
 		}
+
 		v.Field(idx).SetString(res)
+		//  update context so subsequent template fields can reference it
+		ctx[t.Field(idx).Name] = res
 	}
 	return nil
 }

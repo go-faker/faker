@@ -6,20 +6,15 @@ import (
 	"github.com/go-faker/faker/v4"
 )
 
-type Address struct {
-	Street string `faker:"street_name"`
-	City   string `faker:"city"`
-}
-
 type UserProfile struct {
-	FirstName string `faker:"first_name"`
-	LastName  string `faker:"last_name"`
-	Domain    string `faker:"domain"`
+	FirstName  string `faker:"first_name"`
+	LastName   string `faker:"last_name"`
+	DomainName string `faker:"domain_name"`
 
 	// Template uses helper 'lower' and 'slug' (slug is lower+dash)
 	Username string `faker:"template:{{.FirstName | lower}}.{{.LastName | lower}}"`
 	Slug     string `faker:"template:{{.FirstName | slug}}-{{.LastName | slug}}"`
-	Email    string `faker:"template:{{.Username}}@{{.Domain}}"`
+	Email    string `faker:"template:{{.Username}}@{{.DomainName}}"`
 	// (only template-related fields kept for this example)
 }
 
