@@ -471,7 +471,7 @@ func getFakedValue(item interface{}, opts *options.Options) (reflect.Value, erro
 
 			tags := decodeTags(t, i, opts.TagName)
 			// if this field is a template tag, defer evaluation until other fields are generated
-			if strings.HasPrefix(strings.ToLower(tags.fieldType), TemplateTag) {
+			if strings.HasPrefix(strings.ToLower(tags.fieldType), TemplateTag+":") {
 				templateFields = append(templateFields, i)
 				continue
 			}

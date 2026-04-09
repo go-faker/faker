@@ -4,9 +4,14 @@ import (
 	"bytes"
 	"fmt"
 	"reflect"
+	"regexp"
 	"strings"
 	"text/template"
 )
+
+// fieldRefRegexp matches references to struct fields in a template body, e.g. `.FieldName`.
+// Field names in Go are exported (start with uppercase), so we only consider those.
+var fieldRefRegexp = regexp.MustCompile(`\.([A-Z]\w*)`)
 
 // EvaluateTemplateFields evaluates the template-tagged fields for a struct value `v` of type `t`.
 // tagName is the field tag name to use (typically opts.TagName).
@@ -22,12 +27,31 @@ func EvaluateTemplateFields(t reflect.Type, v reflect.Value, templateFields []in
 		ctx[t.Field(i).Name] = v.Field(i).Interface()
 	}
 
+	// Build the set of all template-field names and track which have been
+	// evaluated so we can detect forward / circular references.
+	templateFieldNames := make(map[string]bool, len(templateFields))
+	for _, idx := range templateFields {
+		templateFieldNames[t.Field(idx).Name] = true
+	}
+	evaluated := make(map[string]bool, len(templateFields))
+
 	for _, idx := range templateFields {
 		tags := decodeTags(t, idx, tagName)
 		tpl := tags.fieldType
 		lower := strings.ToLower(tpl)
 		if strings.HasPrefix(lower, TemplateTag+":") {
 			tpl = tpl[len(TemplateTag)+1:]
+		}
+		fieldName := t.Field(idx).Name
+		// Reject forward / circular references to other template fields.
+		for _, m := range fieldRefRegexp.FindAllStringSubmatch(tpl, -1) {
+			ref := m[1]
+			if ref == fieldName {
+				return fmt.Errorf("template field %q references itself", fieldName)
+			}
+			if templateFieldNames[ref] && !evaluated[ref] {
+				return fmt.Errorf("template field %q references template field %q which has not been evaluated yet (forward or circular reference)", fieldName, ref)
+			}
 		}
 		res, err := evaluateTemplateForField(tpl, ctx)
 		if err != nil {
@@ -39,7 +63,8 @@ func EvaluateTemplateFields(t reflect.Type, v reflect.Value, templateFields []in
 
 		v.Field(idx).SetString(res)
 		//  update context so subsequent template fields can reference it
-		ctx[t.Field(idx).Name] = res
+		ctx[fieldName] = res
+		evaluated[fieldName] = true
 	}
 	return nil
 }
@@ -47,7 +72,7 @@ func EvaluateTemplateFields(t reflect.Type, v reflect.Value, templateFields []in
 // evaluateTemplateForField evaluates a template string tpl with context ctx (map of field name -> value)
 // and returns the resulting string. Only a small set of helper funcs are exposed.
 func evaluateTemplateForField(tpl string, ctx map[string]any) (string, error) {
-	t, err := template.New("faker_template").Funcs(helpers()).Parse(tpl)
+	t, err := template.New("faker_template").Option("missingkey=error").Funcs(helpers()).Parse(tpl)
 	if err != nil {
 		return "", err
 	}
