@@ -279,7 +279,7 @@ func WithRandomFloatBoundaries(boundary interfaces.RandomFloatBoundary) OptionFu
 }
 
 // WithOnlyZeroFields makes faker skip any field that already holds a non-zero value.
-// Useful for partially pre-initialising a struct before passing it to faker.
+// Useful for partially pre-initializing a struct before passing it to faker.
 func WithOnlyZeroFields() OptionFunc {
 	return func(oo *Options) {
 		oo.OnlyZeroFields = true
