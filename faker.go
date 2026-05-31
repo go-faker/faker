@@ -457,6 +457,11 @@ func getFakedValue(item interface{}, opts *options.Options) (reflect.Value, erro
 				continue
 			}
 
+			if opts.OnlyZeroFields && !originalDataVal.Field(i).IsZero() {
+				v.Field(i).Set(originalDataVal.Field(i))
+				continue
+			}
+
 			if p, ok := opts.FieldProviders[t.Field(i).Name]; ok {
 				val, err := p()
 				if err != nil {

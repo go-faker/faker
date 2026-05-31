@@ -69,6 +69,8 @@ type Options struct {
 	TagName string
 	// CustomDomain is used for specifying a custom domain when generating email
 	CustomDomain *string
+	// OnlyZeroFields skips any field that already holds a non-zero value, leaving it unchanged
+	OnlyZeroFields bool
 }
 
 // MaxDepthOption used for configuring the max depth of nested struct for faker
@@ -273,6 +275,14 @@ func WithRandomFloatBoundaries(boundary interfaces.RandomFloatBoundary) OptionFu
 	}
 	return func(oo *Options) {
 		oo.RandomFloatBoundary = &boundary
+	}
+}
+
+// WithOnlyZeroFields makes faker skip any field that already holds a non-zero value.
+// Useful for partially pre-initialising a struct before passing it to faker.
+func WithOnlyZeroFields() OptionFunc {
+	return func(oo *Options) {
+		oo.OnlyZeroFields = true
 	}
 }
 
