@@ -232,3 +232,58 @@ func TestRussianLastNameFemale(t *testing.T) {
 		t.Error("Expected value from variable russianLastNamesFemale in function RussianLastNameFemale")
 	}
 }
+
+func TestRussianMiddleNameMale(t *testing.T) {
+	middleName, err := GetPerson().RussianMiddleNameMale(reflect.Value{})
+	if err != nil {
+		t.Error("Expected not error, got err", err)
+	}
+	if !slice.Contains(russianMiddleNamesMale, middleName.(string)) {
+		t.Error("Expected value from variable russianMiddleNamesMale in function RussianMiddleNameMale")
+	}
+}
+
+func TestRussianMiddleNameFemale(t *testing.T) {
+	middleName, err := GetPerson().RussianMiddleNameFemale(reflect.Value{})
+	if err != nil {
+		t.Error("Expected not error, got err", err)
+	}
+	if !slice.Contains(russianMiddleNamesFemale, middleName.(string)) {
+		t.Error("Expected value from variable russianMiddleNamesFemale in function RussianMiddleNameFemale")
+	}
+}
+
+// TestCheckRussianRunesInRussianNames - homoglyph test
+func TestCheckRussianRunesInRussianNames(t *testing.T) {
+	var russianNames []string
+	russianNames = append(russianNames, russianFirstNamesMale...)
+	russianNames = append(russianNames, russianFirstNamesFemale...)
+	russianNames = append(russianNames, russianLastNamesMale...)
+	russianNames = append(russianNames, russianLastNamesFemale...)
+	russianNames = append(russianNames, russianMiddleNamesMale...)
+	russianNames = append(russianNames, russianMiddleNamesFemale...)
+
+	for _, v := range russianNames {
+		for _, r := range v {
+			if (r < 'а' || r > 'я') && (r < 'А' || r > 'Я') && r != 'ё' && r != 'Ё' {
+				t.Errorf("Expected russian rune, but got [%c] in word [%s]", r, v)
+			}
+		}
+	}
+
+}
+
+// TestCheckLatinRunesInLatinNames - homoglyph test
+func TestCheckLatinRunesInLatinNames(t *testing.T) {
+	var latinNames []string
+	latinNames = append(latinNames, firstNames...)
+	latinNames = append(latinNames, lastNames...)
+
+	for _, v := range latinNames {
+		for _, r := range v {
+			if (r < 'a' || r > 'z') && (r < 'A' || r > 'Z') && r != '\'' && r != '-' {
+				t.Errorf("Expected latin rune, but got [%c] in word [%s]", r, v)
+			}
+		}
+	}
+}
