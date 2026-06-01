@@ -435,102 +435,7 @@ func getFakedValue(item interface{}, opts *options.Options) (reflect.Value, erro
 		}
 		return v, nil
 	case reflect.Struct:
-		if structTypeProvider, f := opts.StructTypeProviders[t]; f {
-			ft, err := structTypeProvider()
-			return reflect.ValueOf(ft), err
-		}
-		originalDataVal := reflect.ValueOf(item)
-		v := reflect.New(t).Elem()
-		if opts.MaxFieldDepthOption == 0 {
-			return v, nil
-		} else if opts.MaxFieldDepthOption > 0 {
-			opts.MaxFieldDepthOption--
-			defer func() { opts.MaxFieldDepthOption++ }()
-		}
-		retry := 0 // error if cannot generate unique value after maxRetry tries
-		for i := 0; i < v.NumField(); i++ {
-			if !v.Field(i).CanSet() {
-				continue // to avoid panic to set on unexported field in struct
-			}
-
-			if _, ok := opts.IgnoreFields[t.Field(i).Name]; ok {
-				continue
-			}
-
-			if opts.OnlyZeroFields && !originalDataVal.Field(i).IsZero() {
-				v.Field(i).Set(originalDataVal.Field(i))
-				continue
-			}
-
-			if p, ok := opts.FieldProviders[t.Field(i).Name]; ok {
-				val, err := p()
-				if err != nil {
-					return reflect.Value{}, fmt.Errorf("custom provider for field %s: %w", t.Field(i).Name, err)
-				}
-				v.Field(i).Set(reflect.ValueOf(val))
-				continue
-			}
-
-			tags := decodeTags(t, i, opts.TagName)
-			switch {
-			case tags.keepOriginal:
-				zero, err := isZero(reflect.ValueOf(item).Field(i))
-				if err != nil {
-					return reflect.Value{}, err
-				}
-				if zero {
-					err := setDataWithTag(v.Field(i).Addr(), tags.fieldType, *opts)
-					if err != nil {
-						return reflect.Value{}, err
-					}
-					continue
-				}
-				v.Field(i).Set(reflect.ValueOf(item).Field(i))
-			case tags.fieldType == "":
-				val, err := getFakedValue(v.Field(i).Interface(), opts)
-				if err != nil {
-					return reflect.Value{}, err
-				}
-
-				if v.Field(i).CanSet() {
-					if !reflect.ValueOf(val).IsZero() && val.CanConvert(v.Field(i).Type()) {
-						val = val.Convert(v.Field(i).Type())
-						v.Field(i).Set(val)
-					}
-
-				}
-			case tags.fieldType == SKIP:
-				data := originalDataVal.Field(i).Interface()
-				if v.CanSet() && data != nil {
-					v.Field(i).Set(reflect.ValueOf(data))
-				}
-			default:
-				err := setDataWithTag(v.Field(i).Addr(), tags.fieldType, *opts)
-				if err != nil {
-					return reflect.Value{}, err
-				}
-			}
-
-			if tags.unique {
-				if retry >= maxRetry {
-					return reflect.Value{}, fmt.Errorf(fakerErrors.ErrUniqueFailure, reflect.TypeOf(item).Field(i).Name)
-				}
-				value := v.Field(i).Interface()
-				uniqueVal, _ := uniqueValues.Load(tags.fieldType)
-				uniqueValArr, _ := uniqueVal.([]interface{})
-				if slice.ContainsValue(uniqueValArr, value) { // Retry if unique value already found
-					i--
-					retry++
-					continue
-				}
-				retry = 0
-				uniqueValues.Store(tags.fieldType, append(uniqueValArr, value))
-			} else {
-				retry = 0
-			}
-
-		}
-		return v, nil
+		return getFakedValueForStruct(item, t, opts)
 
 	case reflect.String:
 		res, err := randomString(opts.RandomStringLength, *opts)
@@ -642,6 +547,105 @@ func getFakedValue(item interface{}, opts *options.Options) (reflect.Value, erro
 		return reflect.Value{}, err
 	}
 
+}
+
+func getFakedValueForStruct(item interface{}, t reflect.Type, opts *options.Options) (reflect.Value, error) {
+	if structTypeProvider, f := opts.StructTypeProviders[t]; f {
+		ft, err := structTypeProvider()
+		return reflect.ValueOf(ft), err
+	}
+	originalDataVal := reflect.ValueOf(item)
+	v := reflect.New(t).Elem()
+	if opts.MaxFieldDepthOption == 0 {
+		return v, nil
+	} else if opts.MaxFieldDepthOption > 0 {
+		opts.MaxFieldDepthOption--
+		defer func() { opts.MaxFieldDepthOption++ }()
+	}
+	retry := 0 // error if cannot generate unique value after maxRetry tries
+	for i := 0; i < v.NumField(); i++ {
+		if !v.Field(i).CanSet() {
+			continue // to avoid panic to set on unexported field in struct
+		}
+
+		if _, ok := opts.IgnoreFields[t.Field(i).Name]; ok {
+			continue
+		}
+
+		if opts.OnlyZeroFields && !originalDataVal.Field(i).IsZero() {
+			v.Field(i).Set(originalDataVal.Field(i))
+			continue
+		}
+
+		if p, ok := opts.FieldProviders[t.Field(i).Name]; ok {
+			val, err := p()
+			if err != nil {
+				return reflect.Value{}, fmt.Errorf("custom provider for field %s: %w", t.Field(i).Name, err)
+			}
+			v.Field(i).Set(reflect.ValueOf(val))
+			continue
+		}
+
+		tags := decodeTags(t, i, opts.TagName)
+		switch {
+		case tags.keepOriginal:
+			zero, err := isZero(reflect.ValueOf(item).Field(i))
+			if err != nil {
+				return reflect.Value{}, err
+			}
+			if zero {
+				err := setDataWithTag(v.Field(i).Addr(), tags.fieldType, *opts)
+				if err != nil {
+					return reflect.Value{}, err
+				}
+				continue
+			}
+			v.Field(i).Set(reflect.ValueOf(item).Field(i))
+		case tags.fieldType == "":
+			val, err := getFakedValue(v.Field(i).Interface(), opts)
+			if err != nil {
+				return reflect.Value{}, err
+			}
+
+			if v.Field(i).CanSet() {
+				if !reflect.ValueOf(val).IsZero() && val.CanConvert(v.Field(i).Type()) {
+					val = val.Convert(v.Field(i).Type())
+					v.Field(i).Set(val)
+				}
+
+			}
+		case tags.fieldType == SKIP:
+			data := originalDataVal.Field(i).Interface()
+			if v.CanSet() && data != nil {
+				v.Field(i).Set(reflect.ValueOf(data))
+			}
+		default:
+			err := setDataWithTag(v.Field(i).Addr(), tags.fieldType, *opts)
+			if err != nil {
+				return reflect.Value{}, err
+			}
+		}
+
+		if tags.unique {
+			if retry >= maxRetry {
+				return reflect.Value{}, fmt.Errorf(fakerErrors.ErrUniqueFailure, reflect.TypeOf(item).Field(i).Name)
+			}
+			value := v.Field(i).Interface()
+			uniqueVal, _ := uniqueValues.Load(tags.fieldType)
+			uniqueValArr, _ := uniqueVal.([]interface{})
+			if slice.ContainsValue(uniqueValArr, value) { // Retry if unique value already found
+				i--
+				retry++
+				continue
+			}
+			retry = 0
+			uniqueValues.Store(tags.fieldType, append(uniqueValArr, value))
+		} else {
+			retry = 0
+		}
+
+	}
+	return v, nil
 }
 
 func isZero(field reflect.Value) (bool, error) {
