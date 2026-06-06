@@ -2775,3 +2775,70 @@ func TestMaxFieldDepthThirdLevel(t *testing.T) {
 		t.FailNow()
 	}
 }
+
+func TestWithOnlyZeroFields(t *testing.T) {
+	type SomeStruct struct {
+		Name        string
+		Description string
+		Number      int
+	}
+
+	preset := SomeStruct{Description: "derp derp"}
+	if err := FakeData(&preset,
+		options.WithOnlyZeroFields(),
+		options.WithRandomIntegerBoundaries(interfaces.RandomIntegerBoundary{Start: 1, End: 100}),
+	); err != nil {
+		t.Fatal(err)
+	}
+
+	if preset.Description != "derp derp" {
+		t.Errorf("pre-set Description should not be overwritten, got %q", preset.Description)
+	}
+	if preset.Name == "" {
+		t.Errorf("zero Name should have been populated")
+	}
+	if preset.Number == 0 {
+		t.Errorf("zero Number should have been populated")
+	}
+}
+
+func TestWithOnlyZeroFieldsAllPreset(t *testing.T) {
+	type SomeStruct struct {
+		Name   string
+		Number int
+	}
+
+	preset := SomeStruct{Name: "Alice", Number: 42}
+	if err := FakeData(&preset, options.WithOnlyZeroFields()); err != nil {
+		t.Fatal(err)
+	}
+
+	if preset.Name != "Alice" {
+		t.Errorf("pre-set Name should not be overwritten, got %q", preset.Name)
+	}
+	if preset.Number != 42 {
+		t.Errorf("pre-set Number should not be overwritten, got %d", preset.Number)
+	}
+}
+
+func TestWithOnlyZeroFieldsNestedStruct(t *testing.T) {
+	type Inner struct {
+		Value string
+	}
+	type Outer struct {
+		Name  string
+		Inner Inner
+	}
+
+	preset := Outer{Name: "fixed"}
+	if err := FakeData(&preset, options.WithOnlyZeroFields()); err != nil {
+		t.Fatal(err)
+	}
+
+	if preset.Name != "fixed" {
+		t.Errorf("pre-set Name should not be overwritten, got %q", preset.Name)
+	}
+	if preset.Inner.Value == "" {
+		t.Errorf("zero Inner.Value should have been populated")
+	}
+}
