@@ -203,6 +203,16 @@ func TestRussianFirstNameMale(t *testing.T) {
 	}
 }
 
+func TestRussianMiddleNameMale(t *testing.T) {
+	middleName, err := GetPerson().RussianMiddleNameMale(reflect.Value{})
+	if err != nil {
+		t.Error("Expected not error, got err", err)
+	}
+	if !slice.Contains(russianMiddleNamesMale, middleName.(string)) {
+		t.Error("Expected value from variable russianMiddleNamesMale in function RussianMiddleNameMale")
+	}
+}
+
 func TestRussianLastNameMale(t *testing.T) {
 	lastName, err := GetPerson().RussianLastNameMale(reflect.Value{})
 	if err != nil {
@@ -223,26 +233,6 @@ func TestRussianFirstNameFemale(t *testing.T) {
 	}
 }
 
-func TestRussianLastNameFemale(t *testing.T) {
-	lastName, err := GetPerson().RussianLastNameFemale(reflect.Value{})
-	if err != nil {
-		t.Error("Expected  not error, got err", err)
-	}
-	if !slice.Contains(russianLastNamesFemale, lastName.(string)) {
-		t.Error("Expected value from variable russianLastNamesFemale in function RussianLastNameFemale")
-	}
-}
-
-func TestRussianMiddleNameMale(t *testing.T) {
-	middleName, err := GetPerson().RussianMiddleNameMale(reflect.Value{})
-	if err != nil {
-		t.Error("Expected not error, got err", err)
-	}
-	if !slice.Contains(russianMiddleNamesMale, middleName.(string)) {
-		t.Error("Expected value from variable russianMiddleNamesMale in function RussianMiddleNameMale")
-	}
-}
-
 func TestRussianMiddleNameFemale(t *testing.T) {
 	middleName, err := GetPerson().RussianMiddleNameFemale(reflect.Value{})
 	if err != nil {
@@ -250,6 +240,16 @@ func TestRussianMiddleNameFemale(t *testing.T) {
 	}
 	if !slice.Contains(russianMiddleNamesFemale, middleName.(string)) {
 		t.Error("Expected value from variable russianMiddleNamesFemale in function RussianMiddleNameFemale")
+	}
+}
+
+func TestRussianLastNameFemale(t *testing.T) {
+	lastName, err := GetPerson().RussianLastNameFemale(reflect.Value{})
+	if err != nil {
+		t.Error("Expected  not error, got err", err)
+	}
+	if !slice.Contains(russianLastNamesFemale, lastName.(string)) {
+		t.Error("Expected value from variable russianLastNamesFemale in function RussianLastNameFemale")
 	}
 }
 

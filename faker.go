@@ -188,11 +188,11 @@ func initDefaultTag() {
 	defaultTag.Store(ID, ID)
 	defaultTag.Store(HyphenatedID, HyphenatedID)
 	defaultTag.Store(RussianFirstNameMaleTag, RussianFirstNameMaleTag)
+	defaultTag.Store(RussianMiddleNameMaleTag, RussianMiddleNameMaleTag)
 	defaultTag.Store(RussianLastNameMaleTag, RussianLastNameMaleTag)
 	defaultTag.Store(RussianFirstNameFemaleTag, RussianFirstNameFemaleTag)
-	defaultTag.Store(RussianLastNameFemaleTag, RussianLastNameFemaleTag)
 	defaultTag.Store(RussianMiddleNameFemaleTag, RussianMiddleNameFemaleTag)
-	defaultTag.Store(RussianMiddleNameMaleTag, RussianMiddleNameMaleTag)
+	defaultTag.Store(RussianLastNameFemaleTag, RussianLastNameFemaleTag)
 	defaultTag.Store(UserAgentTag, UserAgentTag)
 }
 
@@ -239,11 +239,11 @@ func initMapperTagDefault() {
 	mapperTag.Store(ID, GetIdentifier().Digit)
 	mapperTag.Store(HyphenatedID, GetIdentifier().Hyphenated)
 	mapperTag.Store(RussianFirstNameMaleTag, GetPerson().RussianFirstNameMale)
-	mapperTag.Store(RussianFirstNameFemaleTag, GetPerson().RussianFirstNameFemale)
-	mapperTag.Store(RussianLastNameMaleTag, GetPerson().RussianLastNameMale)
-	mapperTag.Store(RussianLastNameFemaleTag, GetPerson().RussianLastNameFemale)
 	mapperTag.Store(RussianMiddleNameMaleTag, GetPerson().RussianMiddleNameMale)
+	mapperTag.Store(RussianLastNameMaleTag, GetPerson().RussianLastNameMale)
+	mapperTag.Store(RussianFirstNameFemaleTag, GetPerson().RussianFirstNameFemale)
 	mapperTag.Store(RussianMiddleNameFemaleTag, GetPerson().RussianMiddleNameFemale)
+	mapperTag.Store(RussianLastNameFemaleTag, GetPerson().RussianLastNameFemale)
 	mapperTag.Store(BloodTypeTag, GetBlood().BloodGroup)
 	mapperTag.Store(UserAgentTag, GetUserAgent().UserAgent)
 }
