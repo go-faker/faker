@@ -27,76 +27,78 @@ var (
 
 // Supported tags
 const (
-	letterIdxBits             = 6                    // 6 bits to represent a letter index
-	letterIdxMask             = 1<<letterIdxBits - 1 // All 1-bits, as many as letterIdxBits
-	letterIdxMax              = 63 / letterIdxBits   // # of letter indices fitting in 63 bits
-	maxRetry                  = 10000                // max number of retry for unique values
-	keep                      = "keep"
-	unique                    = "unique"
-	ID                        = "uuid_digit"
-	HyphenatedID              = "uuid_hyphenated"
-	EmailTag                  = "email"
-	MacAddressTag             = "mac_address"
-	DomainNameTag             = "domain_name"
-	UserNameTag               = "username"
-	URLTag                    = "url"
-	IPV4Tag                   = "ipv4"
-	IPV6Tag                   = "ipv6"
-	PASSWORD                  = "password"
-	JWT                       = "jwt"
-	LATITUDE                  = "lat"
-	LONGITUDE                 = "long"
-	RealAddressTag            = "real_address"
-	CreditCardNumber          = "cc_number"
-	CreditCardType            = "cc_type"
-	PhoneNumber               = "phone_number"
-	TollFreeNumber            = "toll_free_number"
-	E164PhoneNumberTag        = "e_164_phone_number"
-	TitleMaleTag              = "title_male"
-	TitleFemaleTag            = "title_female"
-	FirstNameTag              = "first_name"
-	FirstNameMaleTag          = "first_name_male"
-	FirstNameFemaleTag        = "first_name_female"
-	LastNameTag               = "last_name"
-	NAME                      = "name"
-	ChineseFirstNameTag       = "chinese_first_name"
-	ChineseLastNameTag        = "chinese_last_name"
-	ChineseNameTag            = "chinese_name"
-	GENDER                    = "gender"
-	UnixTimeTag               = "unix_time"
-	DATE                      = "date"
-	TIME                      = "time"
-	MonthNameTag              = "month_name"
-	YEAR                      = "year"
-	DayOfWeekTag              = "day_of_week"
-	DayOfMonthTag             = "day_of_month"
-	TIMESTAMP                 = "timestamp"
-	CENTURY                   = "century"
-	TIMEZONE                  = "timezone"
-	TimePeriodTag             = "time_period"
-	WORD                      = "word"
-	SENTENCE                  = "sentence"
-	PARAGRAPH                 = "paragraph"
-	CurrencyTag               = "currency"
-	AmountTag                 = "amount"
-	AmountWithCurrencyTag     = "amount_with_currency"
-	SKIP                      = "-"
-	Length                    = "len"
-	SliceLength               = "slice_len"
-	Language                  = "lang"
-	BoundaryStart             = "boundary_start"
-	BoundaryEnd               = "boundary_end"
-	Equals                    = "="
-	comma                     = ","
-	colon                     = ":"
-	ONEOF                     = "oneof"
-	RussianFirstNameMaleTag   = "russian_first_name_male"
-	RussianLastNameMaleTag    = "russian_last_name_male"
-	RussianFirstNameFemaleTag = "russian_first_name_female"
-	RussianLastNameFemaleTag  = "russian_last_name_female"
-	BloodTypeTag              = "blood_type"
-	CountryInfoTag            = "country_info"
-	UserAgentTag              = "user_agent"
+	letterIdxBits              = 6                    // 6 bits to represent a letter index
+	letterIdxMask              = 1<<letterIdxBits - 1 // All 1-bits, as many as letterIdxBits
+	letterIdxMax               = 63 / letterIdxBits   // # of letter indices fitting in 63 bits
+	maxRetry                   = 10000                // max number of retry for unique values
+	keep                       = "keep"
+	unique                     = "unique"
+	ID                         = "uuid_digit"
+	HyphenatedID               = "uuid_hyphenated"
+	EmailTag                   = "email"
+	MacAddressTag              = "mac_address"
+	DomainNameTag              = "domain_name"
+	UserNameTag                = "username"
+	URLTag                     = "url"
+	IPV4Tag                    = "ipv4"
+	IPV6Tag                    = "ipv6"
+	PASSWORD                   = "password"
+	JWT                        = "jwt"
+	LATITUDE                   = "lat"
+	LONGITUDE                  = "long"
+	RealAddressTag             = "real_address"
+	CreditCardNumber           = "cc_number"
+	CreditCardType             = "cc_type"
+	PhoneNumber                = "phone_number"
+	TollFreeNumber             = "toll_free_number"
+	E164PhoneNumberTag         = "e_164_phone_number"
+	TitleMaleTag               = "title_male"
+	TitleFemaleTag             = "title_female"
+	FirstNameTag               = "first_name"
+	FirstNameMaleTag           = "first_name_male"
+	FirstNameFemaleTag         = "first_name_female"
+	LastNameTag                = "last_name"
+	NAME                       = "name"
+	ChineseFirstNameTag        = "chinese_first_name"
+	ChineseLastNameTag         = "chinese_last_name"
+	ChineseNameTag             = "chinese_name"
+	GENDER                     = "gender"
+	UnixTimeTag                = "unix_time"
+	DATE                       = "date"
+	TIME                       = "time"
+	MonthNameTag               = "month_name"
+	YEAR                       = "year"
+	DayOfWeekTag               = "day_of_week"
+	DayOfMonthTag              = "day_of_month"
+	TIMESTAMP                  = "timestamp"
+	CENTURY                    = "century"
+	TIMEZONE                   = "timezone"
+	TimePeriodTag              = "time_period"
+	WORD                       = "word"
+	SENTENCE                   = "sentence"
+	PARAGRAPH                  = "paragraph"
+	CurrencyTag                = "currency"
+	AmountTag                  = "amount"
+	AmountWithCurrencyTag      = "amount_with_currency"
+	SKIP                       = "-"
+	Length                     = "len"
+	SliceLength                = "slice_len"
+	Language                   = "lang"
+	BoundaryStart              = "boundary_start"
+	BoundaryEnd                = "boundary_end"
+	Equals                     = "="
+	comma                      = ","
+	colon                      = ":"
+	ONEOF                      = "oneof"
+	RussianFirstNameMaleTag    = "russian_first_name_male"
+	RussianMiddleNameMaleTag   = "russian_middle_name_male"
+	RussianLastNameMaleTag     = "russian_last_name_male"
+	RussianFirstNameFemaleTag  = "russian_first_name_female"
+	RussianMiddleNameFemaleTag = "russian_middle_name_female"
+	RussianLastNameFemaleTag   = "russian_last_name_female"
+	BloodTypeTag               = "blood_type"
+	CountryInfoTag             = "country_info"
+	UserAgentTag               = "user_agent"
 )
 
 // PriorityTags define the priority order of the tag
@@ -186,8 +188,10 @@ func initDefaultTag() {
 	defaultTag.Store(ID, ID)
 	defaultTag.Store(HyphenatedID, HyphenatedID)
 	defaultTag.Store(RussianFirstNameMaleTag, RussianFirstNameMaleTag)
+	defaultTag.Store(RussianMiddleNameMaleTag, RussianMiddleNameMaleTag)
 	defaultTag.Store(RussianLastNameMaleTag, RussianLastNameMaleTag)
 	defaultTag.Store(RussianFirstNameFemaleTag, RussianFirstNameFemaleTag)
+	defaultTag.Store(RussianMiddleNameFemaleTag, RussianMiddleNameFemaleTag)
 	defaultTag.Store(RussianLastNameFemaleTag, RussianLastNameFemaleTag)
 	defaultTag.Store(UserAgentTag, UserAgentTag)
 }
@@ -235,8 +239,10 @@ func initMapperTagDefault() {
 	mapperTag.Store(ID, GetIdentifier().Digit)
 	mapperTag.Store(HyphenatedID, GetIdentifier().Hyphenated)
 	mapperTag.Store(RussianFirstNameMaleTag, GetPerson().RussianFirstNameMale)
-	mapperTag.Store(RussianFirstNameFemaleTag, GetPerson().RussianFirstNameFemale)
+	mapperTag.Store(RussianMiddleNameMaleTag, GetPerson().RussianMiddleNameMale)
 	mapperTag.Store(RussianLastNameMaleTag, GetPerson().RussianLastNameMale)
+	mapperTag.Store(RussianFirstNameFemaleTag, GetPerson().RussianFirstNameFemale)
+	mapperTag.Store(RussianMiddleNameFemaleTag, GetPerson().RussianMiddleNameFemale)
 	mapperTag.Store(RussianLastNameFemaleTag, GetPerson().RussianLastNameFemale)
 	mapperTag.Store(BloodTypeTag, GetBlood().BloodGroup)
 	mapperTag.Store(UserAgentTag, GetUserAgent().UserAgent)
