@@ -2444,7 +2444,7 @@ func TestNestedSliceSizeOption(t *testing.T) {
 }
 
 // TestNestedSliceSizeDefaultBehavior ensures that without WithNestedRandomMapAndSliceSize,
-// the original behaviour is preserved: sizes propagate to all nesting levels.
+// the original behavior is preserved: sizes propagate to all nesting levels.
 func TestNestedSliceSizeDefaultBehavior(t *testing.T) {
 	type Location struct {
 		Name string

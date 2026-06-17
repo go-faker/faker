@@ -74,7 +74,7 @@ type Options struct {
 	// RandomNestedMaxSliceSize controls the max size for slices/maps that are nested inside
 	// another slice or map. When set, this prevents exponential memory growth when generating
 	// large outer slices containing structs with nested slice/map fields.
-	// If unset (0), RandomMaxSliceSize applies at all depths (original behaviour).
+	// If unset (0), RandomMaxSliceSize applies at all depths (original behavior).
 	RandomNestedMaxSliceSize int
 	// RandomNestedMinSliceSize controls the min size for slices/maps nested inside another
 	// slice or map. Pair with RandomNestedMaxSliceSize.
@@ -270,16 +270,16 @@ func WithRandomMapAndSliceMinSize(size uint) OptionFunc {
 //	    options.WithRandomMapAndSliceMaxSize(1000),
 //	    options.WithNestedRandomMapAndSliceSize(1, 5),
 //	)
-func WithNestedRandomMapAndSliceSize(min, max uint) OptionFunc {
-	if max < 1 {
-		panic(fmt.Errorf(fakerErrors.ErrSmallerThanOne, max))
+func WithNestedRandomMapAndSliceSize(minSize, maxSize uint) OptionFunc {
+	if maxSize < 1 {
+		panic(fmt.Errorf(fakerErrors.ErrSmallerThanOne, maxSize))
 	}
-	if min > max {
+	if minSize > maxSize {
 		panic(errors.New(fakerErrors.ErrStartValueBiggerThanEnd))
 	}
 	return func(oo *Options) {
-		oo.RandomNestedMinSliceSize = int(min)
-		oo.RandomNestedMaxSliceSize = int(max)
+		oo.RandomNestedMinSliceSize = int(minSize)
+		oo.RandomNestedMaxSliceSize = int(maxSize)
 	}
 }
 
