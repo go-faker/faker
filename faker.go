@@ -453,8 +453,9 @@ func getFakedValue(item interface{}, opts *options.Options) (reflect.Value, erro
 			return reflect.Zero(t), nil
 		}
 		v := reflect.MakeSlice(t, length, length)
+		innerOpts := opts.Nested()
 		for i := 0; i < length; i++ {
-			val, err := getFakedValue(v.Index(i).Interface(), opts)
+			val, err := getFakedValue(v.Index(i).Interface(), &innerOpts)
 			if err != nil {
 				return reflect.Value{}, err
 			}
@@ -471,8 +472,9 @@ func getFakedValue(item interface{}, opts *options.Options) (reflect.Value, erro
 		return v, nil
 	case reflect.Array:
 		v := reflect.New(t).Elem()
+		innerOpts := opts.Nested()
 		for i := 0; i < v.Len(); i++ {
-			val, err := getFakedValue(v.Index(i).Interface(), opts)
+			val, err := getFakedValue(v.Index(i).Interface(), &innerOpts)
 			if err != nil {
 				return reflect.Value{}, err
 			}
@@ -524,15 +526,16 @@ func getFakedValue(item interface{}, opts *options.Options) (reflect.Value, erro
 			return reflect.Zero(t), nil
 		}
 		v := reflect.MakeMap(t)
+		innerOpts := opts.Nested()
 		for i := 0; i < length; i++ {
 			keyInstance := reflect.New(t.Key()).Elem().Interface()
-			key, err := getFakedValue(keyInstance, opts)
+			key, err := getFakedValue(keyInstance, &innerOpts)
 			if err != nil {
 				return reflect.Value{}, err
 			}
 
 			valueInstance := reflect.New(t.Elem()).Elem().Interface()
-			val, err := getFakedValue(valueInstance, opts)
+			val, err := getFakedValue(valueInstance, &innerOpts)
 			if err != nil {
 				return reflect.Value{}, err
 			}
@@ -801,13 +804,14 @@ func userDefinedMap(v reflect.Value, tag string, opt options.Options) error {
 		v.Set(reflect.Zero(v.Type()))
 		return nil
 	}
+	innerOpt := opt.Nested()
 	definedMap := reflect.MakeMap(v.Type())
 	for i := 0; i < length; i++ {
-		key, err := getValueWithTag(v.Type().Key(), tag, opt)
+		key, err := getValueWithTag(v.Type().Key(), tag, innerOpt)
 		if err != nil {
 			return err
 		}
-		val, err := getValueWithTag(v.Type().Elem(), tag, opt)
+		val, err := getValueWithTag(v.Type().Elem(), tag, innerOpt)
 		if err != nil {
 			return err
 		}
@@ -909,10 +913,11 @@ func userDefinedArray(v reflect.Value, tag string, opt options.Options) error {
 	//remove slice_len from tag string to avoid extra logic in downstream function
 	tag = findSliceLenReg.ReplaceAllString(tag, "")
 	array := reflect.MakeSlice(v.Type(), sliceLen, sliceLen)
+	innerOpt := opt.Nested()
 	for i := 0; i < array.Len(); i++ {
 		k := v.Type().Elem().Kind()
 		if k == reflect.Pointer || k == reflect.Struct {
-			res, err := getFakedValue(array.Index(i).Interface(), &opt)
+			res, err := getFakedValue(array.Index(i).Interface(), &innerOpt)
 			if err != nil {
 				return err
 			}
@@ -923,7 +928,7 @@ func userDefinedArray(v reflect.Value, tag string, opt options.Options) error {
 			continue
 		}
 		if tag == "" {
-			res, err := getValueWithNoTag(v.Type().Elem(), opt)
+			res, err := getValueWithNoTag(v.Type().Elem(), innerOpt)
 			if err != nil {
 				return err
 			}
@@ -931,7 +936,7 @@ func userDefinedArray(v reflect.Value, tag string, opt options.Options) error {
 			continue
 		}
 
-		res, err := getValueWithTag(v.Type().Elem(), tag, opt)
+		res, err := getValueWithTag(v.Type().Elem(), tag, innerOpt)
 		if err != nil {
 			return err
 		}
@@ -1330,17 +1335,24 @@ func randomFloat(opt *options.Options) float64 {
 	return randomFloatWithBoundary(*opt.RandomFloatBoundary)
 }
 
-// randomSliceAndMapSize returns a random integer between [0,randomSliceAndMapSize). If the testRandZero is set, returns 0
-// Written for test purposes for shouldSetNil
+// randomSliceAndMapSize returns a random integer between [min,max). If testRandZero is set, returns 0.
+// When SliceDepth > 0 and RandomNestedMaxSliceSize is configured, the nested sizes are used instead
+// to prevent exponential memory growth from large outer sizes propagating to all nested slices.
 func randomSliceAndMapSize(opt options.Options) int {
 	if opt.SetSliceMapRandomToZero {
 		return 0
 	}
-	r := opt.RandomMaxSliceSize - opt.RandomMinSliceSize
+	maxSize := opt.RandomMaxSliceSize
+	minSize := opt.RandomMinSliceSize
+	if opt.IsNested() && opt.RandomNestedMaxSliceSize > 0 {
+		maxSize = opt.RandomNestedMaxSliceSize
+		minSize = opt.RandomNestedMinSliceSize
+	}
+	r := maxSize - minSize
 	if r < 1 {
 		r = 1
 	}
-	return opt.RandomMinSliceSize + rand.Intn(r)
+	return minSize + rand.Intn(r)
 }
 
 func randomElementFromSliceString(s []string) string {
