@@ -110,6 +110,11 @@ func (o Options) IsNested() bool {
 
 // Nested returns a copy of o with the nesting depth incremented by one.
 // Call this before recursing into the elements of a slice, array, or map.
+//
+// The value receiver is intentional: Go copies o on entry, so incrementing
+// sliceDepth and returning that copy leaves the caller's Options unchanged.
+// A pointer receiver would mutate the original and corrupt depth tracking
+// across sibling iterations.
 func (o Options) Nested() Options {
 	o.sliceDepth++
 	return o
