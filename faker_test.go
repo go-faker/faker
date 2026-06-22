@@ -2396,6 +2396,83 @@ func TestRandomMapSliceSize(t *testing.T) {
 	}
 }
 
+// TestNestedSliceSizeOption reproduces the performance issue from
+// https://github.com/go-faker/faker/issues/42: generating a large outer []User slice whose
+// User structs each contain nested []Location and []Service slices must not cause exponential
+// memory growth. Without WithNestedRandomMapAndSliceSize the outer size (500) would propagate
+// into every nested slice, producing 500*500 = 250 000 Location structs instead of ~2500.
+func TestNestedSliceSizeOption(t *testing.T) {
+	type Location struct {
+		Name    string
+		Address string
+	}
+	type Service struct {
+		Name        string
+		Description string
+	}
+	type User struct {
+		Name      string
+		Email     string
+		Locations []Location
+		Services  []Service
+	}
+
+	const outerSize = 500
+	const nestedMax = 5
+
+	var users []User
+	err := FakeData(&users,
+		options.WithRandomMapAndSliceMaxSize(outerSize),
+		options.WithRandomMapAndSliceMinSize(outerSize),
+		options.WithNestedRandomMapAndSliceSize(1, nestedMax),
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(users) != outerSize {
+		t.Fatalf("expected %d users, got %d", outerSize, len(users))
+	}
+	for i, u := range users {
+		if len(u.Locations) > nestedMax {
+			t.Errorf("user %d: Locations len %d exceeds nested max %d", i, len(u.Locations), nestedMax)
+		}
+		if len(u.Services) > nestedMax {
+			t.Errorf("user %d: Services len %d exceeds nested max %d", i, len(u.Services), nestedMax)
+		}
+	}
+}
+
+// TestNestedSliceSizeDefaultBehavior ensures that without WithNestedRandomMapAndSliceSize,
+// the original behavior is preserved: sizes propagate to all nesting levels.
+func TestNestedSliceSizeDefaultBehavior(t *testing.T) {
+	type Location struct {
+		Name string
+	}
+	type User struct {
+		Name      string
+		Locations []Location
+	}
+
+	const size = 3
+	var users []User
+	err := FakeData(&users,
+		options.WithRandomMapAndSliceMaxSize(size),
+		options.WithRandomMapAndSliceMinSize(size),
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(users) != size {
+		t.Fatalf("expected %d users, got %d", size, len(users))
+	}
+	for i, u := range users {
+		if len(u.Locations) != size {
+			t.Errorf("user %d: expected Locations len %d, got %d", i, size, len(u.Locations))
+		}
+	}
+}
+
 func TestWithTagName(t *testing.T) {
 	a := TaggedStruct{}
 	if err := FakeData(&a, options.WithTagName("custom_tag_name")); err != nil {

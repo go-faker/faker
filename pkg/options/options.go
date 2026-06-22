@@ -71,6 +71,17 @@ type Options struct {
 	CustomDomain *string
 	// OnlyZeroFields skips any field that already holds a non-zero value, leaving it unchanged
 	OnlyZeroFields bool
+	// RandomNestedMaxSliceSize controls the max size for slices/maps that are nested inside
+	// another slice or map. When set, this prevents exponential memory growth when generating
+	// large outer slices containing structs with nested slice/map fields.
+	// If unset (0), RandomMaxSliceSize applies at all depths (original behavior).
+	RandomNestedMaxSliceSize int
+	// RandomNestedMinSliceSize controls the min size for slices/maps nested inside another
+	// slice or map. Pair with RandomNestedMaxSliceSize.
+	RandomNestedMinSliceSize int
+	// sliceDepth tracks the current nesting depth of slice/map generation.
+	// Access via IsNested() and Nested(); do not read or write this field directly.
+	sliceDepth int
 }
 
 // MaxDepthOption used for configuring the max depth of nested struct for faker
@@ -89,6 +100,24 @@ func (o *MaxDepthOption) ForgetType(t reflect.Type) {
 
 func (o *MaxDepthOption) RecursionOutOfLimit(t reflect.Type) bool {
 	return o.typeSeen[t] > o.recursionMaxDepth
+}
+
+// IsNested reports whether faker is currently generating elements inside an outer
+// slice, array, or map. Used by randomSliceAndMapSize to pick nested sizes.
+func (o Options) IsNested() bool {
+	return o.sliceDepth > 0
+}
+
+// Nested returns a copy of o with the nesting depth incremented by one.
+// Call this before recursing into the elements of a slice, array, or map.
+//
+// The value receiver is intentional: Go copies o on entry, so incrementing
+// sliceDepth and returning that copy leaves the caller's Options unchanged.
+// A pointer receiver would mutate the original and corrupt depth tracking
+// across sibling iterations.
+func (o Options) Nested() Options {
+	o.sliceDepth++
+	return o
 }
 
 // BuildOptions build all option functions into one option
@@ -232,6 +261,30 @@ func WithRandomMapAndSliceMaxSize(size uint) OptionFunc {
 func WithRandomMapAndSliceMinSize(size uint) OptionFunc {
 	return func(oo *Options) {
 		oo.RandomMinSliceSize = int(size)
+	}
+}
+
+// WithNestedRandomMapAndSliceSize sets the min and max size for slices and maps that are
+// generated as fields inside the elements of an outer slice or map. Use this together with
+// WithRandomMapAndSliceMaxSize to avoid exponential memory growth when the generated struct
+// contains nested slice/map fields.
+//
+// Example: generate 1000 users where each user's nested slices stay small:
+//
+//	faker.FakeData(&users,
+//	    options.WithRandomMapAndSliceMaxSize(1000),
+//	    options.WithNestedRandomMapAndSliceSize(1, 5),
+//	)
+func WithNestedRandomMapAndSliceSize(minSize, maxSize uint) OptionFunc {
+	if maxSize < 1 {
+		panic(fmt.Errorf(fakerErrors.ErrSmallerThanOne, maxSize))
+	}
+	if minSize > maxSize {
+		panic(errors.New(fakerErrors.ErrStartValueBiggerThanEnd))
+	}
+	return func(oo *Options) {
+		oo.RandomNestedMinSliceSize = int(minSize)
+		oo.RandomNestedMaxSliceSize = int(maxSize)
 	}
 }
 
