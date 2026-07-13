@@ -135,7 +135,7 @@ func BuildOptions(optFuncs []OptionFunc) *Options {
 func DefaultOption() *Options {
 	ops := &Options{}
 	ops.StructTypeProviders = make(map[reflect.Type]interfaces.CustomProviderFunction)
-	ops.StructTypeProviders[reflect.TypeOf(time.Time{})] = func() (interface{}, error) {
+	ops.StructTypeProviders[reflect.TypeFor[time.Time]()] = func() (any, error) {
 		return time.Now().Add(time.Duration(rand.Int63())), nil
 	}
 	ops.MaxDepthOption = &MaxDepthOption{
@@ -209,7 +209,7 @@ func WithMaxFieldDepthOption(depth int) OptionFunc {
 }
 
 // WithStructTypeProviders used for configuring the custom provider of struct type
-func WithStructTypeProviders(t interface{}, provider interfaces.CustomProviderFunction) OptionFunc {
+func WithStructTypeProviders(t any, provider interfaces.CustomProviderFunction) OptionFunc {
 	if reflect.TypeOf(t).Kind() != reflect.Struct {
 		panic(fakerErrors.ErrOnlyStructTypeSupported)
 	}

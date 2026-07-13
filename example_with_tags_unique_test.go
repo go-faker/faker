@@ -12,7 +12,7 @@ type SomeStructWithUnique struct {
 }
 
 func Example_withTagsAndUnique() {
-	for i := 0; i < 5; i++ { // Generate 5 structs having a unique word
+	for range 5 { // Generate 5 structs having a unique word
 		a := SomeStructWithUnique{}
 		err := faker.FakeData(&a)
 		if err != nil {

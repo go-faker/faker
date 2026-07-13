@@ -20,9 +20,9 @@ func Example_structTypeProviders() {
 		UUID faker.UUID
 	}
 
-	_ = faker.FakeData(&s, options.WithStructTypeProviders(RedefinedTime{}, func() (interface{}, error) {
+	_ = faker.FakeData(&s, options.WithStructTypeProviders(RedefinedTime{}, func() (any, error) {
 		return time.Now(), nil
-	}), options.WithStructTypeProviders(big.Rat{}, func() (interface{}, error) {
+	}), options.WithStructTypeProviders(big.Rat{}, func() (any, error) {
 		return *big.NewRat(rand.Int63(), rand.Int63n(1<<63-1)+1), nil
 	}))
 	fmt.Printf("time: %v\n", time.Time(*s.T))

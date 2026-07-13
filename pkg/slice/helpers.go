@@ -1,17 +1,13 @@
 package slice
 
 import (
+	"slices"
 	"strconv"
 )
 
 // Contains Check item in slice string type
 func Contains(slice []string, item string) bool {
-	for _, s := range slice {
-		if s == item {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(slice, item)
 }
 
 // ContainsRune Check item in map rune type
@@ -21,13 +17,8 @@ func ContainsRune(set map[rune]struct{}, item rune) bool {
 }
 
 // ContainsValue check if value exists in slice, no matter its type
-func ContainsValue(slice []interface{}, value interface{}) bool {
-	for _, v := range slice {
-		if v == value {
-			return true
-		}
-	}
-	return false
+func ContainsValue(slice []any, value any) bool {
+	return slices.Contains(slice, value)
 }
 
 // IntToString Convert slice int to slice string

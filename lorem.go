@@ -52,9 +52,9 @@ var wordList = []string{
 
 // DataFaker generates randomized Words, Sentences and Paragraphs
 type DataFaker interface {
-	Word(v reflect.Value) (interface{}, error)
-	Sentence(v reflect.Value) (interface{}, error)
-	Paragraph(v reflect.Value) (interface{}, error)
+	Word(v reflect.Value) (any, error)
+	Sentence(v reflect.Value) (any, error)
+	Paragraph(v reflect.Value) (any, error)
 }
 
 // GetLorem returns a new DataFaker interface of Lorem struct
@@ -72,14 +72,14 @@ func (l Lorem) word() string {
 }
 
 // Word returns a word from the wordList const
-func (l Lorem) Word(v reflect.Value) (interface{}, error) {
+func (l Lorem) Word(v reflect.Value) (any, error) {
 	return l.word(), nil
 }
 
 // Word get a word randomly in string
 func Word(opts ...options.OptionFunc) string {
 	i := Lorem{}
-	return singleFakeData(WORD, func() interface{} {
+	return singleFakeData(WORD, func() any {
 		return i.word()
 	}, opts...).(string)
 }
@@ -103,7 +103,7 @@ func (l Lorem) sentence(sentence *strings.Builder) *strings.Builder {
 }
 
 // Sentence returns a sentence using the wordList const
-func (l Lorem) Sentence(_ reflect.Value) (interface{}, error) {
+func (l Lorem) Sentence(_ reflect.Value) (any, error) {
 	sentence := l.sentence(&strings.Builder{})
 	return sentence.String(), nil
 }
@@ -111,7 +111,7 @@ func (l Lorem) Sentence(_ reflect.Value) (interface{}, error) {
 // Sentence get a sentence randomly in string
 func Sentence(opts ...options.OptionFunc) string {
 	i := Lorem{}
-	return singleFakeData(SENTENCE, func() interface{} {
+	return singleFakeData(SENTENCE, func() any {
 		return i.sentence(&strings.Builder{}).String()
 	}, opts...).(string)
 }
@@ -119,7 +119,7 @@ func Sentence(opts ...options.OptionFunc) string {
 func (l Lorem) paragraph() string {
 	paragraph := &strings.Builder{}
 	size := rand.Intn(10) + 1
-	for i := 0; i < size; i++ {
+	for i := range size {
 		l.sentence(paragraph)
 		if i != size-1 {
 			paragraph.WriteString(" ")
@@ -129,14 +129,14 @@ func (l Lorem) paragraph() string {
 }
 
 // Paragraph returns a series of sentences as a paragraph using the wordList const
-func (l Lorem) Paragraph(v reflect.Value) (interface{}, error) {
+func (l Lorem) Paragraph(v reflect.Value) (any, error) {
 	return l.paragraph(), nil
 }
 
 // Paragraph get a paragraph randomly in string
 func Paragraph(opts ...options.OptionFunc) string {
 	i := Lorem{}
-	return singleFakeData(PARAGRAPH, func() interface{} {
+	return singleFakeData(PARAGRAPH, func() any {
 		return i.paragraph()
 	}, opts...).(string)
 }

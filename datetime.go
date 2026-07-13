@@ -606,17 +606,17 @@ const (
 
 // A DateTimer contains random Time generators, returning time string in certain particular format
 type DateTimer interface {
-	UnixTime(v reflect.Value) (interface{}, error)
-	Date(v reflect.Value) (interface{}, error)
-	Time(v reflect.Value) (interface{}, error)
-	MonthName(v reflect.Value) (interface{}, error)
-	Year(v reflect.Value) (interface{}, error)
-	DayOfWeek(v reflect.Value) (interface{}, error)
-	DayOfMonth(v reflect.Value) (interface{}, error)
-	Timestamp(v reflect.Value) (interface{}, error)
-	Century(v reflect.Value) (interface{}, error)
-	TimeZone(v reflect.Value) (interface{}, error)
-	TimePeriod(v reflect.Value) (interface{}, error)
+	UnixTime(v reflect.Value) (any, error)
+	Date(v reflect.Value) (any, error)
+	Time(v reflect.Value) (any, error)
+	MonthName(v reflect.Value) (any, error)
+	Year(v reflect.Value) (any, error)
+	DayOfWeek(v reflect.Value) (any, error)
+	DayOfMonth(v reflect.Value) (any, error)
+	Timestamp(v reflect.Value) (any, error)
+	Century(v reflect.Value) (any, error)
+	TimeZone(v reflect.Value) (any, error)
+	TimePeriod(v reflect.Value) (any, error)
 }
 
 // GetDateTimer returns a new DateTimer interface of DateTime
@@ -634,7 +634,7 @@ func (d DateTime) unixtime() int64 {
 }
 
 // UnixTime get unix time
-func (d DateTime) UnixTime(v reflect.Value) (interface{}, error) {
+func (d DateTime) UnixTime(v reflect.Value) (any, error) {
 	kind := v.Kind()
 	var val int64
 	if kind == reflect.Int64 {
@@ -648,7 +648,7 @@ func (d DateTime) UnixTime(v reflect.Value) (interface{}, error) {
 
 // UnixTime get unix time randomly
 func UnixTime(opts ...options.OptionFunc) int64 {
-	return singleFakeData(UnixTimeTag, func() interface{} {
+	return singleFakeData(UnixTimeTag, func() any {
 		datetime := DateTime{}
 		return datetime.unixtime()
 	}, opts...).(int64)
@@ -659,13 +659,13 @@ func (d DateTime) date() string {
 }
 
 // Date formats DateTime using example BaseDateFormat const
-func (d DateTime) Date(v reflect.Value) (interface{}, error) {
+func (d DateTime) Date(v reflect.Value) (any, error) {
 	return d.date(), nil
 }
 
 // Date get fake date in string randomly
 func Date(opts ...options.OptionFunc) string {
-	return singleFakeData(DATE, func() interface{} {
+	return singleFakeData(DATE, func() any {
 		datetime := DateTime{}
 		return datetime.date()
 	}, opts...).(string)
@@ -676,13 +676,13 @@ func (d DateTime) time() string {
 }
 
 // Time formats DateTime using example Time const
-func (d DateTime) Time(v reflect.Value) (interface{}, error) {
+func (d DateTime) Time(v reflect.Value) (any, error) {
 	return d.time(), nil
 }
 
 // TimeString get time randomly in string format
 func TimeString(opts ...options.OptionFunc) string {
-	return singleFakeData(TIME, func() interface{} {
+	return singleFakeData(TIME, func() any {
 		datetime := DateTime{}
 		return datetime.time()
 	}, opts...).(string)
@@ -693,13 +693,13 @@ func (d DateTime) monthName() string {
 }
 
 // MonthName formats DateTime using example Month const
-func (d DateTime) MonthName(v reflect.Value) (interface{}, error) {
+func (d DateTime) MonthName(v reflect.Value) (any, error) {
 	return d.monthName(), nil
 }
 
 // MonthName get month name randomly in string format
 func MonthName(opts ...options.OptionFunc) string {
-	return singleFakeData(MonthNameTag, func() interface{} {
+	return singleFakeData(MonthNameTag, func() any {
 		datetime := DateTime{}
 		return datetime.monthName()
 	}, opts...).(string)
@@ -710,13 +710,13 @@ func (d DateTime) year() string {
 }
 
 // Year formats DateTime using example Year const
-func (d DateTime) Year(v reflect.Value) (interface{}, error) {
+func (d DateTime) Year(v reflect.Value) (any, error) {
 	return d.year(), nil
 }
 
 // YearString get year randomly in string format
 func YearString(opts ...options.OptionFunc) string {
-	return singleFakeData(YEAR, func() interface{} {
+	return singleFakeData(YEAR, func() any {
 		datetime := DateTime{}
 		return datetime.year()
 	}, opts...).(string)
@@ -727,13 +727,13 @@ func (d DateTime) dayOfWeek() string {
 }
 
 // DayOfWeek formats DateTime using example Day const
-func (d DateTime) DayOfWeek(v reflect.Value) (interface{}, error) {
+func (d DateTime) DayOfWeek(v reflect.Value) (any, error) {
 	return d.dayOfWeek(), nil
 }
 
 // DayOfWeek get day of week randomly in string format
 func DayOfWeek(opts ...options.OptionFunc) string {
-	return singleFakeData(DayOfWeekTag, func() interface{} {
+	return singleFakeData(DayOfWeekTag, func() any {
 		datetime := DateTime{}
 		return datetime.dayOfWeek()
 	}, opts...).(string)
@@ -744,13 +744,13 @@ func (d DateTime) dayOfMonth() string {
 }
 
 // DayOfMonth formats DateTime using example DayOfMonth const
-func (d DateTime) DayOfMonth(v reflect.Value) (interface{}, error) {
+func (d DateTime) DayOfMonth(v reflect.Value) (any, error) {
 	return d.dayOfMonth(), nil
 }
 
 // DayOfMonth get month randomly in string format
 func DayOfMonth(opts ...options.OptionFunc) string {
-	return singleFakeData(DayOfMonthTag, func() interface{} {
+	return singleFakeData(DayOfMonthTag, func() any {
 		datetime := DateTime{}
 		return datetime.dayOfMonth()
 	}, opts...).(string)
@@ -761,13 +761,13 @@ func (d DateTime) timestamp() string {
 }
 
 // Timestamp formats DateTime using example Timestamp const
-func (d DateTime) Timestamp(v reflect.Value) (interface{}, error) {
+func (d DateTime) Timestamp(v reflect.Value) (any, error) {
 	return d.timestamp(), nil
 }
 
 // Timestamp get timestamp randomly in string format: 2006-01-02 15:04:05
 func Timestamp(opts ...options.OptionFunc) string {
-	return singleFakeData(TIMESTAMP, func() interface{} {
+	return singleFakeData(TIMESTAMP, func() any {
 		datetime := DateTime{}
 		return datetime.timestamp()
 	}, opts...).(string)
@@ -778,13 +778,13 @@ func (d DateTime) century() string {
 }
 
 // Century returns a random century
-func (d DateTime) Century(v reflect.Value) (interface{}, error) {
+func (d DateTime) Century(v reflect.Value) (any, error) {
 	return d.century(), nil
 }
 
 // Century get century randomly in string
 func Century(opts ...options.OptionFunc) string {
-	return singleFakeData(CENTURY, func() interface{} {
+	return singleFakeData(CENTURY, func() any {
 		datetime := DateTime{}
 		return datetime.century()
 	}, opts...).(string)
@@ -795,13 +795,13 @@ func (d DateTime) timezone() string {
 }
 
 // TimeZone returns a random timezone
-func (d DateTime) TimeZone(v reflect.Value) (interface{}, error) {
+func (d DateTime) TimeZone(v reflect.Value) (any, error) {
 	return d.timezone(), nil
 }
 
 // Timezone get timezone randomly in string
 func Timezone(opts ...options.OptionFunc) string {
-	return singleFakeData(TIMEZONE, func() interface{} {
+	return singleFakeData(TIMEZONE, func() any {
 		datetime := DateTime{}
 		return datetime.timezone()
 	}, opts...).(string)
@@ -812,13 +812,13 @@ func (d DateTime) period() string {
 }
 
 // TimePeriod formats DateTime using example TimePeriod const
-func (d DateTime) TimePeriod(v reflect.Value) (interface{}, error) {
+func (d DateTime) TimePeriod(v reflect.Value) (any, error) {
 	return d.period(), nil
 }
 
 // Timeperiod get timeperiod randomly in string (AM/PM)
 func Timeperiod(opts ...options.OptionFunc) string {
-	return singleFakeData(TimePeriodTag, func() interface{} {
+	return singleFakeData(TimePeriodTag, func() any {
 		datetime := DateTime{}
 		return datetime.period()
 	}, opts...).(string)

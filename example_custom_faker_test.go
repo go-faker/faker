@@ -26,14 +26,14 @@ type Sample struct {
 
 // CustomGenerator ...
 func CustomGenerator() {
-	_ = faker.AddProvider("customIdFaker", func(v reflect.Value) (interface{}, error) {
+	_ = faker.AddProvider("customIdFaker", func(v reflect.Value) (any, error) {
 		return int64(43), nil
 	})
-	_ = faker.AddProvider("danger", func(v reflect.Value) (interface{}, error) {
+	_ = faker.AddProvider("danger", func(v reflect.Value) (any, error) {
 		return "danger-ranger", nil
 	})
 
-	_ = faker.AddProvider("gondoruwo", func(v reflect.Value) (interface{}, error) {
+	_ = faker.AddProvider("gondoruwo", func(v reflect.Value) (any, error) {
 		obj := Gondoruwo{
 			Name:       "Power",
 			Locatadata: 324,
@@ -41,7 +41,7 @@ func CustomGenerator() {
 		return obj, nil
 	})
 
-	_ = faker.AddProvider("customUUID", func(v reflect.Value) (interface{}, error) {
+	_ = faker.AddProvider("customUUID", func(v reflect.Value) (any, error) {
 		s := CustomUUID{
 			0, 8, 7, 2, 3,
 		}

@@ -38,13 +38,13 @@ func GetUserAgent() UserAgenter {
 }
 
 type UserAgenter interface {
-	UserAgent(v reflect.Value) (interface{}, error)
+	UserAgent(v reflect.Value) (any, error)
 }
 
 // UserAgent implements logic loosely based on https://fakerphp.org/formatters/user-agent/.
 type UserAgent struct{}
 
-func (ua UserAgent) UserAgent(reflect.Value) (interface{}, error) {
+func (ua UserAgent) UserAgent(reflect.Value) (any, error) {
 	browserType := randomElementFromSliceString(browserTypes)
 	switch browserType {
 	case "chrome":

@@ -34,9 +34,9 @@ var currencies = []string{
 
 // Money provides an interface to generate a custom price with or without a random currency code
 type Money interface {
-	Currency(v reflect.Value) (interface{}, error)
-	Amount(v reflect.Value) (interface{}, error)
-	AmountWithCurrency(v reflect.Value) (interface{}, error)
+	Currency(v reflect.Value) (any, error)
+	Amount(v reflect.Value) (any, error)
+	AmountWithCurrency(v reflect.Value) (any, error)
 }
 
 // Price struct
@@ -53,13 +53,13 @@ func (p Price) currency() string {
 }
 
 // Currency returns a random currency from currencies
-func (p Price) Currency(v reflect.Value) (interface{}, error) {
+func (p Price) Currency(v reflect.Value) (any, error) {
 	return p.currency(), nil
 }
 
 // Currency get fake Currency (IDR, USD)
 func Currency(opts ...options.OptionFunc) string {
-	return singleFakeData(CurrencyTag, func() interface{} {
+	return singleFakeData(CurrencyTag, func() any {
 		p := Price{}
 		return p.currency()
 	}, opts...).(string)
@@ -71,7 +71,7 @@ func (p Price) amount() float64 {
 
 // Amount returns a random floating price amount
 // with a random precision of [1,2] up to (10**8 - 1)
-func (p Price) Amount(v reflect.Value) (interface{}, error) {
+func (p Price) Amount(v reflect.Value) (any, error) {
 	kind := v.Kind()
 	val := p.amount()
 	if kind == reflect.Float32 {
@@ -88,13 +88,13 @@ func (p Price) amountwithcurrency() string {
 }
 
 // AmountWithCurrency combines both price and currency together
-func (p Price) AmountWithCurrency(v reflect.Value) (interface{}, error) {
+func (p Price) AmountWithCurrency(v reflect.Value) (any, error) {
 	return p.amountwithcurrency(), nil
 }
 
 // AmountWithCurrency get fake AmountWithCurrency  USD 49257.100
 func AmountWithCurrency(opts ...options.OptionFunc) string {
-	return singleFakeData(AmountWithCurrencyTag, func() interface{} {
+	return singleFakeData(AmountWithCurrencyTag, func() any {
 		p := Price{}
 		return p.amountwithcurrency()
 	}, opts...).(string)

@@ -5,6 +5,7 @@ import (
 	"math/big"
 	mathrand "math/rand"
 	"reflect"
+	"slices"
 	"strings"
 	"sync"
 	"testing"
@@ -399,11 +400,11 @@ func TestFakerData(t *testing.T) {
 
 func TestCustomFakerOnUnsupportedMapStringInterface(t *testing.T) {
 	type Sample struct {
-		Map map[string]interface{} `faker:"custom"`
+		Map map[string]any `faker:"custom"`
 	}
 
-	err := AddProvider("custom", func(v reflect.Value) (interface{}, error) {
-		return map[string]interface{}{"foo": "bar"}, nil
+	err := AddProvider("custom", func(v reflect.Value) (any, error) {
+		return map[string]any{"foo": "bar"}, nil
 	})
 	if err != nil {
 		t.Error("Expected NoError, but Got Err", err)
@@ -427,7 +428,7 @@ func TestCustomFakerOnUnsupportedMapStringInterface(t *testing.T) {
 
 func TestUnsuportedMapStringInterface(t *testing.T) {
 	type Sample struct {
-		Map map[string]interface{}
+		Map map[string]any
 	}
 	var sample = new(Sample)
 	if err := FakeData(sample, options.WithRandomMapAndSliceMinSize(1)); err == nil {
@@ -586,7 +587,7 @@ func TestSetNilIfLenIsZero(t *testing.T) {
 }
 
 func TestSetIgnoreInterface(t *testing.T) {
-	var someInterface interface{}
+	var someInterface any
 	if err := FakeData(&someInterface, options.WithIgnoreInterface(false)); err == nil {
 		t.Error("Fake data generation didn't fail on interface{}")
 	}
@@ -609,7 +610,7 @@ func TestSetIgnoreInterface(t *testing.T) {
 func TestBoundaryAndLen(t *testing.T) {
 	iterate := 10
 	someStruct := SomeStructWithLen{}
-	for i := 0; i < iterate; i++ {
+	for range iterate {
 		if err := FakeData(&someStruct); err != nil {
 			t.Error(err)
 		}
@@ -1206,7 +1207,7 @@ func TestExtend(t *testing.T) {
 			ID string `faker:"test"`
 		}{}
 
-		err := AddProvider("test", func(v reflect.Value) (interface{}, error) {
+		err := AddProvider("test", func(v reflect.Value) (any, error) {
 			return "test", nil
 		})
 
@@ -1227,7 +1228,7 @@ func TestExtend(t *testing.T) {
 
 	t.Run("test-struct", func(t *testing.T) {
 		a := &Student{}
-		err := AddProvider("custom-school", func(v reflect.Value) (interface{}, error) {
+		err := AddProvider("custom-school", func(v reflect.Value) (any, error) {
 
 			sch := School{
 				Location: "North Kindom",
@@ -1258,7 +1259,7 @@ func TestExtend(t *testing.T) {
 
 	t.Run("test-with-custom-slice-type", func(t *testing.T) {
 		a := CustomThatUsesSlice{}
-		err := AddProvider("custom-type-over-slice", func(v reflect.Value) (interface{}, error) {
+		err := AddProvider("custom-type-over-slice", func(v reflect.Value) (any, error) {
 			return CustomTypeOverSlice{0, 1, 2, 3, 4}, nil
 		})
 
@@ -1285,7 +1286,7 @@ func TestExtend(t *testing.T) {
 	t.Run("test with type alias for int", func(t *testing.T) {
 		a := Sample{}
 		sliceLen := 10
-		err := AddProvider("myint", func(v reflect.Value) (interface{}, error) {
+		err := AddProvider("myint", func(v reflect.Value) (any, error) {
 			r1 := mathrand.New(NewSafeSource(mathrand.NewSource(time.Now().UnixNano())))
 			r := make([]MyInt, sliceLen)
 			for i := range r {
@@ -1315,7 +1316,7 @@ func TestExtend(t *testing.T) {
 func TestTagAlreadyExists(t *testing.T) {
 	// This test is to ensure that existing tag cannot be rewritten
 
-	err := AddProvider(EmailTag, func(v reflect.Value) (interface{}, error) {
+	err := AddProvider(EmailTag, func(v reflect.Value) (any, error) {
 		return nil, nil
 	})
 
@@ -1325,7 +1326,7 @@ func TestTagAlreadyExists(t *testing.T) {
 }
 
 func TestRemoveProvider(t *testing.T) {
-	err := AddProvider("new_test_tag", func(v reflect.Value) (interface{}, error) {
+	err := AddProvider("new_test_tag", func(v reflect.Value) (any, error) {
 		return "test", nil
 	})
 	if err != nil {
@@ -1357,7 +1358,7 @@ func TestTagWithPointer(t *testing.T) {
 		School     *School  `faker:"school"`
 	}
 	// With custom provider
-	err := AddProvider("school", func(v reflect.Value) (interface{}, error) {
+	err := AddProvider("school", func(v reflect.Value) (any, error) {
 		return &School{Location: "Jakarta"}, nil
 	})
 	if err != nil {
@@ -1457,7 +1458,7 @@ func TestItThrowsAnErrorWhenKeepIsUsedOnIncomparableType(t *testing.T) {
 	withSlice := TypeStructWithSlice{}
 	withArray := TypeStructWithArray{}
 
-	for _, item := range []interface{}{withArray, withStruct, withSlice} {
+	for _, item := range []any{withArray, withStruct, withSlice} {
 		err := FakeData(&item)
 		if err == nil {
 			t.Errorf("expected error, but got nil")
@@ -1467,7 +1468,7 @@ func TestItThrowsAnErrorWhenKeepIsUsedOnIncomparableType(t *testing.T) {
 
 func TestItThrowsAnErrorWhenPointerToInterfaceIsUsed(t *testing.T) {
 	type PtrToInterface struct {
-		Interface *interface{}
+		Interface *any
 	}
 
 	interfacePtr := PtrToInterface{}
@@ -1497,7 +1498,7 @@ func TestUnique(t *testing.T) {
 		IntVal    int    `faker:"unique"`
 	}
 
-	for i := 0; i < 50; i++ {
+	for range 50 {
 		val := UniqueStruct{}
 		err := FakeData(&val)
 		if err != nil {
@@ -1505,16 +1506,14 @@ func TestUnique(t *testing.T) {
 		}
 	}
 
-	found := []interface{}{}
+	found := []any{}
 	uniqueVal, _ := uniqueValues.Load("word")
-	uniqueValArr := uniqueVal.([]interface{})
+	uniqueValArr := uniqueVal.([]any)
 	for _, v := range uniqueValArr {
-		for _, f := range found {
-			if f == v {
-				t.Errorf("expected unique values, found \"%s\" at least twice", v)
-				ResetUnique()
-				return
-			}
+		if slices.Contains(found, v) {
+			t.Errorf("expected unique values, found \"%s\" at least twice", v)
+			ResetUnique()
+			return
 		}
 		found = append(found, v)
 	}
@@ -1551,7 +1550,7 @@ func TestUniqueReset(t *testing.T) {
 		StringVal string `faker:"word,unique"`
 	}
 
-	for i := 0; i < 20; i++ {
+	for range 20 {
 		val := String{}
 		err := FakeData(&val)
 		if err != nil {
@@ -1561,7 +1560,7 @@ func TestUniqueReset(t *testing.T) {
 
 	ResetUnique()
 	var getSize = func(m *sync.Map) (count int) {
-		m.Range(func(_, _ interface{}) bool {
+		m.Range(func(_, _ any) bool {
 			count++
 			return true
 		})
@@ -1581,7 +1580,7 @@ func TestUniqueFailure(t *testing.T) {
 
 	hasError := false
 	length := len(wordList) + 1
-	for i := 0; i < length; i++ {
+	for range length {
 		val := String{}
 		err := FakeData(&val)
 		if err != nil {
@@ -2379,7 +2378,7 @@ func TestRandomMapSliceSize(t *testing.T) {
 		Map   map[string]int
 	}
 	expect := 5
-	for i := 0; i < 10; i++ {
+	for range 10 {
 		s := SliceMap{}
 		err := FakeData(&s, options.WithRandomMapAndSliceMaxSize(uint(expect)))
 		if err != nil {
@@ -2486,9 +2485,9 @@ func TestWithTagName(t *testing.T) {
 
 // assertAllStructFieldsNonZero asserts that the given struct s has all fields set to a non-zero value.
 // s must be a struct or a pointer to a struct, the function panics otherwise.
-func assertAllStructFieldsNonZero(s interface{}) error {
+func assertAllStructFieldsNonZero(s any) error {
 	v := reflect.ValueOf(s)
-	if v.Kind() == reflect.Ptr {
+	if v.Kind() == reflect.Pointer {
 		v = v.Elem()
 	}
 
@@ -2530,10 +2529,10 @@ func TestWithFieldProvider(t *testing.T) {
 	const heightVal = int64(123)
 	const nameVal = "some string"
 	if err := FakeData(&a,
-		options.WithCustomFieldProvider("Height", func() (interface{}, error) {
+		options.WithCustomFieldProvider("Height", func() (any, error) {
 			return heightVal, nil
 		}),
-		options.WithCustomFieldProvider("Name", func() (interface{}, error) {
+		options.WithCustomFieldProvider("Name", func() (any, error) {
 			return nameVal, nil
 		}),
 	); err != nil {
@@ -2548,7 +2547,7 @@ func TestWithFieldProvider(t *testing.T) {
 	}
 
 	// when provider fails
-	if err := FakeData(&a, options.WithCustomFieldProvider("Height", func() (interface{}, error) {
+	if err := FakeData(&a, options.WithCustomFieldProvider("Height", func() (any, error) {
 		return nil, fmt.Errorf("test")
 	})); err == nil {
 		t.Errorf("expected an error, but got nil")
@@ -2630,7 +2629,7 @@ func TestFakeDate_ConcurrentSafe(_ *testing.T) {
 	var wg sync.WaitGroup
 	wg.Add(1000)
 	fmt.Println("Running for loop…")
-	for i := 0; i < 1000; i++ {
+	for i := range 1000 {
 		go func(i int) {
 			defer wg.Done()
 			_ = i
@@ -2661,17 +2660,17 @@ func TestNonEmptyInterface(t *testing.T) {
 type InterfaceStruct struct {
 	A string
 	B map[string]any
-	C map[string]interface{}
+	C map[string]any
 	D Interface
-	E interface{}
-	F map[interface{}]any
+	E any
+	F map[any]any
 	G map[any]any
-	H map[any]interface{}
-	I []interface{}
-	J [2]interface{}
-	K [][]interface{}
-	L [][2]interface{}
-	M [3][2]interface{}
+	H map[any]any
+	I []any
+	J [2]any
+	K [][]any
+	L [][2]any
+	M [3][2]any
 	N map[any][]any
 	O []int
 }
@@ -2714,7 +2713,7 @@ func TestRandomString(t *testing.T) {
 		opt   = options.DefaultOption()
 	)
 
-	for i := 0; i < count; i++ {
+	for range count {
 		str, err := randomString(20, *opt)
 		if err != nil {
 			t.Error("Expected NoError, but Got Err:", err)
@@ -2735,9 +2734,9 @@ func TestStructTypeProvidersToBeFilled(t *testing.T) {
 		RP *big.Rat
 		R  big.Rat
 	}
-	if err := FakeData(&s, options.WithStructTypeProviders(RedefinedTime{}, func() (interface{}, error) {
+	if err := FakeData(&s, options.WithStructTypeProviders(RedefinedTime{}, func() (any, error) {
 		return time.Now(), nil
-	}), options.WithStructTypeProviders(big.Rat{}, func() (interface{}, error) {
+	}), options.WithStructTypeProviders(big.Rat{}, func() (any, error) {
 		return *big.NewRat(rand.Int63(), rand.Int63n(1<<63-1)+1), nil
 	})); err != nil {
 		t.Errorf("%+v", err)
