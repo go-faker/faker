@@ -6,15 +6,17 @@ on:
   pull_request:
     branches: [ "main" ]
 
+# Use the exact toolchain that setup-go installs. Without this, GOTOOLCHAIN=auto
+# would silently download the version required by go.mod and ignore the matrix.
+env:
+  GOTOOLCHAIN: local
+
 jobs:
   run-tests:
     strategy:
       matrix:
         version: [
-          "~1.21",
-          "~1.22",
-          "~1.23",
-          "~1.24"
+          "~1.26"
         ]
     runs-on: ubuntu-latest
     steps:
@@ -38,7 +40,7 @@ jobs:
     strategy:
       matrix:
         version: [
-          "~1.24"
+          "~1.26"
         ]
     steps:
       - uses: actions/checkout@v4
