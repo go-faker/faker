@@ -99,8 +99,8 @@ Support For :
 Unfortunately this library has some limitation
 
 - It does not support private fields. Make sure your structs fields you intend to generate fake data for are public, it would otherwise trigger a panic. You can however omit fields using a tag skip `faker:"-"` on your private fields.
-- It does not support the `interface{}` data type. How could we generate anything without knowing its data type?
-- It does not support the `map[interface{}]interface{}`, `map[any_type]interface{}` & `map[interface{}]any_type` data types. Once again, we cannot generate values for an unknown data type.
+- It does not support the `any` (empty interface) data type. How could we generate anything without knowing its data type?
+- It does not support the `map[any]any`, `map[T]any` & `map[any]T` data types (where `T` is any concrete type). Once again, we cannot generate values for an unknown data type.
 - Some extra custom types can be supported IF AND ONLY IF extended with [AddProvider()](https://github.com/go-faker/faker/blob/7473ac7d8d0440d24addac302c73e13c08895764/faker.go#L303) please see [example](example_custom_faker_test.go#L46)
 - The `oneof` tag currently only supports `string`, the `int` types, and both `float32` & `float64`. Further support is coming soon (i.e. hex numbers, etc). See [example](example_with_tags_test.go#L53) for usage.
 
