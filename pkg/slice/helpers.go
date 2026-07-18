@@ -23,10 +23,8 @@ func ContainsValue(slice []any, value any) bool {
 
 // IntToString Convert slice int to slice string
 func IntToString(intSl []int) (str []string) {
-	for i := range intSl {
-		number := intSl[i]
-		text := strconv.Itoa(number)
-		str = append(str, text)
+	for _, number := range intSl {
+		str = append(str, strconv.Itoa(number))
 	}
 	return str
 }
