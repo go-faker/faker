@@ -124,7 +124,7 @@ func (m *mapperTagCustom) Load(key string) (interfaces.TaggedFunction, bool) {
 	if ok {
 		return tagFunc, ok
 	}
-	tagPureFunc, ok := mappedTagFunc.(func(v reflect.Value) (interface{}, error))
+	tagPureFunc, ok := mappedTagFunc.(func(v reflect.Value) (any, error))
 	if ok {
 		return tagPureFunc, ok
 	}
@@ -310,11 +310,11 @@ func initOption(opt ...options.OptionFunc) *options.Options {
 
 // FakeData is the main function. Will generate a fake data based on your struct.  You can use this for automation testing, or anything that need automated data.
 // You don't need to Create your own data for your testing.
-func FakeData(a interface{}, opt ...options.OptionFunc) error {
+func FakeData(a any, opt ...options.OptionFunc) error {
 	opts := initOption(opt...)
 	reflectType := reflect.TypeOf(a)
 
-	if reflectType.Kind() != reflect.Ptr {
+	if reflectType.Kind() != reflect.Pointer {
 		return errors.New(fakerErrors.ErrValueNotPtr)
 	}
 
@@ -401,7 +401,7 @@ func RemoveProvider(tag string) error {
 	return nil
 }
 
-func getFakedValue(item interface{}, opts *options.Options) (reflect.Value, error) {
+func getFakedValue(item any, opts *options.Options) (reflect.Value, error) {
 	t := reflect.TypeOf(item)
 	if t == nil {
 		if opts.IgnoreInterface {
@@ -418,7 +418,7 @@ func getFakedValue(item interface{}, opts *options.Options) (reflect.Value, erro
 	}()
 	k := t.Kind()
 	switch k {
-	case reflect.Ptr:
+	case reflect.Pointer:
 		v := reflect.New(t.Elem())
 		var val reflect.Value
 		var err error
@@ -454,7 +454,7 @@ func getFakedValue(item interface{}, opts *options.Options) (reflect.Value, erro
 		}
 		v := reflect.MakeSlice(t, length, length)
 		innerOpts := opts.Nested()
-		for i := 0; i < length; i++ {
+		for i := range length {
 			val, err := getFakedValue(v.Index(i).Interface(), &innerOpts)
 			if err != nil {
 				return reflect.Value{}, err
@@ -527,7 +527,7 @@ func getFakedValue(item interface{}, opts *options.Options) (reflect.Value, erro
 		}
 		v := reflect.MakeMap(t)
 		innerOpts := opts.Nested()
-		for i := 0; i < length; i++ {
+		for range length {
 			keyInstance := reflect.New(t.Key()).Elem().Interface()
 			key, err := getFakedValue(keyInstance, &innerOpts)
 			if err != nil {
@@ -558,7 +558,7 @@ func getFakedValue(item interface{}, opts *options.Options) (reflect.Value, erro
 
 }
 
-func getFakedValueForStruct(item interface{}, t reflect.Type, opts *options.Options) (reflect.Value, error) {
+func getFakedValueForStruct(item any, t reflect.Type, opts *options.Options) (reflect.Value, error) {
 	if structTypeProvider, f := opts.StructTypeProviders[t]; f {
 		ft, err := structTypeProvider()
 		return reflect.ValueOf(ft), err
@@ -641,7 +641,7 @@ func getFakedValueForStruct(item interface{}, t reflect.Type, opts *options.Opti
 			}
 			value := v.Field(i).Interface()
 			uniqueVal, _ := uniqueValues.Load(tags.fieldType)
-			uniqueValArr, _ := uniqueVal.([]interface{})
+			uniqueValArr, _ := uniqueVal.([]any)
 			if slice.ContainsValue(uniqueValArr, value) { // Retry if unique value already found
 				i--
 				retry++
@@ -724,12 +724,12 @@ type structTag struct {
 }
 
 func setDataWithTag(v reflect.Value, tag string, opt options.Options) error {
-	if v.Kind() != reflect.Ptr {
+	if v.Kind() != reflect.Pointer {
 		return errors.New(fakerErrors.ErrValueNotPtr)
 	}
 	v = reflect.Indirect(v)
 	switch v.Kind() {
-	case reflect.Ptr:
+	case reflect.Pointer:
 		if _, exist := mapperTag.Load(tag); !exist {
 			newv := reflect.New(v.Type().Elem())
 			if err := setDataWithTag(newv, tag, opt); err != nil {
@@ -806,7 +806,7 @@ func userDefinedMap(v reflect.Value, tag string, opt options.Options) error {
 	}
 	innerOpt := opt.Nested()
 	definedMap := reflect.MakeMap(v.Type())
-	for i := 0; i < length; i++ {
+	for range length {
 		key, err := getValueWithTag(v.Type().Key(), tag, innerOpt)
 		if err != nil {
 			return err
@@ -821,7 +821,7 @@ func userDefinedMap(v reflect.Value, tag string, opt options.Options) error {
 	return nil
 }
 
-func getValueWithTag(t reflect.Type, tag string, opt options.Options) (interface{}, error) {
+func getValueWithTag(t reflect.Type, tag string, opt options.Options) (any, error) {
 	switch t.Kind() {
 	case reflect.Int, reflect.Int32, reflect.Int64, reflect.Int8, reflect.Int16, reflect.Uint, reflect.Uint8,
 		reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Float32, reflect.Float64:
@@ -841,7 +841,7 @@ func getValueWithTag(t reflect.Type, tag string, opt options.Options) (interface
 	}
 }
 
-func getNumberWithBoundary(t reflect.Type, boundary interfaces.RandomIntegerBoundary) (interface{}, error) {
+func getNumberWithBoundary(t reflect.Type, boundary interfaces.RandomIntegerBoundary) (any, error) {
 	switch t.Kind() {
 	case reflect.Uint:
 		return uint(randomIntegerWithBoundary(boundary)), nil
@@ -868,7 +868,7 @@ func getNumberWithBoundary(t reflect.Type, boundary interfaces.RandomIntegerBoun
 	}
 }
 
-func getValueWithNoTag(t reflect.Type, opt options.Options) (interface{}, error) {
+func getValueWithNoTag(t reflect.Type, opt options.Options) (any, error) {
 	switch t.Kind() {
 	case reflect.Int, reflect.Int32, reflect.Int64, reflect.Int8, reflect.Int16, reflect.Uint, reflect.Uint8,
 		reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Float32, reflect.Float64:
@@ -947,7 +947,7 @@ func userDefinedArray(v reflect.Value, tag string, opt options.Options) error {
 }
 
 func userDefinedString(v reflect.Value, tag string, opt options.Options) error {
-	var res interface{}
+	var res any
 	var err error
 
 	if tagFunc, ok := mapperTag.Load(tag); ok {
@@ -970,7 +970,7 @@ func userDefinedString(v reflect.Value, tag string, opt options.Options) error {
 }
 
 func userDefinedNumber(v reflect.Value, tag string) error {
-	var res interface{}
+	var res any
 	var err error
 
 	if tagFunc, ok := mapperTag.Load(tag); ok {
@@ -1014,7 +1014,7 @@ func extractSliceLengthFromTag(tag string, opt options.Options) (int, error) {
 	return randomSliceAndMapSize(opt), nil //Returns random slice length if the sliceLength tag isn't set
 }
 
-func extractStringFromTag(tag string, opts options.Options) (interface{}, error) {
+func extractStringFromTag(tag string, opts options.Options) (any, error) {
 	var err error
 	strlen := opts.RandomStringLength
 	strlng := opts.StringLanguage
@@ -1075,7 +1075,7 @@ func extractLangFromTag(tag string) (*interfaces.LangRuneBoundary, error) {
 	}
 }
 
-func extractNumberFromTag(tag string, t reflect.Type) (interface{}, error) {
+func extractNumberFromTag(tag string, t reflect.Type) (any, error) {
 	hasOneOf := strings.Contains(tag, ONEOF)
 	hasBoundaryStart := strings.Contains(tag, BoundaryStart)
 	hasBoundaryEnd := strings.Contains(tag, BoundaryEnd)
@@ -1348,10 +1348,7 @@ func randomSliceAndMapSize(opt options.Options) int {
 		maxSize = opt.RandomNestedMaxSliceSize
 		minSize = opt.RandomNestedMinSliceSize
 	}
-	r := maxSize - minSize
-	if r < 1 {
-		r = 1
-	}
+	r := max(maxSize-minSize, 1)
 	return minSize + rand.Intn(r)
 }
 
@@ -1413,11 +1410,11 @@ func RandomInt(parameters ...int) (p []int, err error) {
 	return p, err
 }
 
-func generateUnique(dataType string, fn func() interface{}) (interface{}, error) {
-	for i := 0; i < maxRetry; i++ {
+func generateUnique(dataType string, fn func() any) (any, error) {
+	for range maxRetry {
 		value := fn()
 		uniqueVal, _ := uniqueValues.Load(dataType)
-		uniqueValArr, _ := uniqueVal.([]interface{})
+		uniqueValArr, _ := uniqueVal.([]any)
 		if !slice.ContainsValue(uniqueValArr, value) { // Retry if unique value already found
 			uniqueValues.Store(dataType, append(uniqueValArr, value))
 			return value, nil
@@ -1426,7 +1423,7 @@ func generateUnique(dataType string, fn func() interface{}) (interface{}, error)
 	return reflect.Value{}, fmt.Errorf(fakerErrors.ErrUniqueFailure, dataType)
 }
 
-func singleFakeData(dataType string, fn func() interface{}, opts ...options.OptionFunc) interface{} {
+func singleFakeData(dataType string, fn func() any, opts ...options.OptionFunc) any {
 	ops := initOption(opts...)
 	if ops.GenerateUniqueValues {
 		v, err := generateUnique(dataType, fn)

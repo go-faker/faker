@@ -40,6 +40,9 @@ linters:
       - std-error-handling
     rules:
       - linters:
+          - goconst
+        path: lorem.go
+      - linters:
           - misspell
         path: person.go
       - linters:

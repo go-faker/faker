@@ -9,23 +9,23 @@ import (
 
 // Dowser provides interfaces to generate random logical Names with their initials
 type Dowser interface {
-	TitleMale(v reflect.Value) (interface{}, error)
-	TitleFeMale(v reflect.Value) (interface{}, error)
-	FirstName(v reflect.Value) (interface{}, error)
-	FirstNameMale(v reflect.Value) (interface{}, error)
-	FirstNameFemale(v reflect.Value) (interface{}, error)
-	LastName(v reflect.Value) (interface{}, error)
-	Name(v reflect.Value) (interface{}, error)
-	Gender(v reflect.Value) (interface{}, error)
-	ChineseFirstName(v reflect.Value) (interface{}, error)
-	ChineseLastName(v reflect.Value) (interface{}, error)
-	ChineseName(v reflect.Value) (interface{}, error)
-	RussianFirstNameMale(v reflect.Value) (interface{}, error)
-	RussianMiddleNameMale(v reflect.Value) (interface{}, error)
-	RussianLastNameMale(v reflect.Value) (interface{}, error)
-	RussianFirstNameFemale(v reflect.Value) (interface{}, error)
-	RussianMiddleNameFemale(v reflect.Value) (interface{}, error)
-	RussianLastNameFemale(v reflect.Value) (interface{}, error)
+	TitleMale(v reflect.Value) (any, error)
+	TitleFeMale(v reflect.Value) (any, error)
+	FirstName(v reflect.Value) (any, error)
+	FirstNameMale(v reflect.Value) (any, error)
+	FirstNameFemale(v reflect.Value) (any, error)
+	LastName(v reflect.Value) (any, error)
+	Name(v reflect.Value) (any, error)
+	Gender(v reflect.Value) (any, error)
+	ChineseFirstName(v reflect.Value) (any, error)
+	ChineseLastName(v reflect.Value) (any, error)
+	ChineseName(v reflect.Value) (any, error)
+	RussianFirstNameMale(v reflect.Value) (any, error)
+	RussianMiddleNameMale(v reflect.Value) (any, error)
+	RussianLastNameMale(v reflect.Value) (any, error)
+	RussianFirstNameFemale(v reflect.Value) (any, error)
+	RussianMiddleNameFemale(v reflect.Value) (any, error)
+	RussianLastNameFemale(v reflect.Value) (any, error)
 }
 
 var titlesMale = []string{
@@ -637,13 +637,13 @@ func (p Person) titlemale() string {
 }
 
 // TitleMale generates random titles for males
-func (p Person) TitleMale(v reflect.Value) (interface{}, error) {
+func (p Person) TitleMale(v reflect.Value) (any, error) {
 	return p.titlemale(), nil
 }
 
 // TitleMale get a title male randomly in string ("Mr.", "Dr.", "Prof.", "Lord", "King", "Prince")
 func TitleMale(opts ...options.OptionFunc) string {
-	return singleFakeData(TitleMaleTag, func() interface{} {
+	return singleFakeData(TitleMaleTag, func() any {
 		p := Person{}
 		return p.titlemale()
 	}, opts...).(string)
@@ -654,13 +654,13 @@ func (p Person) titleFemale() string {
 }
 
 // TitleFeMale generates random titles for females
-func (p Person) TitleFeMale(v reflect.Value) (interface{}, error) {
+func (p Person) TitleFeMale(v reflect.Value) (any, error) {
 	return p.titleFemale(), nil
 }
 
 // TitleFemale get a title female randomly in string ("Mrs.", "Ms.", "Miss", "Dr.", "Prof.", "Lady", "Queen", "Princess")
 func TitleFemale(opts ...options.OptionFunc) string {
-	return singleFakeData(TitleFemaleTag, func() interface{} {
+	return singleFakeData(TitleFemaleTag, func() any {
 		p := Person{}
 		return p.titleFemale()
 	}, opts...).(string)
@@ -671,13 +671,13 @@ func (p Person) firstname() string {
 }
 
 // FirstName returns first names
-func (p Person) FirstName(v reflect.Value) (interface{}, error) {
+func (p Person) FirstName(v reflect.Value) (any, error) {
 	return p.firstname(), nil
 }
 
 // FirstName get fake firstname
 func FirstName(opts ...options.OptionFunc) string {
-	return singleFakeData(FirstNameTag, func() interface{} {
+	return singleFakeData(FirstNameTag, func() any {
 		p := Person{}
 		return p.firstname()
 	}, opts...).(string)
@@ -688,13 +688,13 @@ func (p Person) firstnamemale() string {
 }
 
 // FirstNameMale returns first names for males
-func (p Person) FirstNameMale(v reflect.Value) (interface{}, error) {
+func (p Person) FirstNameMale(v reflect.Value) (any, error) {
 	return p.firstnamemale(), nil
 }
 
 // FirstNameMale get fake firstname for male
 func FirstNameMale(opts ...options.OptionFunc) string {
-	return singleFakeData(FirstNameMaleTag, func() interface{} {
+	return singleFakeData(FirstNameMaleTag, func() any {
 		p := Person{}
 		return p.firstnamemale()
 	}, opts...).(string)
@@ -705,13 +705,13 @@ func (p Person) firstnamefemale() string {
 }
 
 // FirstNameFemale returns first names for females
-func (p Person) FirstNameFemale(v reflect.Value) (interface{}, error) {
+func (p Person) FirstNameFemale(v reflect.Value) (any, error) {
 	return p.firstnamefemale(), nil
 }
 
 // FirstNameFemale get fake firstname for female
 func FirstNameFemale(opts ...options.OptionFunc) string {
-	return singleFakeData(FirstNameFemaleTag, func() interface{} {
+	return singleFakeData(FirstNameFemaleTag, func() any {
 		p := Person{}
 		return p.firstnamefemale()
 	}, opts...).(string)
@@ -722,13 +722,13 @@ func (p Person) lastname() string {
 }
 
 // LastName returns last name
-func (p Person) LastName(v reflect.Value) (interface{}, error) {
+func (p Person) LastName(v reflect.Value) (any, error) {
 	return p.lastname(), nil
 }
 
 // LastName get fake lastname
 func LastName(opts ...options.OptionFunc) string {
-	return singleFakeData(LastNameTag, func() interface{} {
+	return singleFakeData(LastNameTag, func() any {
 		p := Person{}
 		return p.lastname()
 	}, opts...).(string)
@@ -742,20 +742,20 @@ func (p Person) name() string {
 }
 
 // Name returns a random name
-func (p Person) Name(v reflect.Value) (interface{}, error) {
+func (p Person) Name(v reflect.Value) (any, error) {
 	return p.name(), nil
 }
 
 // Name get fake name
 func Name(opts ...options.OptionFunc) string {
-	return singleFakeData(NAME, func() interface{} {
+	return singleFakeData(NAME, func() any {
 		p := Person{}
 		return p.name()
 	}, opts...).(string)
 }
 
 // Gender returns a random gender
-func (p Person) Gender(v reflect.Value) (interface{}, error) {
+func (p Person) Gender(v reflect.Value) (any, error) {
 	return p.gender(), nil
 }
 
@@ -765,14 +765,14 @@ func (p Person) gender() string {
 
 // Gender get fake gender
 func Gender(opts ...options.OptionFunc) string {
-	return singleFakeData(GENDER, func() interface{} {
+	return singleFakeData(GENDER, func() any {
 		p := Person{}
 		return p.gender()
 	}, opts...).(string)
 }
 
 // ChineseFirstName returns a random chinese first name
-func (p Person) ChineseFirstName(v reflect.Value) (interface{}, error) {
+func (p Person) ChineseFirstName(v reflect.Value) (any, error) {
 	return p.chineseFirstName(), nil
 }
 
@@ -782,14 +782,14 @@ func (p Person) chineseFirstName() string {
 
 // ChineseFirstName get chinese first name
 func ChineseFirstName(opts ...options.OptionFunc) string {
-	return singleFakeData(ChineseFirstNameTag, func() interface{} {
+	return singleFakeData(ChineseFirstNameTag, func() any {
 		p := Person{}
 		return p.chineseFirstName()
 	}, opts...).(string)
 }
 
 // ChineseLastName returns a random chinese last name
-func (p Person) ChineseLastName(v reflect.Value) (interface{}, error) {
+func (p Person) ChineseLastName(v reflect.Value) (any, error) {
 	return p.chineseLastName(), nil
 }
 
@@ -799,14 +799,14 @@ func (p Person) chineseLastName() string {
 
 // ChineseLastName get chinese lsst name
 func ChineseLastName(opts ...options.OptionFunc) string {
-	return singleFakeData(ChineseLastNameTag, func() interface{} {
+	return singleFakeData(ChineseLastNameTag, func() any {
 		p := Person{}
 		return p.chineseLastName()
 	}, opts...).(string)
 }
 
 // ChineseName returns a random nhinese name
-func (p Person) ChineseName(v reflect.Value) (interface{}, error) {
+func (p Person) ChineseName(v reflect.Value) (any, error) {
 	return p.chineseName(), nil
 }
 
@@ -816,7 +816,7 @@ func (p Person) chineseName() string {
 
 // ChineseName get chinese lsst name
 func ChineseName(opts ...options.OptionFunc) string {
-	return singleFakeData(ChineseNameTag, func() interface{} {
+	return singleFakeData(ChineseNameTag, func() any {
 		p := Person{}
 		return p.chineseName()
 	}, opts...).(string)
@@ -847,31 +847,31 @@ func (p Person) russianLastNameFemale() string {
 }
 
 // RussianFirstNameMale returns russian male firstname
-func (p Person) RussianFirstNameMale(v reflect.Value) (interface{}, error) {
+func (p Person) RussianFirstNameMale(v reflect.Value) (any, error) {
 	return p.russianFirstNameMale(), nil
 }
 
 // RussianMiddleNameMale returns russian male middlename
-func (p Person) RussianMiddleNameMale(v reflect.Value) (interface{}, error) {
+func (p Person) RussianMiddleNameMale(v reflect.Value) (any, error) {
 	return p.russianMiddleNameMale(), nil
 }
 
 // RussianLastNameMale returns russian male lastname
-func (p Person) RussianLastNameMale(v reflect.Value) (interface{}, error) {
+func (p Person) RussianLastNameMale(v reflect.Value) (any, error) {
 	return p.russianLastNameMale(), nil
 }
 
 // RussianFirstNameFemale returns russian female firstname
-func (p Person) RussianFirstNameFemale(v reflect.Value) (interface{}, error) {
+func (p Person) RussianFirstNameFemale(v reflect.Value) (any, error) {
 	return p.russianFirstNameFemale(), nil
 }
 
 // RussianMiddleNameFemale returns russian female middlename
-func (p Person) RussianMiddleNameFemale(v reflect.Value) (interface{}, error) {
+func (p Person) RussianMiddleNameFemale(v reflect.Value) (any, error) {
 	return p.russianMiddleNameFemale(), nil
 }
 
 // RussianLastNameFemale returns russian female lastname
-func (p Person) RussianLastNameFemale(v reflect.Value) (interface{}, error) {
+func (p Person) RussianLastNameFemale(v reflect.Value) (any, error) {
 	return p.russianLastNameFemale(), nil
 }

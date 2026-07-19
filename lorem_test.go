@@ -88,7 +88,7 @@ func TestUniqueWordPanic(t *testing.T) {
 	}()
 
 	length := len(wordList) + 1
-	for i := 0; i < length; i++ {
+	for range length {
 		Word(options.WithGenerateUniqueValues(true))
 	}
 	ResetUnique()

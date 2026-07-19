@@ -8,7 +8,7 @@ import (
 	fakerErrors "github.com/go-faker/faker/v4/pkg/errors"
 )
 
-func extractFloat64FromTagArgs(args []string) (interface{}, error) {
+func extractFloat64FromTagArgs(args []string) (any, error) {
 	bytes := 64
 	var floatValues []float64
 	for _, i := range args {
@@ -23,7 +23,7 @@ func extractFloat64FromTagArgs(args []string) (interface{}, error) {
 	return toRet, nil
 }
 
-func extractFloat32FromTagArgs(args []string) (interface{}, error) {
+func extractFloat32FromTagArgs(args []string) (any, error) {
 	bytes := 32
 	var floatValues []float32
 	for _, i := range args {
@@ -38,7 +38,7 @@ func extractFloat32FromTagArgs(args []string) (interface{}, error) {
 	return toRet, nil
 }
 
-func extractInt64FromTagArgs(args []string) (interface{}, error) {
+func extractInt64FromTagArgs(args []string) (any, error) {
 	bytes := 64
 	var floatValues []int64
 	for _, i := range args {
@@ -53,7 +53,7 @@ func extractInt64FromTagArgs(args []string) (interface{}, error) {
 	return toRet, nil
 }
 
-func extractInt32FromTagArgs(args []string) (interface{}, error) {
+func extractInt32FromTagArgs(args []string) (any, error) {
 	bytes := 32
 	var floatValues []int32
 	for _, i := range args {
@@ -68,7 +68,7 @@ func extractInt32FromTagArgs(args []string) (interface{}, error) {
 	return toRet, nil
 }
 
-func extractInt16FromTagArgs(args []string) (interface{}, error) {
+func extractInt16FromTagArgs(args []string) (any, error) {
 	bytes := 16
 	var floatValues []int16
 	for _, i := range args {
@@ -83,7 +83,7 @@ func extractInt16FromTagArgs(args []string) (interface{}, error) {
 	return toRet, nil
 }
 
-func extractInt8FromTagArgs(args []string) (interface{}, error) {
+func extractInt8FromTagArgs(args []string) (any, error) {
 	bytes := 8
 	var floatValues []int8
 	for _, i := range args {
@@ -98,7 +98,7 @@ func extractInt8FromTagArgs(args []string) (interface{}, error) {
 	return toRet, nil
 }
 
-func extractIntFromTagArgs(args []string) (interface{}, error) {
+func extractIntFromTagArgs(args []string) (any, error) {
 	bytes := 0
 	var floatValues []int
 	for _, i := range args {
@@ -113,7 +113,7 @@ func extractIntFromTagArgs(args []string) (interface{}, error) {
 	return toRet, nil
 }
 
-func extractUint64FromTagArgs(args []string) (interface{}, error) {
+func extractUint64FromTagArgs(args []string) (any, error) {
 	bytes := 64
 	var floatValues []uint64
 	for _, i := range args {
@@ -128,7 +128,7 @@ func extractUint64FromTagArgs(args []string) (interface{}, error) {
 	return toRet, nil
 }
 
-func extractUint32FromTagArgs(args []string) (interface{}, error) {
+func extractUint32FromTagArgs(args []string) (any, error) {
 	bytes := 32
 	var floatValues []uint32
 	for _, i := range args {
@@ -143,7 +143,7 @@ func extractUint32FromTagArgs(args []string) (interface{}, error) {
 	return toRet, nil
 }
 
-func extractUint16FromTagArgs(args []string) (interface{}, error) {
+func extractUint16FromTagArgs(args []string) (any, error) {
 	bytes := 16
 	var floatValues []uint16
 	for _, i := range args {
@@ -158,7 +158,7 @@ func extractUint16FromTagArgs(args []string) (interface{}, error) {
 	return toRet, nil
 }
 
-func extractUint8FromTagArgs(args []string) (interface{}, error) {
+func extractUint8FromTagArgs(args []string) (any, error) {
 	bytes := 8
 	var floatValues []uint8
 	for _, i := range args {
@@ -173,7 +173,7 @@ func extractUint8FromTagArgs(args []string) (interface{}, error) {
 	return toRet, nil
 }
 
-func extractUintFromTagArgs(args []string) (interface{}, error) {
+func extractUintFromTagArgs(args []string) (any, error) {
 	bytes := 0
 	var floatValues []uint
 	for _, i := range args {

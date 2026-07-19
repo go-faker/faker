@@ -15,8 +15,8 @@ func GetIdentifier() Identifier {
 
 // Identifier ...
 type Identifier interface {
-	Digit(v reflect.Value) (interface{}, error)
-	Hyphenated(v reflect.Value) (interface{}, error)
+	Digit(v reflect.Value) (any, error)
+	Hyphenated(v reflect.Value) (any, error)
 }
 
 // UUID struct
@@ -46,13 +46,13 @@ func (u UUID) hyphenated() (string, error) {
 }
 
 // Hyphenated returns a 36 byte hyphenated UUID
-func (u UUID) Hyphenated(v reflect.Value) (interface{}, error) {
+func (u UUID) Hyphenated(v reflect.Value) (any, error) {
 	return u.hyphenated()
 }
 
 // UUIDHyphenated get fake Hyphenated UUID
 func UUIDHyphenated(opts ...options.OptionFunc) string {
-	return singleFakeData(HyphenatedID, func() interface{} {
+	return singleFakeData(HyphenatedID, func() any {
 		u := UUID{}
 		res, _ := u.hyphenated()
 		return res
@@ -69,13 +69,13 @@ func (u UUID) digit() (string, error) {
 }
 
 // Digit returns a 32 bytes UUID
-func (u UUID) Digit(v reflect.Value) (interface{}, error) {
+func (u UUID) Digit(v reflect.Value) (any, error) {
 	return u.digit()
 }
 
 // UUIDDigit get fake Digit UUID
 func UUIDDigit(opts ...options.OptionFunc) string {
-	return singleFakeData(ID, func() interface{} {
+	return singleFakeData(ID, func() any {
 		u := UUID{}
 		res, _ := u.digit()
 		return res

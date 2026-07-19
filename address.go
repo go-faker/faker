@@ -42,10 +42,10 @@ func GetAddress() Addresser {
 
 // Addresser is logical layer for Address
 type Addresser interface {
-	Latitude(v reflect.Value) (interface{}, error)
-	Longitude(v reflect.Value) (interface{}, error)
-	RealWorld(v reflect.Value) (interface{}, error)
-	CountryInfo(v reflect.Value) (interface{}, error)
+	Latitude(v reflect.Value) (any, error)
+	Longitude(v reflect.Value) (any, error)
+	RealWorld(v reflect.Value) (any, error)
+	CountryInfo(v reflect.Value) (any, error)
 }
 
 // Address struct
@@ -56,7 +56,7 @@ func (i Address) latitude() float32 {
 }
 
 // Latitude sets latitude of the address
-func (i Address) Latitude(v reflect.Value) (interface{}, error) {
+func (i Address) Latitude(v reflect.Value) (any, error) {
 	kind := v.Kind()
 	val := i.latitude()
 	if kind == reflect.Float32 {
@@ -70,7 +70,7 @@ func (i Address) longitude() float32 {
 }
 
 // Longitude sets longitude of the address
-func (i Address) Longitude(v reflect.Value) (interface{}, error) {
+func (i Address) Longitude(v reflect.Value) (any, error) {
 	kind := v.Kind()
 	val := i.longitude()
 	if kind == reflect.Float32 {
@@ -87,18 +87,18 @@ func (i Address) countryInfo() CountryInfo {
 	return countries[rand.Intn(len(countries))]
 }
 
-func (i Address) CountryInfo(_ reflect.Value) (interface{}, error) {
+func (i Address) CountryInfo(_ reflect.Value) (any, error) {
 	return i.countryInfo(), nil
 }
 
 // RealWorld sets real world address
-func (i Address) RealWorld(_ reflect.Value) (interface{}, error) {
+func (i Address) RealWorld(_ reflect.Value) (any, error) {
 	return i.realWorld(), nil
 }
 
 // Longitude get fake longitude randomly
 func Longitude(opts ...options.OptionFunc) float64 {
-	return singleFakeData(LONGITUDE, func() interface{} {
+	return singleFakeData(LONGITUDE, func() any {
 		address := Address{}
 		return float64(address.longitude())
 	}, opts...).(float64)
@@ -106,7 +106,7 @@ func Longitude(opts ...options.OptionFunc) float64 {
 
 // Latitude get fake latitude randomly
 func Latitude(opts ...options.OptionFunc) float64 {
-	return singleFakeData(LATITUDE, func() interface{} {
+	return singleFakeData(LATITUDE, func() any {
 		address := Address{}
 		return float64(address.latitude())
 	}, opts...).(float64)
@@ -127,7 +127,7 @@ type RealAddress struct {
 
 // GetRealAddress get real world address randomly
 func GetRealAddress(opts ...options.OptionFunc) RealAddress {
-	return singleFakeData(RealAddressTag, func() interface{} {
+	return singleFakeData(RealAddressTag, func() any {
 		address := Address{}
 		return address.realWorld()
 	}, opts...).(RealAddress)
@@ -142,7 +142,7 @@ type CountryInfo struct {
 }
 
 func GetCountryInfo(opts ...options.OptionFunc) CountryInfo {
-	return singleFakeData(CountryInfoTag, func() interface{} {
+	return singleFakeData(CountryInfoTag, func() any {
 		address := Address{}
 		return address.countryInfo()
 	}, opts...).(CountryInfo)

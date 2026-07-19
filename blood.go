@@ -19,9 +19,9 @@ func GetBlood(opts ...options.OptionFunc) Blooder {
 }
 
 type Blooder interface {
-	BloodType(v reflect.Value) (interface{}, error)
-	BloodRHFactor(v reflect.Value) (interface{}, error)
-	BloodGroup(v reflect.Value) (interface{}, error)
+	BloodType(v reflect.Value) (any, error)
+	BloodRHFactor(v reflect.Value) (any, error)
+	BloodGroup(v reflect.Value) (any, error)
 }
 
 // Internet struct
@@ -33,7 +33,7 @@ func (b Blood) bloodType() string {
 	return randomElementFromSliceString(bloodTypes)
 }
 
-func (b Blood) BloodType(v reflect.Value) (interface{}, error) {
+func (b Blood) BloodType(v reflect.Value) (any, error) {
 	return b.bloodType(), nil
 }
 
@@ -41,7 +41,7 @@ func (b Blood) bloodRhFactor() string {
 	return randomElementFromSliceString(bloodRhFactors)
 }
 
-func (b Blood) BloodRHFactor(v reflect.Value) (interface{}, error) {
+func (b Blood) BloodRHFactor(v reflect.Value) (any, error) {
 	return b.bloodRhFactor(), nil
 }
 
@@ -49,6 +49,6 @@ func (b Blood) bloodGroup() string {
 	return fmt.Sprintf("%s%s", b.bloodType(), b.bloodRhFactor())
 }
 
-func (b Blood) BloodGroup(v reflect.Value) (interface{}, error) {
+func (b Blood) BloodGroup(v reflect.Value) (any, error) {
 	return b.bloodGroup(), nil
 }
