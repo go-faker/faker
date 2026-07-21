@@ -1,4 +1,4 @@
-module github.com/go-faker/faker/v4
+module github.com/catdevman/faker
 
 go 1.26.0
 

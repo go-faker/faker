@@ -6,8 +6,8 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/go-faker/faker/v4"
-	"github.com/go-faker/faker/v4/pkg/options"
+	"github.com/catdevman/faker"
+	"github.com/catdevman/faker/pkg/options"
 )
 
 type RedefinedTime time.Time

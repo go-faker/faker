@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/go-faker/faker/v4/pkg/slice"
+	"github.com/catdevman/faker/pkg/slice"
 )
 
 func TestUnixTimeValueValid(t *testing.T) {

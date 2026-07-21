@@ -7,7 +7,7 @@ import (
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 
-	"github.com/go-faker/faker/v4/pkg/options"
+	"github.com/catdevman/faker/pkg/options"
 )
 
 var wordList = []string{

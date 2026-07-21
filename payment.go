@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/go-faker/faker/v4/pkg/options"
+	"github.com/catdevman/faker/pkg/options"
 )
 
 const (

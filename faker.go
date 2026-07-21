@@ -14,10 +14,10 @@ import (
 	"sync"
 	"time"
 
-	fakerErrors "github.com/go-faker/faker/v4/pkg/errors"
-	"github.com/go-faker/faker/v4/pkg/interfaces"
-	"github.com/go-faker/faker/v4/pkg/options"
-	"github.com/go-faker/faker/v4/pkg/slice"
+	fakerErrors "github.com/catdevman/faker/pkg/errors"
+	"github.com/catdevman/faker/pkg/interfaces"
+	"github.com/catdevman/faker/pkg/options"
+	"github.com/catdevman/faker/pkg/slice"
 )
 
 var (
@@ -290,7 +290,27 @@ var (
 	SetRandomNumberBoundaries   = options.SetRandomNumberBoundaries
 )
 
+// mapperTagWithDefaultOptionOnce guards the common case of initMapperTagWithOption
+// being called with no per-call options (e.g. plain faker.FakeData(&v) with no
+// options.OptionFunc args, which is the overwhelming majority of calls in
+// practice). Storing the same functions into mapperTag on every single
+// FakeData call - regardless of options - showed up as a significant chunk of
+// CPU time (and lock contention on mapperTag, since it's hit concurrently)
+// under high call volume, even though the stored values never change when no
+// options are given. Calls that *do* pass options still re-run every time,
+// preserving the existing per-call customization behavior (e.g. a custom
+// email domain option) exactly as before.
+var mapperTagWithDefaultOptionOnce sync.Once
+
 func initMapperTagWithOption(opts ...options.OptionFunc) {
+	if len(opts) == 0 {
+		mapperTagWithDefaultOptionOnce.Do(func() { storeMapperTagWithOption() })
+		return
+	}
+	storeMapperTagWithOption(opts...)
+}
+
+func storeMapperTagWithOption(opts ...options.OptionFunc) {
 	mapperTag.Store(EmailTag, GetNetworker(opts...).Email)
 	mapperTag.Store(MacAddressTag, GetNetworker(opts...).MacAddress)
 	mapperTag.Store(DomainNameTag, GetNetworker(opts...).DomainName)

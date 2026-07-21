@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/go-faker/faker/v4/pkg/options"
+	"github.com/catdevman/faker/pkg/options"
 )
 
 var bloodTypes = []string{"O", "A", "B", "AB"}
