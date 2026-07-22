@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	fakerErrors "github.com/catdevman/faker/pkg/errors"
+	fakerErrors "github.com/go-faker/faker/v4/pkg/errors"
 )
 
 func extractFloat64FromTagArgs(args []string) (any, error) {

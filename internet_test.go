@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/catdevman/faker/pkg/options"
-	"github.com/catdevman/faker/pkg/slice"
+	"github.com/go-faker/faker/v4/pkg/options"
+	"github.com/go-faker/faker/v4/pkg/slice"
 )
 
 func TestEmail(t *testing.T) {

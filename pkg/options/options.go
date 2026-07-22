@@ -9,8 +9,8 @@ import (
 	"time"
 	"unsafe"
 
-	fakerErrors "github.com/catdevman/faker/pkg/errors"
-	"github.com/catdevman/faker/pkg/interfaces"
+	fakerErrors "github.com/go-faker/faker/v4/pkg/errors"
+	"github.com/go-faker/faker/v4/pkg/interfaces"
 )
 
 var (
