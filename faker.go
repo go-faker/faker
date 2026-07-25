@@ -12,6 +12,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	fakerErrors "github.com/go-faker/faker/v4/pkg/errors"
@@ -290,7 +291,27 @@ var (
 	SetRandomNumberBoundaries   = options.SetRandomNumberBoundaries
 )
 
+// mapperTagHasDefaults reports whether mapperTag currently holds the default
+// (no-option) generator functions. The common no-option case skips the
+// redundant re-store while this is true, avoiding repeated work and lock
+// contention under high volume. An option call overwrites mapperTag and clears
+// the flag, so the next no-option call restores the defaults.
+var mapperTagHasDefaults atomic.Bool
+
 func initMapperTagWithOption(opts ...options.OptionFunc) {
+	if len(opts) == 0 {
+		if mapperTagHasDefaults.Load() {
+			return
+		}
+		storeMapperTagWithOption()
+		mapperTagHasDefaults.Store(true)
+		return
+	}
+	storeMapperTagWithOption(opts...)
+	mapperTagHasDefaults.Store(false)
+}
+
+func storeMapperTagWithOption(opts ...options.OptionFunc) {
 	mapperTag.Store(EmailTag, GetNetworker(opts...).Email)
 	mapperTag.Store(MacAddressTag, GetNetworker(opts...).MacAddress)
 	mapperTag.Store(DomainNameTag, GetNetworker(opts...).DomainName)

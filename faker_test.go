@@ -1016,6 +1016,115 @@ func BenchmarkFakerDataTagged(b *testing.B) {
 	}
 }
 
+// BenchmarkFakeDataNoOption measures the common hot path: repeated FakeData
+// calls with no per-call options. This is the case the sync.Once/atomic guard
+// optimizes, since the default mapperTag population runs only once.
+func BenchmarkFakeDataNoOption(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		a := TaggedStruct{}
+		if err := FakeData(&a); err != nil {
+			b.Fatal(err)
+		}
+	}
+}
+
+// BenchmarkFakeDataNoOptionThenOption alternates a no-option call with an
+// option call (custom email domain). Each option call overwrites the global
+// mapperTag, so the following no-option call must re-store the defaults.
+func BenchmarkFakeDataNoOptionThenOption(b *testing.B) {
+	domain := options.WithCustomDomain("bench.example")
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		a := TaggedStruct{}
+		if err := FakeData(&a); err != nil {
+			b.Fatal(err)
+		}
+		if err := FakeData(&a, domain); err != nil {
+			b.Fatal(err)
+		}
+	}
+}
+
+// BenchmarkFakeDataNoOptionOptionNoOption runs no-option, then option, then
+// no-option again per iteration. The trailing no-option call exercises the
+// path that restores the defaults after an option call overwrote them.
+func BenchmarkFakeDataNoOptionOptionNoOption(b *testing.B) {
+	domain := options.WithCustomDomain("bench.example")
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		a := TaggedStruct{}
+		if err := FakeData(&a); err != nil {
+			b.Fatal(err)
+		}
+		if err := FakeData(&a, domain); err != nil {
+			b.Fatal(err)
+		}
+		if err := FakeData(&a); err != nil {
+			b.Fatal(err)
+		}
+	}
+}
+
+// BenchmarkFakeDataNoOptionParallel is the concurrent version of the hot path:
+// many goroutines calling FakeData with no options at once. This is the case
+// the guard targets most directly, since it removes the per-call re-store of
+// mapperTag and the lock contention that came with it.
+func BenchmarkFakeDataNoOptionParallel(b *testing.B) {
+	b.ReportAllocs()
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			a := TaggedStruct{}
+			if err := FakeData(&a); err != nil {
+				b.Fatal(err)
+			}
+		}
+	})
+}
+
+// BenchmarkFakeDataNoOptionThenOptionParallel runs the no-option + option pair
+// concurrently across goroutines. Note: option calls mutate the shared global
+// mapperTag, so this intentionally exercises the contended mixed workload (do
+// not run under -race, which will flag the pre-existing shared-map access).
+func BenchmarkFakeDataNoOptionThenOptionParallel(b *testing.B) {
+	domain := options.WithCustomDomain("bench.example")
+	b.ReportAllocs()
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			a := TaggedStruct{}
+			if err := FakeData(&a); err != nil {
+				b.Fatal(err)
+			}
+			if err := FakeData(&a, domain); err != nil {
+				b.Fatal(err)
+			}
+		}
+	})
+}
+
+// BenchmarkFakeDataNoOptionOptionNoOptionParallel runs the no-option, option,
+// no-option sequence concurrently across goroutines. As above, the option call
+// mutates shared global state, so this is a throughput/contention measurement
+// under a mixed workload, not a race-clean benchmark.
+func BenchmarkFakeDataNoOptionOptionNoOptionParallel(b *testing.B) {
+	domain := options.WithCustomDomain("bench.example")
+	b.ReportAllocs()
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			a := TaggedStruct{}
+			if err := FakeData(&a); err != nil {
+				b.Fatal(err)
+			}
+			if err := FakeData(&a, domain); err != nil {
+				b.Fatal(err)
+			}
+			if err := FakeData(&a); err != nil {
+				b.Fatal(err)
+			}
+		}
+	})
+}
+
 func TestRandomIntOnlyFirstParameter(t *testing.T) {
 	r := rand.Intn(100)
 	res, _ := RandomInt(r)
@@ -2916,5 +3025,46 @@ func TestWithOnlyZeroFieldsNestedStruct(t *testing.T) {
 	}
 	if preset.Inner.Value == "" {
 		t.Errorf("zero Inner.Value should have been populated")
+	}
+}
+
+// TestFakeDataNoOptionAfterOptionCall verifies that calling FakeData without
+// options, then with a per-call option, then without options again behaves
+// correctly. The middle call customizes the email domain via a per-call option;
+// the final no-option call must produce a default-domain email and must not
+// leak the custom domain set by the previous call. This guards the sync.Once
+// fast path for the default (no-option) mapperTag population.
+func TestFakeDataNoOptionAfterOptionCall(t *testing.T) {
+	type EmailStruct struct {
+		Email string `faker:"email"`
+	}
+	const customDomain = "custom-domain-for-test.example"
+
+	// 1. No options: baseline default-domain email.
+	var before EmailStruct
+	if err := FakeData(&before); err != nil {
+		t.Fatalf("FakeData without options failed: %v", err)
+	}
+	if strings.HasSuffix(before.Email, customDomain) {
+		t.Fatalf("baseline email unexpectedly used custom domain: %q", before.Email)
+	}
+
+	// 2. With a per-call option that customizes the email domain.
+	var withOpt EmailStruct
+	if err := FakeData(&withOpt, options.WithCustomDomain(customDomain)); err != nil {
+		t.Fatalf("FakeData with custom domain failed: %v", err)
+	}
+	if !strings.HasSuffix(withOpt.Email, "@"+customDomain) {
+		t.Fatalf("expected email with custom domain %q, got %q", customDomain, withOpt.Email)
+	}
+
+	// 3. No options again: must revert to a default-domain email and not leak
+	// the custom domain from step 2.
+	var after EmailStruct
+	if err := FakeData(&after); err != nil {
+		t.Fatalf("FakeData without options (second call) failed: %v", err)
+	}
+	if strings.HasSuffix(after.Email, customDomain) {
+		t.Fatalf("no-option call leaked custom domain from previous option call: %q", after.Email)
 	}
 }
