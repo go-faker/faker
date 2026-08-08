@@ -620,8 +620,24 @@ func getFakedValueForStruct(item any, t reflect.Type, opts *options.Options) (re
 		}
 
 		tags := decodeTags(t, i, opts.TagName)
-		// if this field is a template tag, defer evaluation until other fields are generated
-		if strings.HasPrefix(strings.ToLower(tags.fieldType), TemplateTag+":") {
+		// A template field is derived from other fields, so it is deferred to a
+		// second pass that runs once every other field has been generated.
+		if tags.isTemplate {
+			if tags.unique {
+				// A template over fixed inputs is deterministic, so the retry loop
+				// could never produce a different value. Fail loudly instead.
+				return reflect.Value{}, fmt.Errorf(fakerErrors.ErrTemplateWithUnique, t.Field(i).Name)
+			}
+			if tags.keepOriginal {
+				zero, err := isZero(originalDataVal.Field(i))
+				if err != nil {
+					return reflect.Value{}, err
+				}
+				if !zero {
+					v.Field(i).Set(originalDataVal.Field(i))
+					continue
+				}
+			}
 			templateFields = append(templateFields, i)
 			continue
 		}
@@ -684,10 +700,8 @@ func getFakedValueForStruct(item any, t reflect.Type, opts *options.Options) (re
 
 	}
 	// second pass: evaluate template fields using values generated above
-	if len(templateFields) > 0 {
-		if err := EvaluateTemplateFields(t, v, templateFields, opts.TagName); err != nil {
-			return reflect.Value{}, err
-		}
+	if err := evaluateTemplateFields(t, v, templateFields, opts.TagName); err != nil {
+		return reflect.Value{}, err
 	}
 	return v, nil
 }
@@ -713,6 +727,10 @@ func decodeTags(typ reflect.Type, i int, tagName string) structTag {
 	uni := false
 	res := make([]string, 0)
 	pMap := make(map[string]string)
+	// body collects the template body once a "template:" chunk is seen. Everything
+	// after that chunk belongs to the body, so a template may contain commas; only
+	// the standalone "keep" and "unique" chunks keep their usual meaning.
+	var body []string
 	for _, tag := range tags {
 		if tag == keep {
 			keepOriginal = true
@@ -721,11 +739,29 @@ func decodeTags(typ reflect.Type, i int, tagName string) structTag {
 			uni = true
 			continue
 		}
+		if body != nil {
+			body = append(body, tag)
+			continue
+		}
+		if hasTemplatePrefix(strings.TrimSpace(tag)) {
+			body = append(body, strings.TrimSpace(tag)[len(TemplateTag)+1:])
+			continue
+		}
 		// res = append(res, tag)
 		ptag := strings.ToLower(strings.Trim(strings.Split(tag, "=")[0], " "))
 		pMap[ptag] = tag
 		ptag = strings.ToLower(strings.Trim(strings.Split(tag, ":")[0], " "))
 		pMap[ptag] = tag
+	}
+	if body != nil {
+		// A template body is opaque: it must never reach the priority scanner, which
+		// would otherwise hijack a chunk such as ", email: {{.X}}" as the email tag.
+		return structTag{
+			template:     strings.Join(body, comma),
+			isTemplate:   true,
+			unique:       uni,
+			keepOriginal: keepOriginal,
+		}
 	}
 	// Priority
 	for _, ptag := range PriorityTags {
@@ -753,9 +789,22 @@ func decodeTags(typ reflect.Type, i int, tagName string) structTag {
 }
 
 type structTag struct {
-	fieldType    string
+	fieldType string
+	// template holds the verbatim template body when isTemplate is set. It is kept
+	// out of fieldType because a template body is not a tag and must not be parsed
+	// as one.
+	template     string
 	unique       bool
 	keepOriginal bool
+	isTemplate   bool
+}
+
+// hasTemplatePrefix reports whether s starts with "template:" (case-insensitive).
+// The colon is required, so `faker:"template"` and `faker:"templated"` stay with
+// the normal tag pipeline.
+func hasTemplatePrefix(s string) bool {
+	const n = len(TemplateTag) + 1
+	return len(s) >= n && strings.EqualFold(s[:n], TemplateTag+colon)
 }
 
 func setDataWithTag(v reflect.Value, tag string, opt options.Options) error {
