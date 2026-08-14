@@ -10,6 +10,12 @@ package errors
 //	ErrTagDoesNotExist: Error when tag does not exist and call RemoveProvider
 //	ErrMoreArguments: Error on passing more arguments
 //	ErrNotSupportedPointer: Error when passing unsupported pointer
+//	ErrTemplateNotStringField: Error when the template tag is used on a non-string field
+//	ErrTemplateEmptyBody: Error when the template tag has no body
+//	ErrTemplateParse: Error when the template body fails to parse
+//	ErrTemplateEvaluate: Error when the template body fails to execute
+//	ErrTemplateCycle: Error when template fields reference each other in a cycle
+//	ErrTemplateWithUnique: Error when the template tag is combined with the unique tag
 var (
 	ErrUnsupportedKindPtr        = "Unsupported kind: %s Change Without using * (pointer) in Field of %s"
 	ErrUnsupportedKind           = "Unsupported kind: %s"
@@ -33,4 +39,11 @@ var (
 	ErrNotEnoughTagArguments   = "Not enough arguments for tag."
 	ErrUnsupportedNumberType   = "Unsupported Number type."
 	ErrOnlyStructTypeSupported = "only struct type supported."
+
+	ErrTemplateNotStringField = "Template tag is only supported on string fields, field \"%s\" is %s"
+	ErrTemplateEmptyBody      = "Template tag for field \"%s\" has an empty body"
+	ErrTemplateParse          = "Failed to parse template for field \"%s\": %w"
+	ErrTemplateEvaluate       = "Failed to evaluate template for field \"%s\": %w"
+	ErrTemplateCycle          = "Template tag cycle detected: %s"
+	ErrTemplateWithUnique     = "Tag \"unique\" can not be combined with the template tag (field \"%s\")"
 )
