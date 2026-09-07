@@ -9,6 +9,20 @@ import (
 	"github.com/go-faker/faker/v4/pkg/slice"
 )
 
+// chineseMobilePrefixes holds the 3-digit prefixes of Mainland China mobile
+// numbers, allocated to China Mobile, China Unicom, China Telecom and China
+// Broadnet (including MVNO & IoT segments). Each prefix is followed by 8
+// subscriber digits to form an 11-digit number.
+var chineseMobilePrefixes = []string{
+	"130", "131", "132", "133", "134", "135", "136", "137", "138", "139",
+	"145", "146", "147", "148", "149",
+	"150", "151", "152", "153", "155", "156", "157", "158", "159",
+	"162", "165", "166", "167",
+	"170", "171", "172", "173", "174", "175", "176", "177", "178",
+	"180", "181", "182", "183", "184", "185", "186", "187", "188", "189",
+	"190", "191", "192", "193", "195", "196", "197", "198", "199",
+}
+
 // GetPhoner serves as a constructor for Phoner interface
 func GetPhoner() Phoner {
 	phone := &Phone{}
@@ -20,6 +34,7 @@ type Phoner interface {
 	PhoneNumber(v reflect.Value) (any, error)
 	TollFreePhoneNumber(v reflect.Value) (any, error)
 	E164PhoneNumber(v reflect.Value) (any, error)
+	ChinesePhoneNumber(v reflect.Value) (any, error)
 }
 
 // Phone struct
@@ -93,5 +108,24 @@ func E164PhoneNumber(opts ...options.OptionFunc) string {
 	return singleFakeData(E164PhoneNumberTag, func() any {
 		p := Phone{}
 		return p.e164PhoneNumber()
+	}, opts...).(string)
+}
+
+func (p Phone) chinesePhoneNumber() string {
+	prefix := chineseMobilePrefixes[rand.Intn(len(chineseMobilePrefixes))]
+	return prefix + randomStringNumber(8)
+}
+
+// ChinesePhoneNumber generates a Mainland-China mobile phone number of the
+// form "13812345678" (11 digits, starting with a valid operator prefix)
+func (p Phone) ChinesePhoneNumber(v reflect.Value) (any, error) {
+	return p.chinesePhoneNumber(), nil
+}
+
+// ChinesePhoneNumber get fake Chinese phone number
+func ChinesePhoneNumber(opts ...options.OptionFunc) string {
+	return singleFakeData(ChinesePhoneNumberTag, func() any {
+		p := Phone{}
+		return p.chinesePhoneNumber()
 	}, opts...).(string)
 }

@@ -63,6 +63,7 @@ const (
 	ChineseFirstNameTag        = "chinese_first_name"
 	ChineseLastNameTag         = "chinese_last_name"
 	ChineseNameTag             = "chinese_name"
+	ChinesePhoneNumberTag      = "chinese_phone_number"
 	GENDER                     = "gender"
 	UnixTimeTag                = "unix_time"
 	DATE                       = "date"
@@ -107,7 +108,7 @@ const (
 var PriorityTags = []string{ID, HyphenatedID, EmailTag, MacAddressTag, DomainNameTag, UserNameTag, URLTag, IPV4Tag,
 	IPV6Tag, PASSWORD, JWT, CountryInfoTag, LATITUDE, LONGITUDE, CreditCardNumber, CreditCardType, PhoneNumber, TollFreeNumber,
 	E164PhoneNumberTag, TitleMaleTag, TitleFemaleTag, FirstNameTag, FirstNameMaleTag, FirstNameFemaleTag, LastNameTag,
-	NAME, ChineseFirstNameTag, ChineseLastNameTag, ChineseNameTag, GENDER, UnixTimeTag, DATE, TIME, MonthNameTag,
+	NAME, ChineseFirstNameTag, ChineseLastNameTag, ChineseNameTag, ChinesePhoneNumberTag, GENDER, UnixTimeTag, DATE, TIME, MonthNameTag,
 	YEAR, DayOfWeekTag, DayOfMonthTag, TIMESTAMP, CENTURY, TIMEZONE, TimePeriodTag, WORD, SENTENCE, PARAGRAPH,
 	CurrencyTag, AmountTag, AmountWithCurrencyTag, SKIP, Length, SliceLength, Language, BoundaryStart, BoundaryEnd, ONEOF, BloodTypeTag,
 	UserAgentTag,
@@ -169,6 +170,7 @@ func initDefaultTag() {
 	defaultTag.Store(ChineseFirstNameTag, ChineseFirstNameTag)
 	defaultTag.Store(ChineseLastNameTag, ChineseLastNameTag)
 	defaultTag.Store(ChineseNameTag, ChineseNameTag)
+	defaultTag.Store(ChinesePhoneNumberTag, ChinesePhoneNumberTag)
 	defaultTag.Store(GENDER, GENDER)
 	defaultTag.Store(UnixTimeTag, UnixTimeTag)
 	defaultTag.Store(DATE, DATE)
@@ -220,6 +222,7 @@ func initMapperTagDefault() {
 	mapperTag.Store(ChineseFirstNameTag, GetPerson().ChineseFirstName)
 	mapperTag.Store(ChineseLastNameTag, GetPerson().ChineseLastName)
 	mapperTag.Store(ChineseNameTag, GetPerson().ChineseName)
+	mapperTag.Store(ChinesePhoneNumberTag, GetPhoner().ChinesePhoneNumber)
 	mapperTag.Store(GENDER, GetPerson().Gender)
 	mapperTag.Store(UnixTimeTag, GetDateTimer().UnixTime)
 	mapperTag.Store(DATE, GetDateTimer().Date)

@@ -283,6 +283,7 @@ type TaggedStruct struct {
 	ChineseFirstName   string  `faker:"chinese_first_name"   custom_tag_name:"chinese_first_name"`
 	ChineseLastName    string  `faker:"chinese_last_name"    custom_tag_name:"chinese_last_name"`
 	ChineseName        string  `faker:"chinese_name"         custom_tag_name:"chinese_name"`
+	ChinesePhoneNumber string  `faker:"chinese_phone_number" custom_tag_name:"chinese_phone_number"`
 	UnixTime           int64   `faker:"unix_time"            custom_tag_name:"unix_time"`
 	Date               string  `faker:"date"                 custom_tag_name:"date"`
 	Time               string  `faker:"time"                 custom_tag_name:"time"`
