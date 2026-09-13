@@ -56,3 +56,52 @@ func TestFakeE164PhoneNumber(t *testing.T) {
 		t.Error("Expected character '(888)', in function TollFreePhoneNumber")
 	}
 }
+
+func isValidChineseMobileNumber(number string) bool {
+	if len(number) != 11 || number[0] != '1' {
+		return false
+	}
+	for _, r := range number {
+		if r < '0' || r > '9' {
+			return false
+		}
+	}
+	prefix := number[:3]
+	for _, p := range chineseMobilePrefixes {
+		if p == prefix {
+			return true
+		}
+	}
+	return false
+}
+
+func TestChinesePhoneNumber(t *testing.T) {
+	ph, err := GetPhoner().ChinesePhoneNumber(reflect.Value{})
+	if err != nil {
+		t.Error("Expected  not error, got err", err)
+	}
+	if !isValidChineseMobileNumber(ph.(string)) {
+		t.Errorf("Expected a valid Chinese mobile number, got: %s", ph.(string))
+	}
+}
+
+func TestFakeChinesePhoneNumber(t *testing.T) {
+	ph := ChinesePhoneNumber()
+	if !isValidChineseMobileNumber(ph) {
+		t.Errorf("Expected a valid Chinese mobile number, got: %s", ph)
+	}
+}
+
+type chinesePhoneStruct struct {
+	Number string `faker:"chinese_phone_number"`
+}
+
+func TestChinesePhoneNumberTag(t *testing.T) {
+	s := chinesePhoneStruct{}
+	if err := FakeData(&s); err != nil {
+		t.Fatal("Expected NoError, but got Err:", err)
+	}
+	if !isValidChineseMobileNumber(s.Number) {
+		t.Errorf("Expected a valid Chinese mobile number, got: %s", s.Number)
+	}
+}
