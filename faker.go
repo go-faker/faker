@@ -993,13 +993,18 @@ func userDefinedArray(v reflect.Value, tag string, opt options.Options) error {
 		return err
 	}
 
-	if opt.SetSliceMapNilIfLenZero && sliceLen == 0 {
+	if v.Kind() == reflect.Slice && opt.SetSliceMapNilIfLenZero && sliceLen == 0 {
 		v.Set(reflect.Zero(v.Type()))
 		return nil
 	}
 	//remove slice_len from tag string to avoid extra logic in downstream function
 	tag = findSliceLenReg.ReplaceAllString(tag, "")
-	array := reflect.MakeSlice(v.Type(), sliceLen, sliceLen)
+	var array reflect.Value
+	if v.Kind() == reflect.Array {
+		array = reflect.New(v.Type()).Elem()
+	} else {
+		array = reflect.MakeSlice(v.Type(), sliceLen, sliceLen)
+	}
 	innerOpt := opt.Nested()
 	for i := 0; i < array.Len(); i++ {
 		k := v.Type().Elem().Kind()
