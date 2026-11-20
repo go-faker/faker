@@ -588,6 +588,8 @@ func getFakedValueForStruct(item any, t reflect.Type, opts *options.Options) (re
 		ft, err := structTypeProvider()
 		return reflect.ValueOf(ft), err
 	}
+	// the cc_type and cc_number fields of a struct are one card, and the next struct gets another
+	defer startCreditCardScope()()
 	originalDataVal := reflect.ValueOf(item)
 	v := reflect.New(t).Elem()
 	// collect template fields to evaluate in a second pass
