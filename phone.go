@@ -3,10 +3,9 @@ package faker
 import (
 	"fmt"
 	"reflect"
-	"strings"
+	"strconv"
 
 	"github.com/go-faker/faker/v4/pkg/options"
-	"github.com/go-faker/faker/v4/pkg/slice"
 )
 
 // chineseMobilePrefixes holds the 3-digit prefixes of Mainland China mobile
@@ -41,10 +40,19 @@ type Phoner interface {
 type Phone struct {
 }
 
+// nanpCode returns a three digit code of the North American Numbering Plan, for an area code or an exchange:
+// it starts with 2 to 9 and it is not N11, the form of the service codes like 411 and 911
+func nanpCode() string {
+	for {
+		code := strconv.Itoa(2+rand.Intn(8)) + randomStringNumber(2)
+		if code[1:] != "11" {
+			return code
+		}
+	}
+}
+
 func (p Phone) phonenumber() string {
-	randInt, _ := RandomInt(1, 10)
-	str := strings.Join(slice.IntToString(randInt), "")
-	return fmt.Sprintf("%s-%s-%s", str[:3], str[3:6], str[6:10])
+	return nanpCode() + "-" + nanpCode() + "-" + randomStringNumber(4)
 }
 
 // PhoneNumber generates phone numbers of type: "201-886-0269"
@@ -61,17 +69,9 @@ func Phonenumber(opts ...options.OptionFunc) string {
 }
 
 func (p Phone) tollfreephonenumber() string {
-	var out strings.Builder
 	boxDigitsStart := []string{"777", "888"}
 
-	ints, _ := RandomInt(1, 9)
-	for index, v := range slice.IntToString(ints) {
-		if index == 3 {
-			out.WriteString("-")
-		}
-		out.WriteString(v)
-	}
-	return fmt.Sprintf("(%s) %s", boxDigitsStart[rand.Intn(len(boxDigitsStart))], out.String())
+	return fmt.Sprintf("(%s) %s-%s", boxDigitsStart[rand.Intn(len(boxDigitsStart))], nanpCode(), randomStringNumber(4))
 }
 
 // TollFreePhoneNumber generates phone numbers of type: "(888) 937-7238"
@@ -88,14 +88,9 @@ func TollFreePhoneNumber(opts ...options.OptionFunc) string {
 }
 
 func (p Phone) e164PhoneNumber() string {
-	out := ""
 	boxDigitsStart := []string{"7", "8"}
-	ints, _ := RandomInt(1, 10)
 
-	for _, v := range slice.IntToString(ints) {
-		out += v
-	}
-	return fmt.Sprintf("+%s%s", boxDigitsStart[rand.Intn(len(boxDigitsStart))], strings.Join(slice.IntToString(ints), ""))
+	return "+" + boxDigitsStart[rand.Intn(len(boxDigitsStart))] + randomStringNumber(10)
 }
 
 // E164PhoneNumber generates phone numbers of type: "+27113456789"
