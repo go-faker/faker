@@ -1109,17 +1109,19 @@ func extractStringFromTag(tag string, opts options.Options) (any, error) {
 	strlen := opts.RandomStringLength
 	strlng := opts.StringLanguage
 	isOneOfTag := strings.Contains(tag, ONEOF)
-	if !strings.Contains(tag, Length) && !strings.Contains(tag, Language) && !isOneOfTag {
+	hasLen := findLenReg.MatchString(tag)
+	hasLang := findLangReg.MatchString(tag)
+	if !hasLen && !hasLang && !isOneOfTag {
 		return nil, fmt.Errorf(fakerErrors.ErrTagNotSupported, tag)
 	}
-	if strings.Contains(tag, Length) {
+	if hasLen {
 		lenParts := strings.Split(findLenReg.FindString(tag), Equals)
 		if len(lenParts) != 2 {
 			return nil, fmt.Errorf(fakerErrors.ErrWrongFormattedTag, tag)
 		}
 		strlen, _ = strconv.Atoi(lenParts[1])
 	}
-	if strings.Contains(tag, Language) {
+	if hasLang {
 		strlng, err = extractLangFromTag(tag)
 		if err != nil {
 			return nil, fmt.Errorf(fakerErrors.ErrWrongFormattedTag, tag)
