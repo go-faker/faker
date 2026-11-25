@@ -118,6 +118,10 @@ type mapperTagCustom struct {
 	sync.Map
 }
 
+// builtinProvider is a provider that the package registers itself, with storeBuiltin. The providers that AddProvider
+// registers are plain functions, so a tag keeps its builtinProvider until RemoveProvider and AddProvider replace it
+type builtinProvider interfaces.TaggedFunction
+
 func (m *mapperTagCustom) Load(key string) (interfaces.TaggedFunction, bool) {
 	mappedTagFunc, ok := m.Map.Load(key)
 	if !ok {
@@ -131,11 +135,25 @@ func (m *mapperTagCustom) Load(key string) (interfaces.TaggedFunction, bool) {
 	if ok {
 		return tagPureFunc, ok
 	}
+	if builtin, ok := mappedTagFunc.(builtinProvider); ok {
+		return interfaces.TaggedFunction(builtin), true
+	}
 	return nil, false
 }
 
 func (m *mapperTagCustom) Store(key string, taggedFunc interfaces.TaggedFunction) {
 	m.Map.Store(key, taggedFunc)
+}
+
+func (m *mapperTagCustom) storeBuiltin(key string, taggedFunc interfaces.TaggedFunction) {
+	m.Map.Store(key, builtinProvider(taggedFunc))
+}
+
+// hasBuiltin reports whether the provider of the tag is still the one that the package registered
+func (m *mapperTagCustom) hasBuiltin(key string) bool {
+	mappedTagFunc, _ := m.Map.Load(key)
+	_, ok := mappedTagFunc.(builtinProvider)
+	return ok
 }
 
 var defaultTag = sync.Map{}
@@ -203,8 +221,9 @@ func initDefaultTag() {
 var mapperTag = mapperTagCustom{}
 
 func initMapperTagDefault() {
-	mapperTag.Store(CreditCardType, GetPayment().CreditCardType)
-	mapperTag.Store(CreditCardNumber, GetPayment().CreditCardNumber)
+	// the cc_type and cc_number fields of a struct are one card only while these two are the providers of the tags
+	mapperTag.storeBuiltin(CreditCardType, GetPayment().CreditCardType)
+	mapperTag.storeBuiltin(CreditCardNumber, GetPayment().CreditCardNumber)
 	mapperTag.Store(CountryInfoTag, GetAddress().CountryInfo)
 	mapperTag.Store(LATITUDE, GetAddress().Latitude)
 	mapperTag.Store(LONGITUDE, GetAddress().Longitude)

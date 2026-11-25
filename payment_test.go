@@ -13,6 +13,7 @@ import (
 	"testing"
 	"time"
 
+	fakerErrors "github.com/go-faker/faker/v4/pkg/errors"
 	"github.com/go-faker/faker/v4/pkg/options"
 )
 
@@ -350,5 +351,161 @@ func TestCreditCardConcurrent(t *testing.T) {
 
 	if mismatched.Load() > 0 {
 		t.Errorf("cc_type and cc_number did not agree in %d of %d structs", mismatched.Load(), total.Load())
+	}
+}
+
+// removeCardProvider takes the provider of a tag away, as RemoveProvider does, and puts the one of the package back when
+// the test ends
+func removeCardProvider(t *testing.T, tag string) {
+	t.Helper()
+
+	builtin, ok := mapperTag.Map.Load(tag)
+	if !ok {
+		t.Fatalf("there is no provider for %s", tag)
+	}
+
+	priorityTags := PriorityTags
+	t.Cleanup(func() {
+		mapperTag.Map.Store(tag, builtin)
+		PriorityTags = priorityTags
+	})
+
+	if err := RemoveProvider(tag); err != nil {
+		t.Fatal(err)
+	}
+}
+
+// replaceCardProvider does what a caller does to get a value of its own for a tag of the package: RemoveProvider, and
+// then AddProvider
+func replaceCardProvider(t *testing.T, tag, value string) {
+	t.Helper()
+
+	removeCardProvider(t, tag)
+
+	err := AddProvider(tag, func(v reflect.Value) (any, error) {
+		return value, nil
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+// oneCard reports whether the numbers belong to the same card type
+func oneCard(numbers ...string) bool {
+	for ccType := range creditCards {
+		if !slices.ContainsFunc(numbers, func(number string) bool { return !cardNumberMatches(number, ccType) }) {
+			return true
+		}
+	}
+
+	return false
+}
+
+type cardFields struct {
+	Type      string  `faker:"cc_type"`
+	Number    string  `faker:"cc_number"`
+	TypePtr   *string `faker:"cc_type"`
+	NumberPtr *string `faker:"cc_number"`
+}
+
+// what the providers of the caller return in the tests below
+const (
+	customCardType   = "MY-CARD"
+	customCardNumber = "0000"
+)
+
+// A provider that a caller puts in place of cc_type or cc_number fills the fields of a struct too. The other tag keeps the
+// card of the struct, and a tag that has no provider is an error, as it is outside of a struct
+func TestCreditCardCustomProviderInAStruct(t *testing.T) {
+	t.Run("cc_type", func(t *testing.T) {
+		replaceCardProvider(t, CreditCardType, customCardType)
+
+		for range 200 {
+			var card cardFields
+			if err := FakeData(&card); err != nil {
+				t.Fatal(err)
+			}
+
+			if card.TypePtr == nil || card.NumberPtr == nil {
+				t.Fatalf("got the pointers %v and %v, want both", card.TypePtr, card.NumberPtr)
+			}
+
+			if card.Type != customCardType || *card.TypePtr != customCardType {
+				t.Fatalf("got the types %q and %q, want %q from the provider of the caller", card.Type, *card.TypePtr, customCardType)
+			}
+
+			if !oneCard(card.Number, *card.NumberPtr) {
+				t.Fatalf("got the numbers %q and %q, want two numbers of one card", card.Number, *card.NumberPtr)
+			}
+		}
+	})
+
+	t.Run("cc_number", func(t *testing.T) {
+		replaceCardProvider(t, CreditCardNumber, customCardNumber)
+
+		for range 200 {
+			var card cardFields
+			if err := FakeData(&card); err != nil {
+				t.Fatal(err)
+			}
+
+			if card.TypePtr == nil || card.NumberPtr == nil {
+				t.Fatalf("got the pointers %v and %v, want both", card.TypePtr, card.NumberPtr)
+			}
+
+			if card.Number != customCardNumber || *card.NumberPtr != customCardNumber {
+				t.Fatalf("got the numbers %q and %q, want %q from the provider of the caller", card.Number, *card.NumberPtr, customCardNumber)
+			}
+
+			if _, ok := creditCards[strings.ToLower(card.Type)]; !ok || *card.TypePtr != card.Type {
+				t.Fatalf("got the types %q and %q, want one card type twice", card.Type, *card.TypePtr)
+			}
+		}
+	})
+
+	t.Run("both", func(t *testing.T) {
+		replaceCardProvider(t, CreditCardType, customCardType)
+		replaceCardProvider(t, CreditCardNumber, customCardNumber)
+
+		var card cardFields
+		if err := FakeData(&card); err != nil {
+			t.Fatal(err)
+		}
+
+		if card.TypePtr == nil || card.NumberPtr == nil {
+			t.Fatalf("got the pointers %v and %v, want both", card.TypePtr, card.NumberPtr)
+		}
+
+		got := []string{card.Type, *card.TypePtr, card.Number, *card.NumberPtr}
+		want := []string{customCardType, customCardType, customCardNumber, customCardNumber}
+		if !slices.Equal(got, want) {
+			t.Errorf("got %q, want %q", got, want)
+		}
+	})
+
+	t.Run("no provider", func(t *testing.T) {
+		removeCardProvider(t, CreditCardType)
+
+		var card cardFields
+		want := fmt.Sprintf(fakerErrors.ErrTagNotSupported, CreditCardType)
+		if err := FakeData(&card); err == nil || err.Error() != want {
+			t.Errorf("got the error %v, want %q because nothing provides cc_type", err, want)
+		}
+	})
+
+	// the providers of the package are back, so the card of a struct is one card again
+	for range 50 {
+		var card cardFields
+		if err := FakeData(&card); err != nil {
+			t.Fatal(err)
+		}
+
+		if card.TypePtr == nil || card.NumberPtr == nil {
+			t.Fatalf("got the pointers %v and %v, want both", card.TypePtr, card.NumberPtr)
+		}
+
+		if !cardNumberMatches(card.Number, card.Type) || !cardNumberMatches(*card.NumberPtr, *card.TypePtr) || card.Type != *card.TypePtr {
+			t.Fatalf("got %q %q and %q %q, want the numbers of the types", card.Type, card.Number, *card.TypePtr, *card.NumberPtr)
+		}
 	}
 }

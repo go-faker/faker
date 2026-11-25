@@ -71,9 +71,14 @@ func (s *structCreditCard) get() creditCard {
 }
 
 // setField fills a field of the struct with the type or the number of the card if its tag is cc_type or cc_number, and
-// reports whether it did. The field is a string or a pointer to one
+// reports whether it did. The field is a string or a pointer to one. A provider that the caller put in place of the
+// one of the package, with RemoveProvider and AddProvider, fills the field as it does for every other tag
 func (s *structCreditCard) setField(field reflect.Value, tag string) bool {
 	if tag != CreditCardType && tag != CreditCardNumber {
+		return false
+	}
+
+	if !mapperTag.hasBuiltin(tag) {
 		return false
 	}
 
