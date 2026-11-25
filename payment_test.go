@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -238,6 +239,53 @@ func TestCreditCardTypesOfASlice(t *testing.T) {
 	}
 }
 
+type cardPointers struct {
+	Number *string `faker:"cc_number"`
+	Type   *string `faker:"cc_type"`
+}
+
+// The fields of a struct that are pointers to strings are one card too
+func TestCreditCardTypeAndNumberOfPointerFields(t *testing.T) {
+	for range 600 {
+		var card cardPointers
+		if err := FakeData(&card); err != nil {
+			t.Fatal(err)
+		}
+
+		if card.Number == nil || card.Type == nil {
+			t.Fatalf("got the number %v and the type %v, want both", card.Number, card.Type)
+		}
+
+		if !cardNumberMatches(*card.Number, *card.Type) {
+			t.Fatalf("%s is not a %s number", *card.Number, *card.Type)
+		}
+	}
+}
+
+type cardNested struct {
+	Type   string `faker:"cc_type"`
+	Inner  cardNumberFirst
+	Number string `faker:"cc_number"`
+}
+
+// A struct inside a struct has a card of its own and leaves the card of the struct around it alone
+func TestCreditCardOfNestedStructs(t *testing.T) {
+	for range 600 {
+		var card cardNested
+		if err := FakeData(&card); err != nil {
+			t.Fatal(err)
+		}
+
+		if !cardNumberMatches(card.Number, card.Type) {
+			t.Fatalf("%s is not a %s number", card.Number, card.Type)
+		}
+
+		if !cardNumberMatches(card.Inner.Number, card.Inner.Type) {
+			t.Fatalf("%s is not a %s number", card.Inner.Number, card.Inner.Type)
+		}
+	}
+}
+
 // The same seed gives the same card types in the same order
 func TestFakeCreditCardTypeSeeded(t *testing.T) {
 	defer SetRandomSource(NewSafeSource(mathrand.NewSource(time.Now().UnixNano())))
@@ -262,18 +310,35 @@ func TestFakeCreditCardTypeSeeded(t *testing.T) {
 	}
 }
 
-// Filling structs and calling CCType and CCNumber from several goroutines must not race (run with -race)
+// Structs that are filled from several goroutines at once keep a card of their own: the cc_type and the cc_number of
+// every struct agree, whatever the other goroutines do (run with -race as well)
 func TestCreditCardConcurrent(t *testing.T) {
 	var wg sync.WaitGroup
+	var mismatched, total atomic.Int64
 	for range 8 {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			for range 100 {
-				var card cardTypeFirst
-				if err := FakeData(&card); err != nil {
+			for range 2000 {
+				var first cardTypeFirst
+				if err := FakeData(&first); err != nil {
 					t.Error(err)
 					return
+				}
+
+				var second cardNumberFirst
+				if err := FakeData(&second); err != nil {
+					t.Error(err)
+					return
+				}
+
+				total.Add(2)
+				if !cardNumberMatches(first.Number, first.Type) {
+					mismatched.Add(1)
+				}
+
+				if !cardNumberMatches(second.Number, second.Type) {
+					mismatched.Add(1)
 				}
 
 				_, _ = CCType(), CCNumber()
@@ -282,4 +347,8 @@ func TestCreditCardConcurrent(t *testing.T) {
 	}
 
 	wg.Wait()
+
+	if mismatched.Load() > 0 {
+		t.Errorf("cc_type and cc_number did not agree in %d of %d structs", mismatched.Load(), total.Load())
+	}
 }

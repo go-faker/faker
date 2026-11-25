@@ -5,8 +5,6 @@ import (
 	"reflect"
 	"slices"
 	"strconv"
-	"strings"
-	"sync"
 
 	"github.com/go-faker/faker/v4/pkg/options"
 )
@@ -35,15 +33,6 @@ var creditCards = map[string]creditCard{
 // so the same seed would not pick the same card type
 var creditCardKeys = slices.Sorted(maps.Keys(creditCards))
 
-var (
-	// cacheCreditCard is the card type of the struct that is being filled,
-	// so the cc_type and the cc_number of a struct are one card
-	cacheCreditCard string
-	// creditCardScopes is the number of structs that are being filled
-	creditCardScopes  int
-	cacheCreditCardMu sync.Mutex
-)
-
 // GetPayment returns a new Render interface of Payment struct
 func GetPayment() Render {
 	pay := &Payment{}
@@ -59,49 +48,62 @@ type Render interface {
 // Payment struct
 type Payment struct{}
 
-// startCreditCardScope gives the struct that is about to be filled a card of its own.
-// It returns the function that puts back the card of the struct around it
-func startCreditCardScope() func() {
-	cacheCreditCardMu.Lock()
-	defer cacheCreditCardMu.Unlock()
-
-	outer := cacheCreditCard
-	cacheCreditCard = ""
-	creditCardScopes++
-
-	return func() {
-		cacheCreditCardMu.Lock()
-		defer cacheCreditCardMu.Unlock()
-
-		cacheCreditCard = outer
-		creditCardScopes--
-	}
-}
-
 // randomCreditCard picks a card type
 func randomCreditCard() creditCard {
 	return creditCards[creditCardKeys[rand.Intn(len(creditCardKeys))]]
 }
 
-// structCreditCard returns the card of the struct that is being filled, the first field that needs it picks it.
-// Outside a struct every call is a card of its own
-func structCreditCard() creditCard {
-	cacheCreditCardMu.Lock()
-	defer cacheCreditCardMu.Unlock()
-
-	if creditCardScopes == 0 {
-		return randomCreditCard()
-	}
-
-	if cacheCreditCard == "" {
-		cacheCreditCard = randomCreditCard().ccType
-	}
-
-	return creditCards[strings.ToLower(cacheCreditCard)]
+// structCreditCard is the card of a struct that is being filled, so that the cc_type and the cc_number of the struct are
+// one card. The first of the two that is filled picks it. It belongs to the code that fills the struct, so structs that
+// are filled at the same time, for example from several goroutines, do not share one
+type structCreditCard struct {
+	card   creditCard
+	picked bool
 }
 
+func (s *structCreditCard) get() creditCard {
+	if !s.picked {
+		s.card = randomCreditCard()
+		s.picked = true
+	}
+
+	return s.card
+}
+
+// setField fills a field of the struct with the type or the number of the card if its tag is cc_type or cc_number, and
+// reports whether it did. The field is a string or a pointer to one
+func (s *structCreditCard) setField(field reflect.Value, tag string) bool {
+	if tag != CreditCardType && tag != CreditCardNumber {
+		return false
+	}
+
+	var target reflect.Value
+
+	switch {
+	case field.Kind() == reflect.String:
+		target = field
+	case field.Kind() == reflect.Pointer && field.Type().Elem().Kind() == reflect.String:
+		target = reflect.New(field.Type().Elem()).Elem()
+	default:
+		return false
+	}
+
+	if tag == CreditCardType {
+		target.SetString(s.get().ccType)
+	} else {
+		target.SetString(creditCardNumber(s.get()))
+	}
+
+	if field.Kind() == reflect.Pointer {
+		field.Set(target.Addr())
+	}
+
+	return true
+}
+
+// cctype returns the type of a card of its own. The cc_type field of a struct gets the card of the struct instead
 func (p Payment) cctype() string {
-	return structCreditCard().ccType
+	return randomCreditCard().ccType
 }
 
 // CreditCardType returns one of the following credit values:
@@ -144,8 +146,9 @@ func creditCardNumber(card creditCard) string {
 	return num + luhnCheckDigit(num)
 }
 
+// ccnumber returns a number of a card of its own. The cc_number field of a struct gets the card of the struct instead
 func (p Payment) ccnumber() string {
-	return creditCardNumber(structCreditCard())
+	return creditCardNumber(randomCreditCard())
 }
 
 // CreditCardNumber generated credit card number according to the card number rules:

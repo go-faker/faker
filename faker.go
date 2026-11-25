@@ -589,7 +589,7 @@ func getFakedValueForStruct(item any, t reflect.Type, opts *options.Options) (re
 		return reflect.ValueOf(ft), err
 	}
 	// the cc_type and cc_number fields of a struct are one card, and the next struct gets another
-	defer startCreditCardScope()()
+	var card structCreditCard
 	originalDataVal := reflect.ValueOf(item)
 	v := reflect.New(t).Elem()
 	// collect template fields to evaluate in a second pass
@@ -653,7 +653,7 @@ func getFakedValueForStruct(item any, t reflect.Type, opts *options.Options) (re
 				return reflect.Value{}, err
 			}
 			if zero {
-				err := setDataWithTag(v.Field(i).Addr(), tags.fieldType, *opts)
+				err := setFieldWithTag(v.Field(i), tags.fieldType, &card, *opts)
 				if err != nil {
 					return reflect.Value{}, err
 				}
@@ -679,7 +679,7 @@ func getFakedValueForStruct(item any, t reflect.Type, opts *options.Options) (re
 				v.Field(i).Set(reflect.ValueOf(data))
 			}
 		default:
-			err := setDataWithTag(v.Field(i).Addr(), tags.fieldType, *opts)
+			err := setFieldWithTag(v.Field(i), tags.fieldType, &card, *opts)
 			if err != nil {
 				return reflect.Value{}, err
 			}
@@ -810,6 +810,16 @@ type structTag struct {
 func hasTemplatePrefix(s string) bool {
 	const n = len(TemplateTag) + 1
 	return len(s) >= n && strings.EqualFold(s[:n], TemplateTag+colon)
+}
+
+// setFieldWithTag fills a field of a struct with the data of its tag. The cc_type and cc_number fields of a struct
+// are one card, which the struct keeps in card
+func setFieldWithTag(field reflect.Value, tag string, card *structCreditCard, opt options.Options) error {
+	if card.setField(field, tag) {
+		return nil
+	}
+
+	return setDataWithTag(field.Addr(), tag, opt)
 }
 
 func setDataWithTag(v reflect.Value, tag string, opt options.Options) error {
