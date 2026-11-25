@@ -977,18 +977,12 @@ func getValueWithNoTag(t reflect.Type, opt options.Options) (any, error) {
 }
 
 func userDefinedArray(v reflect.Value, tag string, opt options.Options) error {
-	tagFunc, tagExists := mapperTag.Load(tag)
-	if tagExists {
-		res, err := tagFunc(v)
-		if err != nil {
-			return err
-		}
-		v.Set(reflect.ValueOf(res))
-		return nil
-	}
 	sliceLen, err := extractSliceLengthFromTag(tag, opt)
 	if err != nil {
 		return err
+	}
+	if tagFunc, ok := mapperTag.Load(tagWithoutSliceLen(tag)); ok {
+		return userDefinedArrayFromProvider(v, tagFunc, sliceLen, opt)
 	}
 
 	if v.Kind() == reflect.Slice && opt.SetSliceMapNilIfLenZero && sliceLen == 0 {
@@ -1031,6 +1025,55 @@ func userDefinedArray(v reflect.Value, tag string, opt options.Options) error {
 			return err
 		}
 		array.Index(i).Set(reflect.ValueOf(res))
+	}
+	v.Set(array)
+	return nil
+}
+
+// tagWithoutSliceLen strips the slice_len chunk from a tag such as "url,slice_len=3".
+func tagWithoutSliceLen(tag string) string {
+	if !strings.Contains(tag, SliceLength) {
+		return tag
+	}
+	return strings.Trim(findSliceLenReg.ReplaceAllString(tag, ""), " ,")
+}
+
+// userDefinedArrayFromProvider fills a slice or array field from a tag provider.
+// A provider may return the whole slice (custom providers do this) or a single
+// element (every built-in tag does); in the latter case it is called once per element.
+func userDefinedArrayFromProvider(v reflect.Value, tagFunc interfaces.TaggedFunction, sliceLen int, opt options.Options) error {
+	if res, err := tagFunc(v); err == nil && res != nil && reflect.TypeOf(res).AssignableTo(v.Type()) {
+		v.Set(reflect.ValueOf(res))
+		return nil
+	}
+
+	if v.Kind() == reflect.Slice && opt.SetSliceMapNilIfLenZero && sliceLen == 0 {
+		v.Set(reflect.Zero(v.Type()))
+		return nil
+	}
+	var array reflect.Value
+	if v.Kind() == reflect.Array {
+		array = reflect.New(v.Type()).Elem()
+	} else {
+		array = reflect.MakeSlice(v.Type(), sliceLen, sliceLen)
+	}
+	elemType := v.Type().Elem()
+	for i := 0; i < array.Len(); i++ {
+		res, err := tagFunc(array.Index(i))
+		if err != nil {
+			return err
+		}
+		rv := reflect.ValueOf(res)
+		switch {
+		case !rv.IsValid():
+			return fmt.Errorf("tag provider returned nil for element of %s", v.Type())
+		case rv.Type().AssignableTo(elemType):
+			array.Index(i).Set(rv)
+		case rv.Kind() == elemType.Kind() && rv.Type().ConvertibleTo(elemType):
+			array.Index(i).Set(rv.Convert(elemType))
+		default:
+			return fmt.Errorf("tag provider returned %s, which fits neither %s nor its element type", rv.Type(), v.Type())
+		}
 	}
 	v.Set(array)
 	return nil
