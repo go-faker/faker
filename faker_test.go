@@ -1938,6 +1938,57 @@ func TestOneOfTag__GoodInputs(t *testing.T) {
 	})
 }
 
+func TestOneOfTag__ValueContainsLenOrLang(t *testing.T) {
+	// Issue #15: extractStringFromTag treated the substrings "len" and "lang"
+	// inside oneof values as len= / lang= options, so tags such as
+	// `oneof: Bedrijfsmatig handelen` returned ErrWrongFormattedTag.
+	type WithLenSubstring struct {
+		Trade string `faker:"oneof: Bedrijfsmatig handelen, particulier"`
+	}
+	type WithLangSubstring struct {
+		Word string `faker:"oneof: language, slang, length"`
+	}
+
+	for range 20 {
+		var trade WithLenSubstring
+		if err := FakeData(&trade); err != nil {
+			t.Fatalf("FakeData with oneof value containing %q: %v", "len", err)
+		}
+		if trade.Trade != "Bedrijfsmatig handelen" && trade.Trade != "particulier" {
+			t.Fatalf("unexpected oneof value %q", trade.Trade)
+		}
+
+		var word WithLangSubstring
+		if err := FakeData(&word); err != nil {
+			t.Fatalf("FakeData with oneof value containing %q: %v", "lang", err)
+		}
+		if word.Word != "language" && word.Word != "slang" && word.Word != "length" {
+			t.Fatalf("unexpected oneof value %q", word.Word)
+		}
+	}
+
+	// Real len= and lang= options must still be honored.
+	type WithLenAndLang struct {
+		Value string `faker:"len=8,lang=eng"`
+	}
+	var v WithLenAndLang
+	if err := FakeData(&v); err != nil {
+		t.Fatalf("FakeData with len and lang: %v", err)
+	}
+	if len(v.Value) != 8 {
+		t.Fatalf("len=8: got %q (len %d)", v.Value, len(v.Value))
+	}
+
+	// A malformed lang option next to a valid len option must still be rejected.
+	for _, tag := range []string{"len=5,lang=ENG", "len=5,lang=xx", "len=5,lang="} {
+		_, err := extractStringFromTag(tag, *options.BuildOptions(nil))
+		want := fmt.Sprintf(fakerErrors.ErrWrongFormattedTag, tag)
+		if err == nil || err.Error() != want {
+			t.Errorf("tag %q: got error %v, want %q", tag, err, want)
+		}
+	}
+}
+
 func TestOneOfTag__BadInputsForFloats(t *testing.T) {
 
 	type CustomWrongFloat1 struct {

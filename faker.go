@@ -1109,18 +1109,26 @@ func extractStringFromTag(tag string, opts options.Options) (any, error) {
 	strlen := opts.RandomStringLength
 	strlng := opts.StringLanguage
 	isOneOfTag := strings.Contains(tag, ONEOF)
-	if !strings.Contains(tag, Length) && !strings.Contains(tag, Language) && !isOneOfTag {
+	// Only look for len and lang options outside the oneof values, so values
+	// such as "handelen" or "language" are not read as options.
+	optionPart := tag
+	if isOneOfTag {
+		optionPart, _, _ = strings.Cut(tag, colon)
+	}
+	hasLen := strings.Contains(optionPart, Length)
+	hasLang := strings.Contains(optionPart, Language)
+	if !hasLen && !hasLang && !isOneOfTag {
 		return nil, fmt.Errorf(fakerErrors.ErrTagNotSupported, tag)
 	}
-	if strings.Contains(tag, Length) {
-		lenParts := strings.Split(findLenReg.FindString(tag), Equals)
+	if hasLen {
+		lenParts := strings.Split(findLenReg.FindString(optionPart), Equals)
 		if len(lenParts) != 2 {
 			return nil, fmt.Errorf(fakerErrors.ErrWrongFormattedTag, tag)
 		}
 		strlen, _ = strconv.Atoi(lenParts[1])
 	}
-	if strings.Contains(tag, Language) {
-		strlng, err = extractLangFromTag(tag)
+	if hasLang {
+		strlng, err = extractLangFromTag(optionPart)
 		if err != nil {
 			return nil, fmt.Errorf(fakerErrors.ErrWrongFormattedTag, tag)
 		}
