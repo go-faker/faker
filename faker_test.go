@@ -1978,6 +1978,15 @@ func TestOneOfTag__ValueContainsLenOrLang(t *testing.T) {
 	if len(v.Value) != 8 {
 		t.Fatalf("len=8: got %q (len %d)", v.Value, len(v.Value))
 	}
+
+	// A malformed lang option next to a valid len option must still be rejected.
+	for _, tag := range []string{"len=5,lang=ENG", "len=5,lang=xx", "len=5,lang="} {
+		_, err := extractStringFromTag(tag, *options.BuildOptions(nil))
+		want := fmt.Sprintf(fakerErrors.ErrWrongFormattedTag, tag)
+		if err == nil || err.Error() != want {
+			t.Errorf("tag %q: got error %v, want %q", tag, err, want)
+		}
+	}
 }
 
 func TestOneOfTag__BadInputsForFloats(t *testing.T) {
