@@ -3,6 +3,7 @@ package faker
 import (
 	"fmt"
 	"reflect"
+	"regexp"
 	"testing"
 	"time"
 
@@ -212,6 +213,24 @@ func TestFakeDayOfWeek(t *testing.T) {
 	_, err := time.Parse(DayFormat, week)
 	if err != nil {
 		t.Error("function DayOfWeek need return valid day")
+	}
+}
+
+// DayOfMonth is the day as a number from 1 to 31: no space in front of the days below 10
+func TestDayOfMonthHasNoSpace(t *testing.T) {
+	day := regexp.MustCompile(`^([1-9]|[12]\d|3[01])$`)
+	days := map[string]bool{}
+	for range 3000 {
+		mt := DayOfMonth()
+		if !day.MatchString(mt) {
+			t.Fatalf("DayOfMonth gave %q, want a number from 1 to 31", mt)
+		}
+
+		days[mt] = true
+	}
+
+	if len(days) != 31 {
+		t.Errorf("3000 calls of DayOfMonth gave %d of the 31 days", len(days))
 	}
 }
 

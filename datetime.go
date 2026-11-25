@@ -600,7 +600,7 @@ const (
 	MonthFormat      = "January"
 	YearFormat       = "2006"
 	DayFormat        = "Monday"
-	DayOfMonthFormat = "_2"
+	DayOfMonthFormat = "2"
 	TimePeriodFormat = "PM"
 )
 
