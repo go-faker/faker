@@ -19,6 +19,7 @@ Faker will generate you a fake data based on your Struct.
 - [Example](#example)
 - [Limitation](#limitation)
 - [Contribution](#contribution)
+- [Maintenance](#maintenance)
 
 ## Support
 
@@ -111,3 +112,16 @@ Unfortunately this library has some limitation
 ---
 
 To contrib to this project, you can open a PR or an issue.
+
+## Maintenance
+
+---
+
+An automated coding agent works on this repository once a week. Each run it:
+
+- triages a few open issues: tries to reproduce bug reports on `main`, adds labels, and leaves a comment when it has something useful to add (a reproduction, the code involved, a likely duplicate);
+- picks one issue it can fix safely and opens a pull request with a regression test.
+
+The agent never merges, closes issues, or pushes to `main`. A maintainer reviews every pull request it opens, the same as any other contribution. Its comments carry a hidden `<!-- maintenance-agent -->` marker and its branches start with `agent/`.
+
+The rules it follows are in [AGENTS.md](AGENTS.md). Human contributions are still welcome, and an issue you're working on won't be picked up if you open a PR that references it.
