@@ -269,8 +269,6 @@ func init() {
 	findLangReg, _ = regexp.Compile("lang=[a-z]{3}")
 	findLenReg, _ = regexp.Compile(`len=\d+`)
 	findSliceLenReg, _ = regexp.Compile(`slice_len=\d+`)
-
-	randNameFlag = rand.Intn(100) // for person
 }
 
 func init() {

@@ -2,6 +2,7 @@ package faker
 
 import (
 	"reflect"
+	"strings"
 	"testing"
 
 	"github.com/go-faker/faker/v4/pkg/slice"
@@ -72,7 +73,6 @@ func TestNameMale(t *testing.T) {
 	if err != nil {
 		t.Error("Expected  not error, got err", err)
 	}
-	randNameFlag = 51
 	if name.(string) == "" {
 		t.Error("Expected from function name string get empty string")
 	}
@@ -82,9 +82,58 @@ func TestNameFemale(t *testing.T) {
 	if err != nil {
 		t.Error("Expected  not error, got err", err)
 	}
-	randNameFlag = 20
 	if name.(string) == "" {
 		t.Error("Expected from function name string get empty string")
+	}
+}
+
+// Name is a male or a female name by the call. It used to be one of them for the whole run of the program,
+// because the choice was drawn once when the package started
+func TestNameGenderVaries(t *testing.T) {
+	const calls = 2000
+	male, female := 0, 0
+	for range calls {
+		title, _, _ := strings.Cut(Name(), " ")
+		inMale, inFemale := slice.Contains(titlesMale, title), slice.Contains(titlesFemale, title)
+		switch {
+		case inMale && !inFemale:
+			male++
+		case inFemale && !inMale:
+			female++
+		}
+	}
+
+	// the titles in both lists (Dr. and Prof.) are left out, 4 of 6 male and 6 of 8 female titles stay
+	if male < 500 || female < 500 {
+		t.Errorf("%d names have a title that only a man has and %d a title that only a woman has, about 667 and 750 expected", male, female)
+	}
+}
+
+// The title and the first name of a Name come from the same list
+func TestNameIsOneGender(t *testing.T) {
+	fits := func(title, first, last string, titles, firsts []string) bool {
+		return slice.Contains(titles, title) && slice.Contains(firsts, first) && slice.Contains(lastNames, last)
+	}
+
+	for range 2000 {
+		name := Name()
+		title, rest, _ := strings.Cut(name, " ")
+		ok := false
+		for i, r := range rest {
+			if r != ' ' {
+				continue
+			}
+
+			first, last := rest[:i], rest[i+1:]
+			if fits(title, first, last, titlesMale, firstNamesMale) || fits(title, first, last, titlesFemale, firstNamesFemale) {
+				ok = true
+				break
+			}
+		}
+
+		if !ok {
+			t.Fatalf("%q is not a title, a first name and a last name of one gender", name)
+		}
 	}
 }
 
@@ -132,14 +181,12 @@ func TestFakeLastName(t *testing.T) {
 
 func TestFakeNameMale(t *testing.T) {
 	name := Name()
-	randNameFlag = 51
 	if name == "" {
 		t.Error("Expected from function name string get empty string")
 	}
 }
 func TestFakeNameFemale(t *testing.T) {
 	name := Name()
-	randNameFlag = 20
 	if name == "" {
 		t.Error("Expected from function name string get empty string")
 	}

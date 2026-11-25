@@ -117,8 +117,6 @@ var lastNames = []string{
 	"Yost", "Yundt", "Zboncak", "Zemlak", "Ziemann", "Zieme", "Zulauf",
 }
 
-var randNameFlag int
-
 var genders = []string{"Male", "Female", "Prefer to skip"}
 
 var chineseFirstNames = []string{
@@ -735,7 +733,8 @@ func LastName(opts ...options.OptionFunc) string {
 }
 
 func (p Person) name() string {
-	if randNameFlag > 50 {
+	// a female or a male name by the call
+	if rand.Intn(2) == 0 {
 		return fmt.Sprintf("%s %s %s", randomElementFromSliceString(titlesFemale), randomElementFromSliceString(firstNamesFemale), randomElementFromSliceString(lastNames))
 	}
 	return fmt.Sprintf("%s %s %s", randomElementFromSliceString(titlesMale), randomElementFromSliceString(firstNamesMale), randomElementFromSliceString(lastNames))
