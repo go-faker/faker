@@ -1,9 +1,10 @@
 package faker
 
 import (
+	"maps"
 	"reflect"
+	"slices"
 	"strconv"
-	"strings"
 
 	"github.com/go-faker/faker/v4/pkg/options"
 )
@@ -28,7 +29,9 @@ var creditCards = map[string]creditCard{
 	"diners club":      {"Diners Club", 14, []int{36, 38, 39}},
 }
 
-var cacheCreditCard string
+// creditCardKeys lists the keys of creditCards in a fixed order: a map is read in a random order,
+// so the same seed would not pick the same card type
+var creditCardKeys = slices.Sorted(maps.Keys(creditCards))
 
 // GetPayment returns a new Render interface of Payment struct
 func GetPayment() Render {
@@ -45,18 +48,67 @@ type Render interface {
 // Payment struct
 type Payment struct{}
 
-func (p Payment) cctype() string {
-	n := len(creditCards)
-	if cacheCreditCard != "" {
-		return cacheCreditCard
-	}
-	var ccTypes []string
+// randomCreditCard picks a card type
+func randomCreditCard() creditCard {
+	return creditCards[creditCardKeys[rand.Intn(len(creditCardKeys))]]
+}
 
-	for _, cc := range creditCards {
-		ccTypes = append(ccTypes, cc.ccType)
+// structCreditCard is the card of a struct that is being filled, so that the cc_type and the cc_number of the struct are
+// one card. The first of the two that is filled picks it. It belongs to the code that fills the struct, so structs that
+// are filled at the same time, for example from several goroutines, do not share one
+type structCreditCard struct {
+	card   creditCard
+	picked bool
+}
+
+func (s *structCreditCard) get() creditCard {
+	if !s.picked {
+		s.card = randomCreditCard()
+		s.picked = true
 	}
-	cacheCreditCard = ccTypes[rand.Intn(n)]
-	return cacheCreditCard
+
+	return s.card
+}
+
+// setField fills a field of the struct with the type or the number of the card if its tag is cc_type or cc_number, and
+// reports whether it did. The field is a string or a pointer to one. A provider that the caller put in place of the
+// one of the package, with RemoveProvider and AddProvider, fills the field as it does for every other tag
+func (s *structCreditCard) setField(field reflect.Value, tag string) bool {
+	if tag != CreditCardType && tag != CreditCardNumber {
+		return false
+	}
+
+	if !mapperTag.hasBuiltin(tag) {
+		return false
+	}
+
+	var target reflect.Value
+
+	switch {
+	case field.Kind() == reflect.String:
+		target = field
+	case field.Kind() == reflect.Pointer && field.Type().Elem().Kind() == reflect.String:
+		target = reflect.New(field.Type().Elem()).Elem()
+	default:
+		return false
+	}
+
+	if tag == CreditCardType {
+		target.SetString(s.get().ccType)
+	} else {
+		target.SetString(creditCardNumber(s.get()))
+	}
+
+	if field.Kind() == reflect.Pointer {
+		field.Set(target.Addr())
+	}
+
+	return true
+}
+
+// cctype returns the type of a card of its own. The cc_type field of a struct gets the card of the struct instead
+func (p Payment) cctype() string {
+	return randomCreditCard().ccType
 }
 
 // CreditCardType returns one of the following credit values:
@@ -68,25 +120,44 @@ func (p Payment) CreditCardType(v reflect.Value) (any, error) {
 // CCType get a credit card type randomly in string (VISA, MasterCard, etc)
 func CCType(opts ...options.OptionFunc) string {
 	return singleFakeData(CreditCardType, func() any {
-		p := Payment{}
-		return p.cctype()
+		return randomCreditCard().ccType
 	}, opts...).(string)
 }
 
-func (p Payment) ccnumber() string {
-	ccType := p.cctype()
-	cacheCreditCard = ccType
-	card := creditCards[strings.ToLower(ccType)]
-	prefix := strconv.Itoa(card.prefixes[rand.Intn(len(card.prefixes))])
+// luhnCheckDigit returns the digit that makes the number followed by it pass the Luhn check
+func luhnCheckDigit(number string) string {
+	sum := 0
+	for i := range len(number) {
+		digit := int(number[len(number)-1-i]) - '0'
+		// the digit next to the check digit is doubled, and every second one after it
+		if i%2 == 0 {
+			digit *= 2
+			if digit > 9 {
+				digit -= 9
+			}
+		}
 
-	num := prefix
-	digit := randomStringNumber(card.length - len(prefix))
+		sum += digit
+	}
 
-	num += digit
-	return num
+	return strconv.Itoa((10 - sum%10) % 10)
 }
 
-// CreditCardNumber generated credit card number according to the card number rules
+// creditCardNumber returns a number of the card: one of its prefixes, random digits and the Luhn check digit
+func creditCardNumber(card creditCard) string {
+	prefix := strconv.Itoa(card.prefixes[rand.Intn(len(card.prefixes))])
+	num := prefix + randomStringNumber(card.length-len(prefix)-1)
+
+	return num + luhnCheckDigit(num)
+}
+
+// ccnumber returns a number of a card of its own. The cc_number field of a struct gets the card of the struct instead
+func (p Payment) ccnumber() string {
+	return creditCardNumber(randomCreditCard())
+}
+
+// CreditCardNumber generated credit card number according to the card number rules:
+// the length and a prefix of its type, and the Luhn check digit as the last digit
 func (p Payment) CreditCardNumber(v reflect.Value) (any, error) {
 	return p.ccnumber(), nil
 }
@@ -94,7 +165,6 @@ func (p Payment) CreditCardNumber(v reflect.Value) (any, error) {
 // CCNumber get a credit card number randomly in string (VISA, MasterCard, etc)
 func CCNumber(opts ...options.OptionFunc) string {
 	return singleFakeData(CreditCardNumber, func() any {
-		p := Payment{}
-		return p.ccnumber()
+		return creditCardNumber(randomCreditCard())
 	}, opts...).(string)
 }

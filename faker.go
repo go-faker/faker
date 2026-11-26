@@ -118,6 +118,10 @@ type mapperTagCustom struct {
 	sync.Map
 }
 
+// builtinProvider is a provider that the package registers itself, with storeBuiltin. The providers that AddProvider
+// registers are plain functions, so a tag keeps its builtinProvider until RemoveProvider and AddProvider replace it
+type builtinProvider interfaces.TaggedFunction
+
 func (m *mapperTagCustom) Load(key string) (interfaces.TaggedFunction, bool) {
 	mappedTagFunc, ok := m.Map.Load(key)
 	if !ok {
@@ -131,11 +135,25 @@ func (m *mapperTagCustom) Load(key string) (interfaces.TaggedFunction, bool) {
 	if ok {
 		return tagPureFunc, ok
 	}
+	if builtin, ok := mappedTagFunc.(builtinProvider); ok {
+		return interfaces.TaggedFunction(builtin), true
+	}
 	return nil, false
 }
 
 func (m *mapperTagCustom) Store(key string, taggedFunc interfaces.TaggedFunction) {
 	m.Map.Store(key, taggedFunc)
+}
+
+func (m *mapperTagCustom) storeBuiltin(key string, taggedFunc interfaces.TaggedFunction) {
+	m.Map.Store(key, builtinProvider(taggedFunc))
+}
+
+// hasBuiltin reports whether the provider of the tag is still the one that the package registered
+func (m *mapperTagCustom) hasBuiltin(key string) bool {
+	mappedTagFunc, _ := m.Map.Load(key)
+	_, ok := mappedTagFunc.(builtinProvider)
+	return ok
 }
 
 var defaultTag = sync.Map{}
@@ -203,8 +221,9 @@ func initDefaultTag() {
 var mapperTag = mapperTagCustom{}
 
 func initMapperTagDefault() {
-	mapperTag.Store(CreditCardType, GetPayment().CreditCardType)
-	mapperTag.Store(CreditCardNumber, GetPayment().CreditCardNumber)
+	// the cc_type and cc_number fields of a struct are one card only while these two are the providers of the tags
+	mapperTag.storeBuiltin(CreditCardType, GetPayment().CreditCardType)
+	mapperTag.storeBuiltin(CreditCardNumber, GetPayment().CreditCardNumber)
 	mapperTag.Store(CountryInfoTag, GetAddress().CountryInfo)
 	mapperTag.Store(LATITUDE, GetAddress().Latitude)
 	mapperTag.Store(LONGITUDE, GetAddress().Longitude)
@@ -586,6 +605,8 @@ func getFakedValueForStruct(item any, t reflect.Type, opts *options.Options) (re
 		ft, err := structTypeProvider()
 		return reflect.ValueOf(ft), err
 	}
+	// the cc_type and cc_number fields of a struct are one card, and the next struct gets another
+	var card structCreditCard
 	originalDataVal := reflect.ValueOf(item)
 	v := reflect.New(t).Elem()
 	// collect template fields to evaluate in a second pass
@@ -649,7 +670,7 @@ func getFakedValueForStruct(item any, t reflect.Type, opts *options.Options) (re
 				return reflect.Value{}, err
 			}
 			if zero {
-				err := setDataWithTag(v.Field(i).Addr(), tags.fieldType, *opts)
+				err := setFieldWithTag(v.Field(i), tags.fieldType, &card, *opts)
 				if err != nil {
 					return reflect.Value{}, err
 				}
@@ -675,7 +696,7 @@ func getFakedValueForStruct(item any, t reflect.Type, opts *options.Options) (re
 				v.Field(i).Set(reflect.ValueOf(data))
 			}
 		default:
-			err := setDataWithTag(v.Field(i).Addr(), tags.fieldType, *opts)
+			err := setFieldWithTag(v.Field(i), tags.fieldType, &card, *opts)
 			if err != nil {
 				return reflect.Value{}, err
 			}
@@ -806,6 +827,16 @@ type structTag struct {
 func hasTemplatePrefix(s string) bool {
 	const n = len(TemplateTag) + 1
 	return len(s) >= n && strings.EqualFold(s[:n], TemplateTag+colon)
+}
+
+// setFieldWithTag fills a field of a struct with the data of its tag. The cc_type and cc_number fields of a struct
+// are one card, which the struct keeps in card
+func setFieldWithTag(field reflect.Value, tag string, card *structCreditCard, opt options.Options) error {
+	if card.setField(field, tag) {
+		return nil
+	}
+
+	return setDataWithTag(field.Addr(), tag, opt)
 }
 
 func setDataWithTag(v reflect.Value, tag string, opt options.Options) error {
