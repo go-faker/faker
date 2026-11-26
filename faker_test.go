@@ -826,6 +826,104 @@ func TestSliceOfStructsLen(t *testing.T) {
 	}
 }
 
+type sliceLenScore float64
+
+type sliceLenName string
+
+func TestSliceLenElementTypes(t *testing.T) {
+	type Parent struct {
+		Floats     []float64       `faker:"slice_len=3"`
+		Floats32   []float32       `faker:"slice_len=3"`
+		Bools      []bool          `faker:"slice_len=3"`
+		Scores     []sliceLenScore `faker:"slice_len=3"`
+		Names      []sliceLenName  `faker:"slice_len=3"`
+		Nested     [][]int         `faker:"slice_len=3"`
+		FloatArray [3]float64      `faker:"slice_len=3"`
+		FixedNames []sliceLenName  `faker:"len=4,slice_len=3"`
+	}
+
+	seenTrue, seenFalse := false, false
+	for range 50 {
+		var p Parent
+		if err := FakeData(&p, options.WithRandomMapAndSliceMinSize(1)); err != nil {
+			t.Fatalf("failed to generate fake data: %s", err.Error())
+		}
+		for name, l := range map[string]int{
+			"Floats": len(p.Floats), "Floats32": len(p.Floats32), "Bools": len(p.Bools),
+			"Scores": len(p.Scores), "Names": len(p.Names), "Nested": len(p.Nested),
+			"FixedNames": len(p.FixedNames),
+		} {
+			if l != 3 {
+				t.Fatalf("%s: got length %d, want 3", name, l)
+			}
+		}
+		if p.Floats[0] == p.Floats[1] && p.Floats[1] == p.Floats[2] {
+			t.Errorf("Floats: got the same value three times: %v", p.Floats)
+		}
+		if p.FloatArray == [3]float64{} {
+			t.Errorf("FloatArray: got zero values: %v", p.FloatArray)
+		}
+		for _, inner := range p.Nested {
+			if len(inner) == 0 {
+				t.Errorf("Nested: got an empty inner slice: %v", p.Nested)
+			}
+		}
+		for _, n := range p.Names {
+			if n == "" {
+				t.Errorf("Names: got an empty value: %v", p.Names)
+			}
+		}
+		for _, n := range p.FixedNames {
+			if utfLen(string(n)) != 4 {
+				t.Errorf("FixedNames: got %q, want 4 characters", n)
+			}
+		}
+		for _, b := range p.Bools {
+			seenTrue = seenTrue || b
+			seenFalse = seenFalse || !b
+		}
+	}
+	if !seenTrue || !seenFalse {
+		t.Errorf("Bools: want both true and false over 50 runs, got true=%v false=%v", seenTrue, seenFalse)
+	}
+}
+
+func TestOneOfNamedElementTypes(t *testing.T) {
+	type Parent struct {
+		Names []sliceLenName                `faker:"oneof: a, b"`
+		Map   map[sliceLenName]sliceLenName `faker:"oneof: a, b"`
+	}
+	for range 50 {
+		var p Parent
+		if err := FakeData(&p, options.WithRandomMapAndSliceMinSize(1)); err != nil {
+			t.Fatalf("failed to generate fake data: %s", err.Error())
+		}
+		if len(p.Names) == 0 || len(p.Map) == 0 {
+			t.Fatalf("got an empty slice or map: %+v", p)
+		}
+		for _, n := range p.Names {
+			if n != "a" && n != "b" {
+				t.Errorf("Names: got %q, want a or b", n)
+			}
+		}
+		for k, n := range p.Map {
+			if (k != "a" && k != "b") || (n != "a" && n != "b") {
+				t.Errorf("Map: got %q: %q, want a or b", k, n)
+			}
+		}
+	}
+}
+
+func TestSliceLenUnsupportedElementType(t *testing.T) {
+	type Parent struct {
+		Values []any `faker:"slice_len=2"`
+	}
+	var p Parent
+	if err := FakeData(&p); err == nil {
+		t.Error("want an error for a slice of interface values, got nil")
+	}
+}
+
 func TestWrongSliceLen(t *testing.T) {
 	type SomeStruct struct {
 		String []string `faker:"slice_len=bla"`

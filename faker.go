@@ -931,7 +931,7 @@ func userDefinedMap(v reflect.Value, tag string, opt options.Options) error {
 		if err != nil {
 			return err
 		}
-		definedMap.SetMapIndex(reflect.ValueOf(key), reflect.ValueOf(val))
+		definedMap.SetMapIndex(reflect.ValueOf(key).Convert(v.Type().Key()), reflect.ValueOf(val).Convert(v.Type().Elem()))
 	}
 	v.Set(definedMap)
 	return nil
@@ -984,29 +984,6 @@ func getNumberWithBoundary(t reflect.Type, boundary interfaces.RandomIntegerBoun
 	}
 }
 
-func getValueWithNoTag(t reflect.Type, opt options.Options) (any, error) {
-	switch t.Kind() {
-	case reflect.Int, reflect.Int32, reflect.Int64, reflect.Int8, reflect.Int16, reflect.Uint, reflect.Uint8,
-		reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Float32, reflect.Float64:
-		boundary := interfaces.RandomIntegerBoundary{
-			Start: opt.RandomIntegerBoundary.Start,
-			End:   opt.RandomIntegerBoundary.End}
-		res, err := getNumberWithBoundary(t, boundary)
-		if err != nil {
-			return nil, err
-		}
-		return res, nil
-	case reflect.String:
-		res, err := randomString(opt.RandomStringLength, opt)
-		if err != nil {
-			return nil, err
-		}
-		return res, nil
-	default:
-		return 0, errors.New(fakerErrors.ErrUnknownType)
-	}
-}
-
 func userDefinedArray(v reflect.Value, tag string, opt options.Options) error {
 	tagFunc, tagExists := mapperTag.Load(tag)
 	if tagExists {
@@ -1035,9 +1012,11 @@ func userDefinedArray(v reflect.Value, tag string, opt options.Options) error {
 		array = reflect.MakeSlice(v.Type(), sliceLen, sliceLen)
 	}
 	innerOpt := opt.Nested()
+	elemType := v.Type().Elem()
 	for i := 0; i < array.Len(); i++ {
-		k := v.Type().Elem().Kind()
-		if k == reflect.Pointer || k == reflect.Struct {
+		k := elemType.Kind()
+		// With only slice_len set, elements come from getFakedValue.
+		if tag == "" || k == reflect.Pointer || k == reflect.Struct {
 			res, err := getFakedValue(array.Index(i).Interface(), &innerOpt)
 			if err != nil {
 				return err
@@ -1045,23 +1024,15 @@ func userDefinedArray(v reflect.Value, tag string, opt options.Options) error {
 			if res.Kind() == reflect.Invalid {
 				return fmt.Errorf("got invalid reflect value")
 			}
-			array.Index(i).Set(res)
-			continue
-		}
-		if tag == "" {
-			res, err := getValueWithNoTag(v.Type().Elem(), innerOpt)
-			if err != nil {
-				return err
-			}
-			array.Index(i).Set(reflect.ValueOf(res))
+			array.Index(i).Set(res.Convert(elemType))
 			continue
 		}
 
-		res, err := getValueWithTag(v.Type().Elem(), tag, innerOpt)
+		res, err := getValueWithTag(elemType, tag, innerOpt)
 		if err != nil {
 			return err
 		}
-		array.Index(i).Set(reflect.ValueOf(res))
+		array.Index(i).Set(reflect.ValueOf(res).Convert(elemType))
 	}
 	v.Set(array)
 	return nil
